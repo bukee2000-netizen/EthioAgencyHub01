@@ -246,7 +246,7 @@ export function EmployeeCard({ employee, agentId, onSelect, viewOnly = false }: 
                   <Link href={`/employee-management/${employee.id}`} className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-sm">
                     <Eye className="h-4 w-4" /> Full Profile
                   </Link>
-                  <Link href={`/employee-management/cv-generator`} className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-semibold text-brand-700 hover:bg-slate-50 transition-colors shadow-sm">
+                  <Link href={`/employee-management/cv-generator?employeeId=${employee.id}`} className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-semibold text-brand-700 hover:bg-slate-50 transition-colors shadow-sm">
                     <Download className="h-4 w-4" /> Generate CV
                   </Link>
                 </div>
