@@ -1,0 +1,12 @@
+﻿'use client';
+
+import { Suspense } from 'react';
+import { TravelManagementModule } from '@/components/travel/travel-management-module';
+
+export default function Page() {
+  return (
+    <Suspense fallback={<TravelManagementModule initialTab="preparation" />}>
+      <TravelManagementModule initialTab="preparation" />
+    </Suspense>
+  );
+}

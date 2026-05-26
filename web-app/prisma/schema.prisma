@@ -1,0 +1,614 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  SUPER_ADMIN
+  AGENCY_ADMIN
+  AGENT
+  VIEWER
+}
+
+enum EmployeeStatus {
+  REGISTERED
+  DOCUMENT_REVIEW
+  MOLS_PENDING
+  INTERVIEW_UPLOADED
+  TRAVEL_READY
+  DEPLOYED
+  ARCHIVED
+}
+
+enum DocumentType {
+  PASSPORT
+  VISA
+  MOLS
+  MEDICAL
+  PHOTO
+  CONTRACT
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum TravelStatus {
+  SCHEDULED
+  TICKETED
+  READY
+  DEPARTED
+  ARRIVED
+  CANCELLED
+}
+
+model Agency {
+  id        String     @id @default(cuid())
+  name      String
+  employees Employee[]
+  agents    Agent[]
+  users     User[]
+  drafts    EmployeeDraft[]
+  crossMatchResults CrossMatchResult[]
+  missingPersonReports MissingPersonReport[]
+  systemSettings       SystemSetting[]
+  cvTemplates          CVTemplate[]
+  pilgrims  Pilgrim[]
+  packages  Package[]
+  accommodations Accommodation[]
+  subscription Subscription?
+  invoices  Invoice[]
+  deletedAt DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([deletedAt])
+}
+
+model Employee {
+  id                  String         @id @default(cuid())
+  agency              Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId            String
+  
+  // Legacy field - keeping for backward compatibility
+  name                String
+  
+  // Personal Information (from new registration form)
+  firstName           String?
+  lastName            String?
+  email               String?
+  dateOfBirth         DateTime?
+  gender              String?
+  maritalStatus       String?
+  nationality         String?
+  region              String?
+  zone                String?
+  woreda              String?
+  contactPhone        String?
+  alternatePhone      String?
+  emergencyContact    String?
+  emergencyPhone      String?
+  emergencyRelation   String?        // e.g., Spouse, Parent, Sibling
+  
+  // IDs & Passport (NEW)
+  nationalId          String?
+  laborId             String?
+  passportNumber      String?
+  passportExpiryDate  DateTime?
+  
+  // Family Information
+  fatherName          String?
+  motherName          String?
+  religion            String?
+  medicalHistory      String?
+
+  // Residence
+  kebele              String?
+
+  // Passport Issuance
+  passportIssuingDate DateTime?
+  passportPlaceOfIssue String?
+
+  // Documents (JSON)
+  pdfDocuments        String?        // JSON array of document references
+  psychInterviewData  String?        // JSON interview data
+
+  // Bank Account Information
+  bankName            String?
+  bankAccountNumber   String?
+  bankBranch          String?
+  
+  // Skills & Qualifications
+  role                String?
+  education           String?
+  experience          String?
+  destination         String?
+  languages           String?        // JSON array stored as string
+  additionalSkills    String?
+
+  // Psychology Assessment
+  psychologyScore     Int?           // 0-100 compatibility score
+  psychologyAnswers   String?        // JSON array of assessment answers
+  psychologyNotes     String?        // Admin notes on assessment
+
+  // Documents
+  docPath             String?
+  tgVideoId           String?
+  passportSizePhotoPath String?
+  fullBodyPhotoPath String?
+  
+  // Status & Tracking
+  status              EmployeeStatus @default(REGISTERED)
+  documents           Document[]
+  travels             Travel[]
+  generatedCvs       GeneratedCv[]
+  visaApplications   VisaApplication[]
+  molsRecords        MolsRecord[]
+  crossMatchResults  CrossMatchResult[]
+  missingPersonReports MissingPersonReport[]
+  selectedByAgent     String?
+  selectedAt          DateTime?
+  deletedAt           DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([agencyId])
+  @@index([status])
+  @@index([deletedAt])
+  @@index([selectedByAgent])
+  @@index([email])
+}
+
+model EmployeeDraft {
+  id        String    @id @default(cuid())
+  agency   Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId String
+  
+  // Draft data stored as JSON strings
+  personal     String   // JSON string of personal data
+  skills       String?  // JSON string of skills data
+  documents    String?  // JSON string of documents data
+  step         Int      @default(0) // Current step in registration wizard (0-3)
+  
+  deletedAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([deletedAt])
+  @@index([createdAt])
+}
+
+model Document {
+  id         String         @id @default(cuid())
+  employee   Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId String
+  type       DocumentType
+  filePath   String
+  status     DocumentStatus @default(PENDING)
+  notes      String?
+  expiresAt  DateTime?
+  deletedAt  DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([employeeId])
+  @@index([type, status])
+  @@index([deletedAt])
+}
+
+model Travel {
+  id                String       @id @default(cuid())
+  employee          Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId        String
+  destination       String
+  departureAt       DateTime
+  status            TravelStatus @default(SCHEDULED)
+  ticket            String?
+  airline           String?
+  flightNumber      String?
+  departureTime    String?
+  arrivalTime       String?
+  origin            String?
+  terminal          String?
+  gate              String?
+  boardingGroup     String?
+  class             String?
+  ticketCost        Float?
+  currency          String?
+  paymentStatus    String?      @default("pending")
+  bookingReference  String?
+  localAgentId      String?
+  localAgentName    String?
+  assignedStaffId   String?
+  assignedStaffName String?
+  inCountryStaff    String?
+  transitStatus     Json?
+  deletedAt         DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([employeeId])
+  @@index([departureAt, status])
+  @@index([deletedAt])
+}
+
+model Agent {
+  id              String    @id @default(cuid())
+  agency          Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId        String
+  name            String
+  email           String?
+  phone           String?
+  commissionRate  Float?
+  territory       String?
+  contractSignedAt DateTime?
+  slaScore        Float?
+  lastActiveAt    DateTime?
+  active          Boolean   @default(true)
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([agencyId])
+  @@index([deletedAt])
+  @@index([active])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  agency       Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId     String
+  email        String   @unique
+  passwordHash String
+  role              Role     @default(VIEWER)
+  twoFactorEnabled  Boolean  @default(false)
+  twoFactorSecret   String?
+  totpSecret        String?
+  backupCodes       String?
+  deletedAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([deletedAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  agencyId   String
+  actorId    String?
+  action     String
+  resource   String
+  resourceId String?
+  metadata   Json?
+  deletedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([agencyId, createdAt])
+  @@index([resource, resourceId])
+  @@index([deletedAt])
+}
+
+model Institution {
+  id        String   @id @default(cuid())
+  agencyId  String
+  name      String
+  type      String?
+  contact   String?
+  country   String?
+  active    Boolean  @default(true)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([deletedAt])
+}
+
+model Pilgrim {
+  id            String   @id @default(cuid())
+  agency        Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId      String
+  name          String
+  passportNo    String?
+  groupName     String?
+  season        String?
+  requirements  Json?
+  status        String   @default("REGISTERED")
+  departureDate DateTime?
+  packageId     String?
+  package       Package? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  accommodationId String?
+  accommodation Accommodation? @relation(fields: [accommodationId], references: [id], onDelete: SetNull)
+  sponsorName   String?
+  sponsorContact String?
+  flightPreference String?
+  notes         String?
+  deletedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([packageId])
+  @@index([accommodationId])
+  @@index([deletedAt])
+}
+
+model Package {
+  id          String    @id @default(cuid())
+  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId    String
+  name        String
+  description String?
+  price       Float?
+  currency    String    @default("ETB")
+  duration    Int?
+  includes    Json?
+  pilgrims    Pilgrim[]
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([agencyId])
+  @@index([deletedAt])
+}
+
+model Accommodation {
+  id          String    @id @default(cuid())
+  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId    String
+  name        String
+  location    String?
+  rating      Int?
+  capacity    Int?
+  amenities   Json?
+  pilgrims    Pilgrim[]
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([agencyId])
+  @@index([deletedAt])
+}
+
+model Subscription {
+  id            String   @id @default(cuid())
+  agency        Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId      String   @unique
+  plan          String   @default("free")
+  status        String   @default("active")
+  startedAt     DateTime @default(now())
+  expiresAt     DateTime?
+  cancelledAt   DateTime?
+  paymentMethod String?
+  autoRenew     Boolean  @default(true)
+  invoices      Invoice[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([status])
+}
+
+model Invoice {
+  id              String   @id @default(cuid())
+  agency          Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId        String
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  subscriptionId  String?
+  amount          Float
+  currency        String   @default("ETB")
+  status          String   @default("pending")
+  dueDate         DateTime?
+  paidAt          DateTime?
+  description     String?
+  reference       String?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenId   String   @unique
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([tokenId])
+}
+
+model CVTemplate {
+  id                String   @id @default(cuid())
+  agency            Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId          String
+  name              String
+  layout            String   @default("bilingual")
+  style             String   @default("standard")
+  logoUrl           String?
+  companyName       String?
+  companyAddress    String?
+  companyPhone      String?
+  companyEmail      String?
+  companyWebsite    String?
+  primaryColor      String   @default("#1e40af")
+  accentColor       String   @default("#059669")
+  fontSize          String   @default("normal")
+  showPassportPhoto Boolean  @default(true)
+  showFullBodyPhoto Boolean  @default(true)
+  isDefault         Boolean  @default(false)
+  generatedCvs      GeneratedCv[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([agencyId])
+}
+
+model GeneratedCv {
+  id            String     @id @default(cuid())
+  employee      Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId    String
+  cvTemplate    CVTemplate? @relation(fields: [cvTemplateId], references: [id], onDelete: SetNull)
+  cvTemplateId  String?
+  template      String
+  language      String
+  layout        String?
+  style         String?
+  pdfData       Bytes?
+  htmlContent   String?
+  status        String     @default("generated")
+  generatedBy   String?
+  downloadedAt  DateTime?
+  sharedWith    String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([employeeId])
+  @@index([cvTemplateId])
+  @@index([createdAt])
+}
+
+enum VisaStage {
+  DOCUMENT_COLLECTION
+  PORTAL_REGISTRATION
+  SUBMITTED_TO_EMBASSY
+  VISA_APPROVED
+  REJECTED_CORRECTION
+}
+
+model VisaApplication {
+  id              String    @id @default(cuid())
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId      String
+  embassy         String
+  visaType        String
+  stage           VisaStage @default(DOCUMENT_COLLECTION)
+  docPassport     String    @default("pending")
+  docMedical      String    @default("pending")
+  docPolice       String    @default("pending")
+  docContract     String    @default("pending")
+  docPhotos       String    @default("pending")
+  docInsurance    String    @default("pending")
+  docCertificate  String    @default("pending")
+  notes           String?
+  molsUnlocked   Boolean   @default(false)
+  ticketNotified  Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([stage])
+}
+
+enum MolsStage {
+  CONTRACT_LINKED
+  MOFA_AUTHENTICATED
+  EMBASSY_LEGALIZATION
+  MOLS_SUBMITTED
+  APPROVED
+}
+
+model MolsRecord {
+  id              String    @id @default(cuid())
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId      String
+  stage           MolsStage @default(CONTRACT_LINKED)
+  healthCert      Boolean   @default(false)
+  insurance       Boolean   @default(false)
+  coc             Boolean   @default(false)
+  visaUnlocked   Boolean   @default(false)
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([stage])
+}
+
+model CrossMatchResult {
+  id              String   @id @default(cuid())
+  agency          Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId        String
+  employee        Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId      String?
+  type            String?
+  reference       String?
+  result          String?
+  allPass         Boolean  @default(false)
+  nameMatch       Boolean  @default(true)
+  passportMatch   Boolean  @default(true)
+  visaCountryMatch Boolean @default(true)
+  passportExpiryOk Boolean @default(true)
+  visaExpiryOk    Boolean  @default(true)
+  errors          String?
+  checkedAt       DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([employeeId])
+  @@index([allPass])
+}
+
+model PaymentWebhook {
+  id              String   @id @default(cuid())
+  transactionId   String   @unique
+  paymentMethod   String
+  amount          Float
+  currency        String   @default("ETB")
+  status          String
+  reference       String?
+  metadata        Json?
+  receivedAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([transactionId])
+  @@index([status])
+  @@index([receivedAt])
+}
+
+model MissingPersonReport {
+  id          String   @id @default(cuid())
+  agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId    String
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId  String
+  reason      String
+  reportedTo  String?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([agencyId])
+  @@index([employeeId])
+  @@index([status])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId  String
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([agencyId, key])
+  @@index([agencyId])
+}

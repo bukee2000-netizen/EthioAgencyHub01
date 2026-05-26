@@ -1,0 +1,59 @@
+services:
+  # ============================================
+  # MySQL Database
+  # ============================================
+  db:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ethio_agency_hub
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_USER: agency_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-agency_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+
+  # ============================================
+  # Next.js Application
+  # ============================================
+  web:
+    build:
+      context: ./web-app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://agency_user:${MYSQL_PASSWORD:-agency_password}@db:3306/ethio_agency_hub
+      - JWT_SECRET=${JWT_SECRET:-this-is-a-very-long-and-secure-jwt-secret-key-12345}
+      - NEXT_PUBLIC_APP_URL=${APP_URL:-http://localhost:3000}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TG_CHANNEL_ID=${TG_CHANNEL_ID:-}
+      - UPLOAD_PATH=/app/uploads
+      - MAX_FILE_SIZE_MB=50
+      - MAX_FILE_SIZE=52428800
+      - SEED_DB=${SEED_DB:-false}
+    volumes:
+      - app_uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+    driver: local
+  app_uploads:
+    driver: local
