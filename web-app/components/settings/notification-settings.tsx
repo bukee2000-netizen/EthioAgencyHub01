@@ -37,21 +37,21 @@ export function NotificationSettings() {
   const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
     <button
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-brand-600' : 'bg-slate-200'}`}
+      className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-600'}`}
     >
       <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${checked ? 'left-6' : 'left-1'}`} />
     </button>
   );
 
   const NotificationGroup = ({ icon: Icon, title, description, children }: any) => (
-    <div className="rounded-xl border border-slate-200 p-4">
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 p-4">
       <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-brand-100 p-2">
-          <Icon className="h-5 w-5 text-brand-600" />
+        <div className="rounded-lg bg-brand-100 dark:bg-brand-900/30 p-2">
+          <Icon className="h-5 w-5 text-brand-600 dark:text-brand-400" />
         </div>
         <div>
-          <h4 className="font-medium">{title}</h4>
-          <p className="text-sm text-slate-500">{description}</p>
+          <h4 className="font-medium dark:text-ink-dark">{title}</h4>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
         </div>
       </div>
       <div className="mt-4 space-y-3">{children}</div>
@@ -66,15 +66,15 @@ export function NotificationSettings() {
         description="Receive updates via email"
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm">Document updates</span>
+          <span className="text-sm dark:text-slate-200">Document updates</span>
           <Toggle checked={notifications.emailDocuments} onChange={(v: boolean) => setNotifications({ ...notifications, emailDocuments: v })} />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm">Travel schedules</span>
+          <span className="text-sm dark:text-slate-200">Travel schedules</span>
           <Toggle checked={notifications.emailTravel} onChange={(v: boolean) => setNotifications({ ...notifications, emailTravel: v })} />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm">Employee registrations</span>
+          <span className="text-sm dark:text-slate-200">Employee registrations</span>
           <Toggle checked={notifications.emailEmployees} onChange={(v: boolean) => setNotifications({ ...notifications, emailEmployees: v })} />
         </div>
       </NotificationGroup>
@@ -85,15 +85,15 @@ export function NotificationSettings() {
         description="Receive in-app notifications"
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm">Document updates</span>
+          <span className="text-sm dark:text-slate-200">Document updates</span>
           <Toggle checked={notifications.pushDocuments} onChange={(v: boolean) => setNotifications({ ...notifications, pushDocuments: v })} />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm">Travel schedules</span>
+          <span className="text-sm dark:text-slate-200">Travel schedules</span>
           <Toggle checked={notifications.pushTravel} onChange={(v: boolean) => setNotifications({ ...notifications, pushTravel: v })} />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm">Employee registrations</span>
+          <span className="text-sm dark:text-slate-200">Employee registrations</span>
           <Toggle checked={notifications.pushEmployees} onChange={(v: boolean) => setNotifications({ ...notifications, pushEmployees: v })} />
         </div>
       </NotificationGroup>
@@ -104,11 +104,11 @@ export function NotificationSettings() {
         description="Configure urgent alerts"
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm">Critical alerts (security, errors)</span>
+          <span className="text-sm dark:text-slate-200">Critical alerts (security, errors)</span>
           <Toggle checked={notifications.criticalAlerts} onChange={(v: boolean) => setNotifications({ ...notifications, criticalAlerts: v })} />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm">Weekly digest</span>
+          <span className="text-sm dark:text-slate-200">Weekly digest</span>
           <Toggle checked={notifications.weeklyDigest} onChange={(v: boolean) => setNotifications({ ...notifications, weeklyDigest: v })} />
         </div>
       </NotificationGroup>
@@ -116,7 +116,7 @@ export function NotificationSettings() {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-2.5 font-medium text-white disabled:opacity-50"
+        className="flex items-center gap-2 rounded-xl bg-brand-600 hover:bg-brand-700 px-6 py-2.5 font-medium text-white disabled:opacity-50 transition-colors"
       >
         <Save className="h-4 w-4" />
         {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Preferences'}

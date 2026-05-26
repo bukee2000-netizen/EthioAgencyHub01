@@ -40,7 +40,15 @@ export async function PATCH(req: Request) {
       return ok({ ...body, source: 'mock' });
     }
 
-    return ok(body);
+    if (body.code) {
+      await db.systemSetting.upsert({
+        where: { agencyId_key: { agencyId: session.agencyId, key: 'language' } },
+        create: { key: 'language', value: body.code, agencyId: session.agencyId },
+        update: { value: body.code }
+      });
+    }
+
+    return ok({ success: true, code: body.code });
   } catch (error) {
     if (isDatabaseConnectionError(error)) return serverError('Database unavailable.');
     return serverError();

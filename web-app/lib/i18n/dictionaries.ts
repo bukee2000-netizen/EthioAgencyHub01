@@ -11,6 +11,10 @@ export type Dictionary = {
     status: string; type: string; date: string; actions: string; all: string;
     active: string; pending: string; approved: string; rejected: string;
     submit: string; confirm: string; back: string; next: string; close: string;
+    theme: string; darkMode: string; lightMode: string; systemTheme: string;
+    profile: string; security: string; notifications: string; preferences: string;
+    appearance: string; password: string; twoFactor: string; dangerZone: string;
+    deleteAccount: string; notificationsDesc: string;
   };
   travel: {
     commandCenter: string; schedule: string; tickets: string;
@@ -44,6 +48,10 @@ const en: Dictionary = {
     pending: 'Pending', approved: 'Approved', rejected: 'Rejected',
     submit: 'Submit', confirm: 'Confirm', back: 'Back', next: 'Next',
     close: 'Close',
+    theme: 'Theme', darkMode: 'Dark', lightMode: 'Light', systemTheme: 'System',
+    profile: 'Profile', security: 'Security', notifications: 'Notifications', preferences: 'Preferences',
+    appearance: 'Appearance', password: 'Password', twoFactor: 'Two-Factor Authentication', dangerZone: 'Danger Zone',
+    deleteAccount: 'Delete Account', notificationsDesc: 'Configure your notification preferences',
   },
   travel: {
     commandCenter: 'Command Center', schedule: 'Schedule', tickets: 'Tickets',
@@ -81,6 +89,10 @@ const am: Dictionary = {
     pending: 'በመጠባበቅ ላይ', approved: 'ጸድቋል', rejected: 'ውድቅ ሆኗል',
     submit: 'ላክ', confirm: 'አረጋግጥ', back: 'ተመለስ', next: 'ቀጣይ',
     close: 'ዝጋ',
+    theme: 'ገጽታ', darkMode: 'ጨለማ', lightMode: 'ብርሃን', systemTheme: 'ስርዓት',
+    profile: 'መገለጫ', security: 'ደህንነት', notifications: 'ማሳወቂያዎች', preferences: 'ምርጫዎች',
+    appearance: 'መልክ', password: 'የይለፍ ቃል', twoFactor: 'ሁለት-ደረጃ ማረጋገጫ', dangerZone: 'አደገኛ ዞን',
+    deleteAccount: 'መለያ ሰርዝ', notificationsDesc: 'የማሳወቂያ ምርጫዎችዎን ያዋቅሩ',
   },
   travel: {
     commandCenter: 'የትእዛዝ ማዕከል', schedule: 'መርሐግብር', tickets: 'ቲኬቶች',
@@ -118,6 +130,10 @@ const om: Dictionary = {
     pending: 'Eegaa', approved: 'Mirkanaa\'e', rejected: 'Didame',
     submit: 'Ergi', confirm: 'Mirkaneessi', back: 'Duubi', next: 'Itti aanu',
     close: 'Cufi',
+    theme: 'Amala', darkMode: 'Dukkana', lightMode: 'Ifaa', systemTheme: 'Sistimii',
+    profile: 'Proofaayilii', security: 'Nageenya', notifications: 'Beeksisota', preferences: 'Filannoo',
+    appearance: 'Mul\'ata', password: 'Jecha Iccitii', twoFactor: 'Mirkaneessa Sadarkaa Lamaa', dangerZone: 'Bakka Diigamaa',
+    deleteAccount: 'Herrega Haqi', notificationsDesc: 'Beeksisota kee qindeessi',
   },
   travel: {
     commandCenter: 'Buufata Ajaja', schedule: 'Karoora', tickets: 'Tikeetota',
@@ -155,6 +171,10 @@ const ar: Dictionary = {
     pending: 'قيد الانتظار', approved: 'موافق عليه', rejected: 'مرفوض',
     submit: 'إرسال', confirm: 'تأكيد', back: 'رجوع', next: 'التالي',
     close: 'إغلاق',
+    theme: 'المظهر', darkMode: 'داكن', lightMode: 'فاتح', systemTheme: 'النظام',
+    profile: 'الملف الشخصي', security: 'الأمان', notifications: 'الإشعارات', preferences: 'التفضيلات',
+    appearance: 'المظهر', password: 'كلمة المرور', twoFactor: 'المصادقة الثنائية', dangerZone: 'منطقة الخطر',
+    deleteAccount: 'حذف الحساب', notificationsDesc: 'قم بتكوين تفضيلات الإشعارات الخاصة بك',
   },
   travel: {
     commandCenter: 'مركز القيادة', schedule: 'الجدول', tickets: 'التذاكر',

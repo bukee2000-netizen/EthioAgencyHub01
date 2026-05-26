@@ -21,12 +21,16 @@ export function LanguageSwitcher({ current }: Props) {
     setError(null);
     try {
       const res = await fetch('/api/settings/language', {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })
       });
       if (!res.ok) throw new Error('Failed to save language');
-      startTransition(() => router.refresh());
+      localStorage.setItem('language', code);
+      startTransition(() => {
+        router.refresh();
+        window.location.reload();
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save language');
     }

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
 import { SidebarProvider } from '@/components/layout/sidebar-provider';
 import { LanguageProvider } from '@/components/layout/language-provider';
+import { ThemeProvider } from '@/components/layout/theme-provider';
 import { getSession } from '@/lib/auth/session';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -13,10 +14,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <SidebarProvider>
-      <LanguageProvider>
-        <AppShell session={session}>{children}</AppShell>
-      </LanguageProvider>
-    </SidebarProvider>
+    <ThemeProvider>
+      <SidebarProvider>
+        <LanguageProvider>
+          <AppShell session={session}>{children}</AppShell>
+        </LanguageProvider>
+      </SidebarProvider>
+    </ThemeProvider>
   );
 }

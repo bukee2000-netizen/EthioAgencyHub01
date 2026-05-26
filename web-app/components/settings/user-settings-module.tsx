@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  User, Lock, Bell, LogOut, Globe, Moon, Sun, Save, Camera, 
+import {
+  User, Lock, Bell, LogOut, Globe, Moon, Sun, Save, Camera,
   Mail, Phone, Building2, MapPin, Calendar, Shield, Eye, EyeOff,
   Key, Smartphone, Watch, Tablet, CheckCircle2, AlertCircle,
   MessageSquare, FileText, Clock, BellRing, BellOff
 } from 'lucide-react';
+import { useTheme } from '@/components/layout/theme-provider';
+import { useLanguage } from '@/components/layout/language-provider';
 
 interface Profile {
   firstName: string;
@@ -86,10 +88,13 @@ export function UserSettingsModule() {
     financialAlerts: true,
   });
 
+  const { dict } = useLanguage();
+  const { theme: currentTheme, setTheme: setAppTheme } = useTheme();
+
   const [preferences, setPreferences] = useState<Preferences>({
     language: 'English',
     timezone: 'Africa/Addis_Ababa',
-    theme: 'light',
+    theme: currentTheme,
     compactMode: false,
     showAnimations: true,
   });
@@ -113,29 +118,29 @@ export function UserSettingsModule() {
   };
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'security', label: 'Security', icon: Lock },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'preferences', label: 'Preferences', icon: Globe },
+    { id: 'profile', label: dict.common.profile, icon: User },
+    { id: 'security', label: dict.common.security, icon: Lock },
+    { id: 'notifications', label: dict.common.notifications, icon: Bell },
+    { id: 'preferences', label: dict.common.preferences, icon: Globe },
   ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-3xl border border-cyan-200 bg-gradient-to-r from-cyan-50 to-blue-50 p-6">
+      <div className="rounded-3xl border border-cyan-200 dark:border-cyan-800 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/30 dark:to-blue-900/30 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-ink flex items-center gap-3">
-              <User className="h-7 w-7 text-cyan-600" />
-              User Settings
+            <h2 className="text-2xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
+              <User className="h-7 w-7 text-cyan-600 dark:text-cyan-400" />
+              {dict.common.settings}
             </h2>
-            <p className="mt-1 text-slate-600">
-              Manage your personal account, security, and preferences
+            <p className="mt-1 text-slate-600 dark:text-slate-400">
+              {dict.common.preferences}
             </p>
           </div>
           {saveMessage && (
             <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${
-              saveMessage.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              saveMessage.type === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
             }`}>
               {saveMessage.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
               {saveMessage.text}
@@ -145,7 +150,7 @@ export function UserSettingsModule() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200">
+      <div className="border-b border-slate-200 dark:border-slate-700">
         <nav className="flex gap-6 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -155,8 +160,8 @@ export function UserSettingsModule() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === tab.id
-                    ? 'border-cyan-500 text-cyan-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                    ? 'border-cyan-500 text-cyan-600 dark:text-cyan-400'
+                    : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -172,7 +177,7 @@ export function UserSettingsModule() {
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6">
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-semibold text-ink mb-6">Personal Information</h3>
+              <h3 className="text-lg font-semibold text-ink mb-6">{dict.common.profile}</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">First Name</label>
@@ -284,7 +289,7 @@ export function UserSettingsModule() {
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h4 className="font-semibold text-ink mb-4">Account Status</h4>
+              <h4 className="font-semibold text-ink mb-4">{dict.common.status}</h4>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Status</span>
@@ -310,7 +315,7 @@ export function UserSettingsModule() {
       {activeTab === 'security' && (
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h3 className="text-lg font-semibold text-ink mb-6">Change Password</h3>
+              <h3 className="text-lg font-semibold text-ink mb-6">{dict.common.password}</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
@@ -367,7 +372,7 @@ export function UserSettingsModule() {
                 </div>
               </div>
               <button className="w-full rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700">
-                Update Password
+                {dict.common.save}
               </button>
             </div>
           </div>
@@ -377,7 +382,7 @@ export function UserSettingsModule() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Smartphone className="h-5 w-5 text-cyan-600" />
-                  <h4 className="font-semibold text-ink">Two-Factor Authentication</h4>
+                  <h4 className="font-semibold text-ink">{dict.common.twoFactor}</h4>
                 </div>
                 <button
                   onClick={() => setSecurity({ ...security, twoFactorEnabled: !security.twoFactorEnabled })}
@@ -401,7 +406,7 @@ export function UserSettingsModule() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Key className="h-5 w-5 text-cyan-600" />
-                  <h4 className="font-semibold text-ink">Login Alerts</h4>
+                  <h4 className="font-semibold text-ink">{dict.common.notifications}</h4>
                 </div>
                 <button
                   onClick={() => setSecurity({ ...security, loginAlerts: !security.loginAlerts })}
@@ -420,12 +425,12 @@ export function UserSettingsModule() {
             </div>
 
             <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-              <h4 className="font-semibold text-red-800 mb-2">Danger Zone</h4>
+              <h4 className="font-semibold text-red-800 mb-2">{dict.common.dangerZone}</h4>
               <p className="text-sm text-red-600 mb-4">
                 Permanently delete your account and all associated data.
               </p>
               <button className="rounded-xl border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
-                Delete Account
+                {dict.common.deleteAccount}
               </button>
             </div>
           </div>
@@ -434,8 +439,8 @@ export function UserSettingsModule() {
 
       {/* Notifications Tab */}
       {activeTab === 'notifications' && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 className="text-lg font-semibold text-ink mb-6">Notification Preferences</h3>
+        <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-800 p-6">
+          <h3 className="text-lg font-semibold text-ink dark:text-ink-dark mb-6">{dict.common.notifications}</h3>
           <div className="space-y-4">
             {[
               { key: 'emailNotifications', label: 'Email Notifications', desc: 'Receive notifications via email' },
@@ -472,7 +477,7 @@ export function UserSettingsModule() {
       {activeTab === 'preferences' && (
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h3 className="text-lg font-semibold text-ink mb-6">Display Preferences</h3>
+            <h3 className="text-lg font-semibold text-ink dark:text-ink-dark mb-6">{dict.common.appearance}</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">Language</label>
@@ -500,34 +505,34 @@ export function UserSettingsModule() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Theme</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{dict.common.theme}</label>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setPreferences({ ...preferences, theme: 'light' })}
+                    onClick={() => { setPreferences({ ...preferences, theme: 'light' }); setAppTheme('light'); }}
                     className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border ${
-                      preferences.theme === 'light' ? 'border-cyan-500 bg-cyan-50' : 'border-slate-200'
+                      currentTheme === 'light' ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30' : 'border-slate-200 dark:border-slate-600'
                     }`}
                   >
                     <Sun className="h-5 w-5" />
-                    <span className="text-sm font-medium">Light</span>
+                    <span className="text-sm font-medium">{dict.common.lightMode}</span>
                   </button>
                   <button
-                    onClick={() => setPreferences({ ...preferences, theme: 'dark' })}
+                    onClick={() => { setPreferences({ ...preferences, theme: 'dark' }); setAppTheme('dark'); }}
                     className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border ${
-                      preferences.theme === 'dark' ? 'border-cyan-500 bg-cyan-50' : 'border-slate-200'
+                      currentTheme === 'dark' ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30' : 'border-slate-200 dark:border-slate-600'
                     }`}
                   >
                     <Moon className="h-5 w-5" />
-                    <span className="text-sm font-medium">Dark</span>
+                    <span className="text-sm font-medium">{dict.common.darkMode}</span>
                   </button>
                   <button
-                    onClick={() => setPreferences({ ...preferences, theme: 'system' })}
+                    onClick={() => { setPreferences({ ...preferences, theme: 'system' }); setAppTheme('system'); }}
                     className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border ${
-                      preferences.theme === 'system' ? 'border-cyan-500 bg-cyan-50' : 'border-slate-200'
+                      currentTheme === 'system' ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30' : 'border-slate-200 dark:border-slate-600'
                     }`}
                   >
                     <Globe className="h-5 w-5" />
-                    <span className="text-sm font-medium">System</span>
+                    <span className="text-sm font-medium">{dict.common.systemTheme}</span>
                   </button>
                 </div>
               </div>
@@ -535,7 +540,7 @@ export function UserSettingsModule() {
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h3 className="text-lg font-semibold text-ink mb-6">Interface Options</h3>
+            <h3 className="text-lg font-semibold text-ink dark:text-ink-dark mb-6">{dict.common.preferences}</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between py-3 border-b border-slate-100">
                 <div>
