@@ -38,7 +38,7 @@ export function LanguageSelector({ currentLanguage, onLanguageChange }: Props) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={pending}
-        className="flex items-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
+        className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-600 px-2 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
         type="button"
         aria-label="Select language"
       >
@@ -47,20 +47,19 @@ export function LanguageSelector({ currentLanguage, onLanguageChange }: Props) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg dark:shadow-soft-dark">
+        <div className="absolute right-0 top-full z-50 mt-1.5 w-36 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg dark:shadow-soft-dark">
           {supportedLanguages.map((lang) => (
             <button
               key={lang.code}
               onClick={() => handleChange(lang.code)}
-              className={`block w-full px-4 py-3 text-left text-sm font-medium transition ${
+              className={`block w-full px-3 py-2 text-left text-xs font-medium transition ${
                 currentLanguage === lang.code
                   ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400'
                   : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
-              } first:rounded-t-2xl last:rounded-b-2xl`}
+              } first:rounded-t-lg last:rounded-b-lg`}
               type="button"
             >
               <span className="block">{lang.nativeName}</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">{lang.name}</span>
             </button>
           ))}
         </div>
