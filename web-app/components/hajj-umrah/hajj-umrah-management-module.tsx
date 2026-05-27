@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -8,6 +8,7 @@ import {
   Clock, Shield, Activity, TrendingUp
 } from 'lucide-react';
 import { HajjUmrahPilgrimRegister } from './hajj-umrah-pilgrim-register';
+import { useToast } from '@/components/ui/toast-provider';
 
 interface Pilgrim {
   id: string;
@@ -38,6 +39,7 @@ interface Group {
 }
 
 export function HajjUmrahManagementModule() {
+  const { addToast } = useToast();
   const [activeView, setActiveView] = useState<'dashboard' | 'register'>('dashboard');
   const [pilgrims, setPilgrims] = useState<Pilgrim[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
@@ -80,6 +82,7 @@ export function HajjUmrahManagementModule() {
       setGroups(mockGroups);
     } catch (error) {
       console.error('Failed to fetch data:', error);
+      addToast({ title: 'Error', description: 'Failed to load pilgrim data.', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -109,7 +112,7 @@ export function HajjUmrahManagementModule() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      registered: 'bg-slate-100 text-slate-700',
+      registered: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
       documents_pending: 'bg-yellow-100 text-yellow-800',
       requirements_met: 'bg-blue-100 text-blue-800',
       medical_clearance: 'bg-indigo-100 text-indigo-800',
@@ -117,7 +120,7 @@ export function HajjUmrahManagementModule() {
       ready_for_travel: 'bg-emerald-100 text-emerald-800',
       deployed: 'bg-teal-100 text-teal-800',
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
   };
 
   const getStatusLabel = (status: string) => {
@@ -146,10 +149,10 @@ export function HajjUmrahManagementModule() {
       ) : (
         <>
       {/* Header */}
-      <div className="rounded-3xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-8 shadow-sm">
+      <div className="rounded-3xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-ink flex items-center gap-3">
+            <h2 className="text-3xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <Heart className="h-8 w-8 text-purple-600" />
               Hajj & Umrah Management
             </h2>
@@ -162,7 +165,7 @@ export function HajjUmrahManagementModule() {
               <Plus className="h-4 w-4" />
               Register Pilgrim
             </button>
-            <button className="flex items-center gap-2 rounded-xl border border-purple-200 bg-white px-4 py-2.5 text-sm font-semibold text-purple-700 hover:bg-purple-50">
+            <button className="flex items-center gap-2 rounded-xl border border-purple-200 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-purple-700 hover:bg-purple-50">
               <Calendar className="h-4 w-4" />
               Create Group
             </button>
@@ -208,37 +211,37 @@ export function HajjUmrahManagementModule() {
 
       {/* Secondary Stats */}
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-600">Deployed</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Deployed</p>
               <p className="mt-2 text-2xl font-bold text-teal-600">{deployedCount}</p>
             </div>
             <Plane className="h-8 w-8 text-teal-600 opacity-20" />
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-600">Groups</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Groups</p>
               <p className="mt-2 text-2xl font-bold text-indigo-600">{groups.length}</p>
             </div>
             <Star className="h-8 w-8 text-indigo-600 opacity-20" />
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-600">Pending Docs</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Pending Docs</p>
               <p className="mt-2 text-2xl font-bold text-yellow-600">{pendingDocsCount}</p>
             </div>
             <FileText className="h-8 w-8 text-yellow-600 opacity-20" />
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-600">Approval Rate</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Approval Rate</p>
               <p className="mt-2 text-2xl font-bold text-green-600">94%</p>
             </div>
             <TrendingUp className="h-8 w-8 text-green-600 opacity-20" />
@@ -248,53 +251,53 @@ export function HajjUmrahManagementModule() {
 
       {/* Quick Links to Sub-Sections */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Link href="/hajj-umrah/pilgrim-detail" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-purple-200 hover:shadow-md transition-all">
+        <Link href="/hajj-umrah/pilgrim-detail" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-purple-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-purple-100">
               <Users className="h-5 w-5 text-purple-600" />
             </div>
-            <h3 className="font-semibold text-ink">Pilgrim Details</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">Pilgrim Details</h3>
           </div>
-          <p className="text-sm text-slate-500">View and manage individual pilgrim information, profiles, and status</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">View and manage individual pilgrim information, profiles, and status</p>
         </Link>
-        <Link href="/hajj-umrah/requirements" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-purple-200 hover:shadow-md transition-all">
+        <Link href="/hajj-umrah/requirements" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-purple-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-green-100">
               <Shield className="h-5 w-5 text-green-600" />
             </div>
-            <h3 className="font-semibold text-ink">Requirements</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">Requirements</h3>
           </div>
-          <p className="text-sm text-slate-500">Check eligibility, health requirements, and documentation checklist</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Check eligibility, health requirements, and documentation checklist</p>
         </Link>
-        <Link href="/hajj-umrah/documentation" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-purple-200 hover:shadow-md transition-all">
+        <Link href="/hajj-umrah/documentation" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-purple-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-blue-100">
               <FileText className="h-5 w-5 text-blue-600" />
             </div>
-            <h3 className="font-semibold text-ink">Documentation</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">Documentation</h3>
           </div>
-          <p className="text-sm text-slate-500">Track visa processing, document verification, and approvals</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Track visa processing, document verification, and approvals</p>
         </Link>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-amber-100">
               <Calendar className="h-5 w-5 text-amber-600" />
             </div>
-            <h3 className="font-semibold text-ink">Groups</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">Groups</h3>
           </div>
-          <p className="text-sm text-slate-500">Organize pilgrim groups, manage leaders, and track departures</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Organize pilgrim groups, manage leaders, and track departures</p>
         </div>
       </div>
 
       {/* Groups Overview */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-ink">Active Groups</h3>
-          <span className="text-sm text-slate-500">{groups.length} groups</span>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Active Groups</h3>
+          <span className="text-sm text-slate-500 dark:text-slate-400">{groups.length} groups</span>
         </div>
         <div className="divide-y divide-slate-100">
           {groups.map((group) => (
-            <div key={group.id} className="p-6 hover:bg-slate-50">
+            <div key={group.id} className="p-6 hover:bg-slate-50 dark:hover:bg-slate-700/50">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                   <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${
@@ -303,14 +306,14 @@ export function HajjUmrahManagementModule() {
                     {group.type === 'Hajj' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
                   </div>
                   <div>
-                    <p className="font-bold text-ink">{group.name}</p>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-slate-500">
+                    <p className="font-bold text-ink dark:text-ink-dark">{group.name}</p>
+                    <div className="flex items-center gap-4 mt-1 text-sm text-slate-500 dark:text-slate-400">
                       <span>{group.pilgrims} pilgrims</span>
-                      <span>•</span>
+                      <span>â€¢</span>
                       <span>Departure: {group.departureDate}</span>
                       {group.leader && (
                         <>
-                          <span>•</span>
+                          <span>â€¢</span>
                           <span>Leader: {group.leader}</span>
                         </>
                       )}
@@ -321,7 +324,7 @@ export function HajjUmrahManagementModule() {
                   group.status === 'ready' ? 'bg-emerald-100 text-emerald-700' :
                   group.status === 'approved' ? 'bg-blue-100 text-blue-700' :
                   group.status === 'registered' ? 'bg-purple-100 text-purple-700' :
-                  group.status === 'planning' ? 'bg-slate-100 text-slate-700' :
+                  group.status === 'planning' ? 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200' :
                   'bg-green-100 text-green-700'
                 }`}>
                   {group.status.charAt(0).toUpperCase() + group.status.slice(1)}
@@ -341,13 +344,13 @@ export function HajjUmrahManagementModule() {
             placeholder="Search pilgrims..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none"
           />
         </div>
         <select
           value={destinationFilter}
           onChange={(e) => setDestinationFilter(e.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none"
+          className="rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none"
         >
           <option value="all">All Types</option>
           <option value="Hajj">Hajj</option>
@@ -356,7 +359,7 @@ export function HajjUmrahManagementModule() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none"
+          className="rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none"
         >
           <option value="all">All Status</option>
           <option value="registered">Registered</option>
@@ -370,42 +373,42 @@ export function HajjUmrahManagementModule() {
       </div>
 
       {/* Pilgrim Table */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm dark:shadow-soft-dark">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50">
+          <thead className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
             <tr>
-              <th className="px-6 py-3 font-semibold text-ink">Pilgrim</th>
-              <th className="px-6 py-3 font-semibold text-ink">Passport</th>
-              <th className="px-6 py-3 font-semibold text-ink">Type</th>
-              <th className="px-6 py-3 font-semibold text-ink">Group</th>
-              <th className="px-6 py-3 font-semibold text-ink">Status</th>
-              <th className="px-6 py-3 font-semibold text-ink">Documents</th>
-              <th className="px-6 py-3 font-semibold text-ink">Registered</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Pilgrim</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Passport</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Type</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Group</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Status</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Documents</th>
+              <th className="px-6 py-3 font-semibold text-ink dark:text-ink-dark">Registered</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                   Loading pilgrims...
                 </td>
               </tr>
             ) : filteredPilgrims.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                   No pilgrims found
                 </td>
               </tr>
             ) : (
               filteredPilgrims.map((pilgrim) => (
-                <tr key={pilgrim.id} className="hover:bg-slate-50">
+                <tr key={pilgrim.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                   <td className="px-6 py-3">
                     <div>
-                      <p className="font-medium text-ink">{pilgrim.name}</p>
-                      <p className="text-xs text-slate-500">{pilgrim.phone}</p>
+                      <p className="font-medium text-ink dark:text-ink-dark">{pilgrim.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{pilgrim.phone}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-3 font-mono text-slate-600">{pilgrim.passportNumber}</td>
+                  <td className="px-6 py-3 font-mono text-slate-600 dark:text-slate-300">{pilgrim.passportNumber}</td>
                   <td className="px-6 py-3">
                     <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
                       pilgrim.destination === 'Hajj'
@@ -415,7 +418,7 @@ export function HajjUmrahManagementModule() {
                       {pilgrim.destination}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-slate-600">{pilgrim.groupName || '-'}</td>
+                  <td className="px-6 py-3 text-slate-600 dark:text-slate-300">{pilgrim.groupName || '-'}</td>
                   <td className="px-6 py-3">
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(pilgrim.status)}`}>
                       {getStatusLabel(pilgrim.status)}
@@ -423,16 +426,16 @@ export function HajjUmrahManagementModule() {
                   </td>
                   <td className="px-6 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-16 h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-purple-500 rounded-full" 
                           style={{ width: `${(pilgrim.documents/pilgrim.totalDocuments)*100}%` }} 
                         />
                       </div>
-                      <span className="text-xs text-slate-500">{pilgrim.documents}/{pilgrim.totalDocuments}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{pilgrim.documents}/{pilgrim.totalDocuments}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-3 text-sm text-slate-500">
+                  <td className="px-6 py-3 text-sm text-slate-500 dark:text-slate-400">
                     {new Date(pilgrim.registeredAt).toLocaleDateString()}
                   </td>
                 </tr>

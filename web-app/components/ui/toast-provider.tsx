@@ -51,10 +51,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => void }) {
   const colors = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    warning: 'bg-amber-50 border-amber-200 text-amber-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
+    success: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-800 dark:text-green-300',
+    error: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-800 dark:text-red-300',
+    warning: 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-300',
+    info: 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-300',
   };
   const icons = {
     success: '✓',
@@ -65,7 +65,7 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
 
   return (
     <div
-      className={`pointer-events-auto flex items-start gap-3 rounded-2xl border p-4 shadow-lg min-w-80 max-w-sm transition-all ${colors[toast.type]}`}
+      className={`pointer-events-auto flex items-start gap-3 rounded-2xl border p-4 shadow-lg dark:shadow-soft-dark min-w-80 max-w-sm transition-all ${colors[toast.type]}`}
       role="alert"
     >
       <span className="text-lg flex-shrink-0">{icons[toast.type]}</span>

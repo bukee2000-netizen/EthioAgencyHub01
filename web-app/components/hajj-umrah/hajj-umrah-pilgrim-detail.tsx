@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -88,7 +88,7 @@ export function HajjUmrahPilgrimDetail() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      registered: 'bg-slate-100 text-slate-700',
+      registered: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
       documents_pending: 'bg-yellow-100 text-yellow-800',
       requirements_met: 'bg-blue-100 text-blue-800',
       medical_clearance: 'bg-indigo-100 text-indigo-800',
@@ -96,7 +96,7 @@ export function HajjUmrahPilgrimDetail() {
       ready_for_travel: 'bg-emerald-100 text-emerald-800',
       deployed: 'bg-teal-100 text-teal-800',
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
   };
 
   return (
@@ -105,7 +105,7 @@ export function HajjUmrahPilgrimDetail() {
       <div className="rounded-3xl border border-purple-200 bg-purple-50 p-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-ink flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <Users className="h-8 w-8 text-purple-600" />
               Pilgrim Details
             </h1>
@@ -158,22 +158,22 @@ export function HajjUmrahPilgrimDetail() {
             placeholder="Search by name, passport, or group..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none"
           />
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Pilgrims List */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
-            <h3 className="text-lg font-bold text-ink">All Pilgrims</h3>
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <h3 className="text-lg font-bold text-ink dark:text-ink-dark">All Pilgrims</h3>
           </div>
           <div className="divide-y divide-slate-100">
             {filteredPilgrims.map((pilgrim) => (
               <div 
                 key={pilgrim.id} 
-                className={`p-4 hover:bg-slate-50 cursor-pointer ${selectedPilgrim?.id === pilgrim.id ? 'bg-purple-50' : ''}`}
+                className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer ${selectedPilgrim?.id === pilgrim.id ? 'bg-purple-50' : ''}`}
                 onClick={() => setSelectedPilgrim(pilgrim)}
               >
                 <div className="flex items-start justify-between">
@@ -184,8 +184,8 @@ export function HajjUmrahPilgrimDetail() {
                       {pilgrim.gender === 'Male' ? 'M' : 'F'}
                     </div>
                     <div>
-                      <p className="font-semibold text-ink">{pilgrim.name}</p>
-                      <p className="text-sm text-slate-500">{pilgrim.passportNumber} • {pilgrim.age} years</p>
+                      <p className="font-semibold text-ink dark:text-ink-dark">{pilgrim.name}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{pilgrim.passportNumber} â€¢ {pilgrim.age} years</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -201,7 +201,7 @@ export function HajjUmrahPilgrimDetail() {
         </div>
 
         {/* Pilgrim Detail Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
           {selectedPilgrim ? (
             <div className="p-6">
               <div className="text-center mb-6">
@@ -210,8 +210,8 @@ export function HajjUmrahPilgrimDetail() {
                 }`}>
                   {selectedPilgrim.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <h3 className="mt-3 text-xl font-bold text-ink">{selectedPilgrim.name}</h3>
-                <p className="text-sm text-slate-500">{selectedPilgrim.passportNumber}</p>
+                <h3 className="mt-3 text-xl font-bold text-ink dark:text-ink-dark">{selectedPilgrim.name}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{selectedPilgrim.passportNumber}</p>
                 <span className={`inline-block mt-2 text-xs font-semibold px-3 py-1 rounded-full ${getStatusColor(selectedPilgrim.status)}`}>
                   {selectedPilgrim.status.replace(/_/g, ' ')}
                 </span>
@@ -219,44 +219,44 @@ export function HajjUmrahPilgrimDetail() {
 
               {/* Personal Info */}
               <div className="space-y-3">
-                <h4 className="font-semibold text-ink border-b border-slate-100 pb-2">Personal Information</h4>
+                <h4 className="font-semibold text-ink dark:text-ink-dark border-b border-slate-100 dark:border-slate-700 pb-2">Personal Information</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><span className="text-slate-500">Age:</span> <span className="font-medium">{selectedPilgrim.age}</span></div>
-                  <div><span className="text-slate-500">Gender:</span> <span className="font-medium">{selectedPilgrim.gender}</span></div>
-                  <div><span className="text-slate-500">DOB:</span> <span className="font-medium">{selectedPilgrim.dateOfBirth}</span></div>
-                  <div><span className="text-slate-500">Nationality:</span> <span className="font-medium">{selectedPilgrim.nationality}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Age:</span> <span className="font-medium">{selectedPilgrim.age}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Gender:</span> <span className="font-medium">{selectedPilgrim.gender}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">DOB:</span> <span className="font-medium">{selectedPilgrim.dateOfBirth}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Nationality:</span> <span className="font-medium">{selectedPilgrim.nationality}</span></div>
                 </div>
                 <div className="text-sm">
-                  <span className="text-slate-500">Address:</span> <span className="font-medium">{selectedPilgrim.address}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Address:</span> <span className="font-medium">{selectedPilgrim.address}</span>
                 </div>
                 <div className="text-sm">
-                  <span className="text-slate-500">Phone:</span> <span className="font-medium">{selectedPilgrim.phone}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Phone:</span> <span className="font-medium">{selectedPilgrim.phone}</span>
                 </div>
                 {selectedPilgrim.email && (
                   <div className="text-sm">
-                    <span className="text-slate-500">Email:</span> <span className="font-medium">{selectedPilgrim.email}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Email:</span> <span className="font-medium">{selectedPilgrim.email}</span>
                   </div>
                 )}
               </div>
 
               {/* Trip Info */}
               <div className="space-y-3 mt-4">
-                <h4 className="font-semibold text-ink border-b border-slate-100 pb-2">Trip Information</h4>
+                <h4 className="font-semibold text-ink dark:text-ink-dark border-b border-slate-100 dark:border-slate-700 pb-2">Trip Information</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><span className="text-slate-500">Type:</span> <span className={`font-medium ${selectedPilgrim.destination === 'Hajj' ? 'text-amber-600' : 'text-blue-600'}`}>{selectedPilgrim.destination}</span></div>
-                  <div><span className="text-slate-500">Season:</span> <span className="font-medium">{selectedPilgrim.season}</span></div>
-                  <div><span className="text-slate-500">Group:</span> <span className="font-medium">{selectedPilgrim.groupId}</span></div>
-                  <div><span className="text-slate-500">Registered:</span> <span className="font-medium">{selectedPilgrim.registrationDate}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Type:</span> <span className={`font-medium ${selectedPilgrim.destination === 'Hajj' ? 'text-amber-600' : 'text-blue-600'}`}>{selectedPilgrim.destination}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Season:</span> <span className="font-medium">{selectedPilgrim.season}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Group:</span> <span className="font-medium">{selectedPilgrim.groupId}</span></div>
+                  <div><span className="text-slate-500 dark:text-slate-400">Registered:</span> <span className="font-medium">{selectedPilgrim.registrationDate}</span></div>
                 </div>
               </div>
 
               {/* Documents Status */}
               <div className="space-y-3 mt-4">
-                <h4 className="font-semibold text-ink border-b border-slate-100 pb-2">Documents</h4>
+                <h4 className="font-semibold text-ink dark:text-ink-dark border-b border-slate-100 dark:border-slate-700 pb-2">Documents</h4>
                 <div className="space-y-2">
                   {Object.entries(selectedPilgrim.documents).map(([key, value]) => (
                     <div key={key} className="flex items-center justify-between text-sm">
-                      <span className="capitalize text-slate-600">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                      <span className="capitalize text-slate-600 dark:text-slate-300">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
                       {value ? (
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
                       ) : (
@@ -269,37 +269,37 @@ export function HajjUmrahPilgrimDetail() {
 
               {/* Medical Status */}
               <div className="space-y-3 mt-4">
-                <h4 className="font-semibold text-ink border-b border-slate-100 pb-2">Medical Status</h4>
+                <h4 className="font-semibold text-ink dark:text-ink-dark border-b border-slate-100 dark:border-slate-700 pb-2">Medical Status</h4>
                 <div className="text-sm">
-                  <span className="text-slate-500">Status:</span> <span className={`font-medium ${
+                  <span className="text-slate-500 dark:text-slate-400">Status:</span> <span className={`font-medium ${
                     selectedPilgrim.medical.status === 'cleared' ? 'text-green-600' : 
                     selectedPilgrim.medical.status === 'pending' ? 'text-yellow-600' : 'text-red-600'
                   }`}>{selectedPilgrim.medical.status}</span>
                 </div>
                 <div className="text-sm">
-                  <span className="text-slate-500">Doctor:</span> <span className="font-medium">{selectedPilgrim.medical.doctorName}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Doctor:</span> <span className="font-medium">{selectedPilgrim.medical.doctorName}</span>
                 </div>
                 {selectedPilgrim.medical.notes && (
                   <div className="text-sm">
-                    <span className="text-slate-500">Notes:</span> <span className="font-medium">{selectedPilgrim.medical.notes}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Notes:</span> <span className="font-medium">{selectedPilgrim.medical.notes}</span>
                   </div>
                 )}
               </div>
 
               {/* Payment Status */}
               <div className="space-y-3 mt-4">
-                <h4 className="font-semibold text-ink border-b border-slate-100 pb-2">Payment</h4>
+                <h4 className="font-semibold text-ink dark:text-ink-dark border-b border-slate-100 dark:border-slate-700 pb-2">Payment</h4>
                 <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                  <div className="p-2 bg-slate-50 rounded-lg">
-                    <p className="text-slate-500">Total</p>
-                    <p className="font-bold text-ink">{selectedPilgrim.payment.total.toLocaleString()} ETB</p>
+                  <div className="p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                    <p className="text-slate-500 dark:text-slate-400">Total</p>
+                    <p className="font-bold text-ink dark:text-ink-dark">{selectedPilgrim.payment.total.toLocaleString()} ETB</p>
                   </div>
                   <div className="p-2 bg-green-50 rounded-lg">
-                    <p className="text-slate-500">Paid</p>
+                    <p className="text-slate-500 dark:text-slate-400">Paid</p>
                     <p className="font-bold text-green-600">{selectedPilgrim.payment.paid.toLocaleString()} ETB</p>
                   </div>
                   <div className="p-2 bg-yellow-50 rounded-lg">
-                    <p className="text-slate-500">Pending</p>
+                    <p className="text-slate-500 dark:text-slate-400">Pending</p>
                     <p className="font-bold text-yellow-600">{selectedPilgrim.payment.pending.toLocaleString()} ETB</p>
                   </div>
                 </div>
@@ -311,14 +311,14 @@ export function HajjUmrahPilgrimDetail() {
                   <Edit className="h-4 w-4" />
                   Edit
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-purple-200 bg-white px-4 py-2 text-sm font-semibold text-purple-700 hover:bg-purple-50">
+                <button className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-purple-200 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-purple-700 hover:bg-purple-50">
                   <Eye className="h-4 w-4" />
                   View
                 </button>
               </div>
             </div>
           ) : (
-            <div className="p-8 text-center text-slate-500">
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-20" />
               <p>Select a pilgrim to view details</p>
             </div>

@@ -19,8 +19,8 @@ export default function CVDatabasePage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
-        <h2 className="text-3xl font-bold text-ink">CV Database</h2>
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm dark:shadow-soft-dark">
+        <h2 className="text-3xl font-bold text-ink dark:text-ink-dark">CV Database</h2>
       </section>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -47,17 +47,17 @@ export default function CVDatabasePage() {
       </div>
 
       <section className="grid gap-4 md:grid-cols-3">
-        <Link href="/employee-management/cv-database/search" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-brand-300">
+        <Link href="/employee-management/cv-database/search" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark transition hover:shadow-md hover:border-brand-300">
           <Search className="mb-3 h-6 w-6 text-brand-600" />
-          <h3 className="font-semibold text-ink">Advanced Search</h3>
+          <h3 className="font-semibold text-ink dark:text-ink-dark">Advanced Search</h3>
         </Link>
-        <Link href="/employee-management/cv-database/employee-profiles" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-brand-300">
+        <Link href="/employee-management/cv-database/employee-profiles" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark transition hover:shadow-md hover:border-brand-300">
           <UsersRound className="mb-3 h-6 w-6 text-brand-600" />
-          <h3 className="font-semibold text-ink">Employee Profiles</h3>
+          <h3 className="font-semibold text-ink dark:text-ink-dark">Employee Profiles</h3>
         </Link>
-        <Link href="/employee-management/cv-database/skill-matching" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-brand-300">
+        <Link href="/employee-management/cv-database/skill-matching" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark transition hover:shadow-md hover:border-brand-300">
           <Database className="mb-3 h-6 w-6 text-brand-600" />
-          <h3 className="font-semibold text-ink">Skill Matching</h3>
+          <h3 className="font-semibold text-ink dark:text-ink-dark">Skill Matching</h3>
         </Link>
       </section>
 

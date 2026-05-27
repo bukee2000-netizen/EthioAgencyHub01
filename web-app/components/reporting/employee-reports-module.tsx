@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { Download, Filter, Users, TrendingUp, BarChart3 } from 'lucide-react';
@@ -93,11 +93,11 @@ export function EmployeeReportsModule() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-ink">Employee Reports</h2>
-            <p className="mt-2 text-slate-600">
+            <h2 className="text-3xl font-bold text-ink dark:text-ink-dark">Employee Reports</h2>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">
               {loading ? 'Loading data...' : `Tracking ${data?.totalEmployees || 0} employees across ${data?.documents || 0} documents`}
             </p>
           </div>
@@ -110,7 +110,7 @@ export function EmployeeReportsModule() {
 
       <div className="flex flex-col gap-4 md:flex-row">
         <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
-          className="rounded-lg border border-slate-200 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
+          className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
           <option value="week">This Week</option>
           <option value="month">This Month</option>
           <option value="quarter">This Quarter</option>
@@ -118,7 +118,7 @@ export function EmployeeReportsModule() {
           <option value="custom">Custom Range</option>
         </select>
         <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)}
-          className="rounded-lg border border-slate-200 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
+          className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
           <option value="all">All Departments</option>
           <option value="healthcare">Healthcare</option>
           <option value="support">Support Staff</option>
@@ -128,19 +128,19 @@ export function EmployeeReportsModule() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {reportOptions.map(report => (
-          <div key={report.id} className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-lg transition-shadow">
+          <div key={report.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-ink">{report.title}</h3>
-                <p className="text-sm text-slate-600 mt-1">{report.description}</p>
+                <h3 className="text-lg font-semibold text-ink dark:text-ink-dark">{report.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{report.description}</p>
               </div>
               <Users className="h-8 w-8 text-brand-600 opacity-30" />
             </div>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {report.metrics.map((metric, idx) => (
-                <div key={idx} className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-600">{metric.label}</p>
-                  <p className="mt-1 text-xl font-bold text-ink">{metric.value}</p>
+                <div key={idx} className="rounded-lg bg-slate-50 dark:bg-slate-800/50 p-3">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{metric.label}</p>
+                  <p className="mt-1 text-xl font-bold text-ink dark:text-ink-dark">{metric.value}</p>
                   <p className="text-xs text-emerald-600 mt-1">{metric.trend}</p>
                 </div>
               ))}
@@ -152,24 +152,24 @@ export function EmployeeReportsModule() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h3 className="text-lg font-semibold text-ink mb-6">Key Metrics Overview</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
+        <h3 className="text-lg font-semibold text-ink dark:text-ink-dark mb-6">Key Metrics Overview</h3>
         <div className="grid gap-6 md:grid-cols-4">
           <div className="text-center p-4">
             <div className="text-4xl font-bold text-blue-600">{loading ? '...' : (data?.totalEmployees || 0)}</div>
-            <p className="text-sm text-slate-600 mt-2">Total Employees</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">Total Employees</p>
           </div>
           <div className="text-center p-4">
             <div className="text-4xl font-bold text-emerald-600">{loading ? '...' : (data?.deployed || 0)}</div>
-            <p className="text-sm text-slate-600 mt-2">Deployed</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">Deployed</p>
           </div>
           <div className="text-center p-4">
             <div className="text-4xl font-bold text-purple-600">{loading ? '...' : `${data?.completionRate || 0}%`}</div>
-            <p className="text-sm text-slate-600 mt-2">Success Rate</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">Success Rate</p>
           </div>
           <div className="text-center p-4">
             <div className="text-4xl font-bold text-amber-600">{loading ? '...' : data?.documents || 0}</div>
-            <p className="text-sm text-slate-600 mt-2">Documents</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2">Documents</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -80,7 +80,7 @@ export function HajjUmrahRequirements() {
       case 'medical': return 'bg-green-100 text-green-600';
       case 'financial': return 'bg-amber-100 text-amber-600';
       case 'training': return 'bg-purple-100 text-purple-600';
-      default: return 'bg-slate-100 text-slate-600';
+      default: return 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300';
     }
   };
 
@@ -94,7 +94,7 @@ export function HajjUmrahRequirements() {
       <div className="rounded-3xl border border-green-200 bg-green-50 p-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-ink flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <Shield className="h-8 w-8 text-green-600" />
               Requirements & Eligibility
             </h1>
@@ -154,13 +154,13 @@ export function HajjUmrahRequirements() {
             placeholder="Search requirements..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-green-500 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-green-500 focus:outline-none"
           />
         </div>
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-green-500 focus:outline-none"
+          className="rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm focus:border-green-500 focus:outline-none"
         >
           <option value="all">All Categories</option>
           <option value="document">Documents</option>
@@ -172,9 +172,9 @@ export function HajjUmrahRequirements() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Requirements List */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
-            <h3 className="text-lg font-bold text-ink">Requirements Checklist</h3>
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Requirements Checklist</h3>
           </div>
           <div className="divide-y divide-slate-100">
             {filteredRequirements.map((req) => {
@@ -182,7 +182,7 @@ export function HajjUmrahRequirements() {
               return (
                 <div 
                   key={req.id} 
-                  className={`p-4 hover:bg-slate-50 cursor-pointer ${selectedRequirement?.id === req.id ? 'bg-green-50' : ''}`}
+                  className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer ${selectedRequirement?.id === req.id ? 'bg-green-50' : ''}`}
                   onClick={() => setSelectedRequirement(req)}
                 >
                   <div className="flex items-start justify-between">
@@ -192,14 +192,14 @@ export function HajjUmrahRequirements() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold text-ink">{req.name}</p>
+                          <p className="font-semibold text-ink dark:text-ink-dark">{req.name}</p>
                           {req.mandatory ? (
                             <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded">Mandatory</span>
                           ) : (
-                            <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Optional</span>
+                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">Optional</span>
                           )}
                         </div>
-                        <p className="text-sm text-slate-500 mt-1">{req.description}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{req.description}</p>
                         {req.deadline && (
                           <p className="text-xs text-slate-400 mt-1">Deadline: {req.deadline}</p>
                         )}
@@ -207,25 +207,25 @@ export function HajjUmrahRequirements() {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-green-600">{req.compliance.total}</p>
-                      <p className="text-xs text-slate-500">pilgrims</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">pilgrims</p>
                     </div>
                   </div>
                   <div className="mt-3 flex gap-4 text-sm">
                     <div className="flex-1">
                       <div className="flex justify-between mb-1">
-                        <span className="text-slate-500">Hajj</span>
+                        <span className="text-slate-500 dark:text-slate-400">Hajj</span>
                         <span className="font-medium text-amber-700">{req.compliance.hajj}%</span>
                       </div>
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
                         <div className="h-full bg-amber-500 rounded-full" style={{ width: `${req.compliance.hajj}%` }} />
                       </div>
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between mb-1">
-                        <span className="text-slate-500">Umrah</span>
+                        <span className="text-slate-500 dark:text-slate-400">Umrah</span>
                         <span className="font-medium text-blue-700">{req.compliance.umrah}%</span>
                       </div>
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
                         <div className="h-full bg-blue-500 rounded-full" style={{ width: `${req.compliance.umrah}%` }} />
                       </div>
                     </div>
@@ -237,15 +237,15 @@ export function HajjUmrahRequirements() {
         </div>
 
         {/* Requirement Details / Pilgrims with Issues */}
-        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
-            <h3 className="text-lg font-bold text-ink">Pilgrim Status</h3>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Pilgrim Status</h3>
           </div>
           <div className="divide-y divide-slate-100">
             {pilgrimRequirements.map((pr) => (
-              <div key={pr.pilgrimId} className="p-4 hover:bg-slate-50">
+              <div key={pr.pilgrimId} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="font-semibold text-ink">{pr.pilgrimName}</p>
+                  <p className="font-semibold text-ink dark:text-ink-dark">{pr.pilgrimName}</p>
                   <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                     pr.requirements.some(r => r.status === 'missing') ? 'bg-red-100 text-red-700' :
                     pr.requirements.some(r => r.status === 'pending') ? 'bg-yellow-100 text-yellow-700' :

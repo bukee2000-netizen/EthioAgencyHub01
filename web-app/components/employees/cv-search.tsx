@@ -126,7 +126,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
   const uniqueDests = Array.from(new Set(cvs.map(c => c.destination).filter(Boolean)));
 
   const getMatchScoreColor = (score?: number) => {
-    if (!score) return 'bg-slate-100 text-slate-600';
+    if (!score) return 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300';
     if (score >= 90) return 'bg-green-100 text-green-700';
     if (score >= 75) return 'bg-blue-100 text-blue-700';
     if (score >= 60) return 'bg-amber-100 text-amber-700';
@@ -138,8 +138,8 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-ink">CV Database</h3>
-          <p className="text-sm text-slate-500 mt-1">
+          <h3 className="text-xl font-bold text-ink dark:text-ink-dark">CV Database</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             {cvs.length} profiles available{filteredCVs.length !== cvs.length && ` • ${filteredCVs.length} matching filters`}
           </p>
         </div>
@@ -149,7 +149,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
             className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium border transition-all ${
               skillMatchMode
                 ? 'bg-purple-600 text-white border-purple-600'
-                : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
             }`}
           >
             <Filter className="h-4 w-4" />
@@ -157,7 +157,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -167,13 +167,13 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
         <input
           type="text"
           placeholder="Search by name, role, employee ID, or skills..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-xl border border-slate-300 py-3 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none"
+          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-3 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none"
         />
       </div>
 
@@ -181,7 +181,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
       <div className="flex flex-wrap gap-2">
         {skillMatchMode && cvs.length > 0 && (
           <>
-            <span className="text-xs font-medium text-slate-500 my-1">Quick Skills:</span>
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 my-1">Quick Skills:</span>
             {SKILLS_LIST.slice(0, 12).map(skill => (
               <button
                 key={skill}
@@ -194,7 +194,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
                   filters.skills?.includes(skill)
                     ? 'bg-brand-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                 }`}
               >
                 {skill}
@@ -206,36 +206,36 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Role</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Role</label>
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm"
               >
                 <option value="all">All Roles</option>
                 {uniqueRoles.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Destination</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Destination</label>
               <select
                 value={selectedDest}
                 onChange={(e) => setSelectedDest(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm"
               >
                 <option value="all">All Destinations</option>
                 {uniqueDests.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Language</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Language</label>
               <select
                 value={filters.language || 'all'}
                 onChange={(e) => setFilters(prev => ({ ...prev, language: e.target.value === 'all' ? undefined : e.target.value }))}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm"
               >
                 <option value="all">All Languages</option>
                 <option value="EN">English</option>
@@ -249,7 +249,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
       )}
 
       {/* Results Count */}
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         Showing <span className="font-bold">{filteredCVs.length}</span> of{' '}
         <span className="font-bold">{cvs.length}</span> profiles
       </p>
@@ -260,17 +260,17 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600" />
         </div>
       ) : filteredCVs.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+        <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
           <UserPlus className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-500 font-medium">No CV profiles found</p>
-          <p className="text-sm text-slate-400">Try adjusting your search or filters</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">No CV profiles found</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Try adjusting your search or filters</p>
         </div>
       ) : (
         <div className="grid gap-4">
           {filteredCVs.map(cv => (
             <div
               key={cv.id}
-              className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+              className={`rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark hover:shadow-md transition-shadow cursor-pointer ${
                 cv.matchScore && cv.matchScore >= 90 ? 'ring-2 ring-green-200' : ''
               }`}
               onClick={() => onSelectProfile?.(cv)}
@@ -285,10 +285,10 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
                     {(cv.employeeName || '?').charAt(0)}
                   </div>
                   <div>
-                    <h4 className="font-bold text-ink text-sm">{cv.employeeName}</h4>
+                    <h4 className="font-bold text-ink dark:text-ink-dark text-sm">{cv.employeeName}</h4>
                     <div className="flex flex-wrap gap-2 mt-1">
                       <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{cv.role}</span>
-                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{cv.destination}</span>
+                      <span className="text-xs bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full">{cv.destination}</span>
                       <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">{cv.experience}</span>
                     </div>
                   </div>
@@ -299,8 +299,8 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
                       {cv.matchScore}% Match
                     </span>
                   )}
-                  <p className="text-xs text-slate-400 mt-1">{cv.language} • {cv.template}</p>
-                  <p className="text-xs text-slate-400">{new Date(cv.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{cv.language} • {cv.template}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">{new Date(cv.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
 
@@ -313,7 +313,7 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
                       className={`text-xs px-2 py-0.5 rounded-full ${
                         filters.skills?.includes(skill)
                           ? 'bg-brand-600 text-white'
-                          : 'bg-slate-100 text-slate-600'
+                          : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       {skill}
@@ -330,10 +330,10 @@ export function CVDatabaseModule({ onSelectProfile, selectable = false }: CVData
                     Generated
                   </span>
                 )}
-                <span className="text-slate-400 mx-2">•</span>
-                <span className="text-slate-500">Education: {cv.education || 'N/A'}</span>
-                <span className="text-slate-400 mx-2">•</span>
-                <span className="text-slate-500">Languages: {cv.languages?.join(', ') || 'N/A'}</span>
+                <span className="text-slate-400 dark:text-slate-500 mx-2">•</span>
+                <span className="text-slate-500 dark:text-slate-400">Education: {cv.education || 'N/A'}</span>
+                <span className="text-slate-400 dark:text-slate-500 mx-2">•</span>
+                <span className="text-slate-500 dark:text-slate-400">Languages: {cv.languages?.join(', ') || 'N/A'}</span>
                 {selectable && (
                   <button className="ml-auto text-brand-600 hover:text-brand-800 text-sm font-medium">
                     Select →

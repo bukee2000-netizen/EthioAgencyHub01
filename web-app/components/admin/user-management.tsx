@@ -54,8 +54,8 @@ export function UserManagement() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="flex items-center gap-2 text-lg font-bold text-ink"><UserPlus className="h-5 w-5 text-brand-600" /> Invite user</h3>
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-ink dark:text-ink-dark"><UserPlus className="h-5 w-5 text-brand-600" /> Invite user</h3>
         <form onSubmit={invite} className="mt-4 grid gap-3 md:grid-cols-4">
           <input
             type="email"
@@ -63,7 +63,7 @@ export function UserManagement() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="user@example.com"
-            className="rounded-2xl border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-2xl border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm"
           />
           <input
             type="password"
@@ -72,12 +72,12 @@ export function UserManagement() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Temporary password (min 8)"
-            className="rounded-2xl border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-2xl border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm"
           />
           <select
             value={role}
             onChange={(event) => setRole(event.target.value as typeof role)}
-            className="rounded-2xl border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-2xl border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm"
           >
             <option value="VIEWER">Viewer</option>
             <option value="AGENT">Agent</option>
@@ -90,26 +90,26 @@ export function UserManagement() {
         {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-ink">Agency users</h3>
-          <span className="text-sm text-slate-500">{users.length} users</span>
+          <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Agency users</h3>
+          <span className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">{users.length} users</span>
         </div>
         {loading ? (
-          <p className="mt-4 text-sm text-slate-500">Loading users...</p>
+          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">Loading users...</p>
         ) : users.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">No users yet. Invite your first teammate above.</p>
+          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">No users yet. Invite your first teammate above.</p>
         ) : (
           <table className="mt-4 w-full text-left text-sm">
-            <thead className="text-xs uppercase tracking-widest text-slate-400">
+            <thead className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500">
               <tr><th className="py-2">Email</th><th className="py-2">Role</th><th className="py-2">Created</th></tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} className="border-t border-slate-100">
-                  <td className="py-2 font-medium text-ink">{user.email}</td>
+                <tr key={user.id} className="border-t border-slate-100 dark:border-slate-700">
+                  <td className="py-2 font-medium text-ink dark:text-ink-dark">{user.email}</td>
                   <td className="py-2">{user.role}</td>
-                  <td className="py-2 text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
+                  <td className="py-2 text-slate-500 dark:text-slate-400 dark:text-slate-500">{new Date(user.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

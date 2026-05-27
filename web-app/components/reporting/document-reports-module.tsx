@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { Download, Filter, FileText, BarChart3, AlertCircle } from 'lucide-react';
@@ -97,11 +97,11 @@ export function DocumentReportsModule() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-ink">Document Reports</h2>
-            <p className="mt-2 text-slate-600">
+            <h2 className="text-3xl font-bold text-ink dark:text-ink-dark">Document Reports</h2>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">
               {loading ? 'Loading...' : `${data?.totalDocuments || 0} documents, ${data?.verifiedRate || 0}% verified rate`}
             </p>
           </div>
@@ -114,14 +114,14 @@ export function DocumentReportsModule() {
 
       <div className="flex flex-col gap-4 md:flex-row">
         <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
-          className="rounded-lg border border-slate-200 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
+          className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
           <option value="week">This Week</option>
           <option value="month">This Month</option>
           <option value="quarter">This Quarter</option>
           <option value="year">This Year</option>
         </select>
         <select value={docTypeFilter} onChange={(e) => setDocTypeFilter(e.target.value)}
-          className="rounded-lg border border-slate-200 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
+          className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
           <option value="all">All Document Types</option>
           <option value="passport">Passports</option>
           <option value="visa">Visas</option>
@@ -142,19 +142,19 @@ export function DocumentReportsModule() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {reportOptions.map(report => (
-          <div key={report.id} className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-lg transition-shadow">
+          <div key={report.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-ink">{report.title}</h3>
-                <p className="text-sm text-slate-600 mt-1">{report.description}</p>
+                <h3 className="text-lg font-semibold text-ink dark:text-ink-dark">{report.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{report.description}</p>
               </div>
               <FileText className="h-8 w-8 text-brand-600 opacity-30" />
             </div>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {report.metrics.map((metric, idx) => (
-                <div key={idx} className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-600">{metric.label}</p>
-                  <p className="mt-1 text-xl font-bold text-ink">{metric.value}</p>
+                <div key={idx} className="rounded-lg bg-slate-50 dark:bg-slate-800/50 p-3">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{metric.label}</p>
+                  <p className="mt-1 text-xl font-bold text-ink dark:text-ink-dark">{metric.value}</p>
                   <p className="text-xs text-emerald-600 mt-1">{metric.trend}</p>
                 </div>
               ))}

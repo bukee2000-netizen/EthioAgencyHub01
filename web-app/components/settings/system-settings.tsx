@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Save, Building2, Bell, HardDrive, MessageSquare, Mail } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 interface AgencySettings {
   name: string;
@@ -31,6 +32,7 @@ interface TelegramSettings {
 }
 
 export function SystemSettings() {
+  const { addToast } = useToast();
   const [agency, setAgency] = useState<AgencySettings>({
     name: 'My Agency',
     country: 'ET',
@@ -73,20 +75,21 @@ export function SystemSettings() {
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
       console.error('Error saving settings:', error);
+      addToast({ title: 'Error', description: 'Failed to save settings. Please try again.', type: 'error' });
     } finally {
       setSaving(false);
     }
   };
 
   const SettingSection = ({ icon: Icon, title, description, children }: any) => (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-700 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
       <div className="flex items-center gap-3">
         <div className="rounded-lg bg-brand-100 p-2">
           <Icon className="h-5 w-5 text-brand-600" />
         </div>
         <div>
           <h3 className="font-semibold">{title}</h3>
-          <p className="text-sm text-slate-500">{description}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
         </div>
       </div>
       <div className="mt-6 space-y-4">{children}</div>
@@ -100,7 +103,7 @@ export function SystemSettings() {
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
+        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5"
       />
     </div>
   );
@@ -110,7 +113,7 @@ export function SystemSettings() {
       <span className="text-sm">{label}</span>
       <div
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-brand-600' : 'bg-slate-200'}`}
+        className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-600'}`}
       >
         <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${checked ? 'left-6' : 'left-1'}`} />
       </div>
@@ -170,7 +173,7 @@ export function SystemSettings() {
             <select
               value={storage.provider}
               onChange={(e) => setStorage({ ...storage, provider: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-4 py-2.5"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5"
             >
               <option value="teledrive">Teledrive</option>
               <option value="local">Local Storage</option>

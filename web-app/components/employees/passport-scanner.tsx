@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { parsePassportData, mapPassportToFormFields } from '@/lib/utils/passport-parser';
 import Tesseract from 'tesseract.js';
+import { useToast } from '@/components/ui/toast-provider';
 
 interface PassportScannerProps {
   onAutoFill: (data: {
@@ -20,6 +21,7 @@ interface PassportScannerProps {
 type ScanState = 'idle' | 'scanning' | 'success' | 'error';
 
 export function PassportScanner({ onAutoFill }: PassportScannerProps) {
+  const { addToast } = useToast();
   const [expanded, setExpanded] = useState(false);
   const [scanState, setScanState] = useState<ScanState>('idle');
   const [progress, setProgress] = useState(0);
@@ -89,6 +91,7 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
       runAutoFill(text);
     } catch (err) {
       console.error('OCR failed:', err);
+      addToast({ title: 'Error', description: 'OCR failed. Please paste passport text manually.', type: 'error' });
       setErrorMsg('OCR failed. Paste the passport text manually below.');
       setScanState('error');
     }
@@ -115,25 +118,25 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
   const reset = () => { setScanState('idle'); setProgress(0); setExtractedText(''); setFilledFields([]); setErrorMsg(''); setImageSrc(null); setManualText(''); };
 
   return (
-    <div className={`rounded-2xl border-2 transition-all ${expanded ? 'border-brand-300 bg-brand-50/30' : 'border-slate-200 bg-white hover:border-slate-300'}`}>
+    <div className={`rounded-2xl border-2 transition-all ${expanded ? 'border-brand-300 bg-brand-50/30' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:border-slate-600'}`}>
       <button onClick={() => { if (scanState !== 'scanning') setExpanded(!expanded); }} type="button" className="flex w-full items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-xl ${scanState === 'success' ? 'bg-green-100' : 'bg-brand-100'}`}>
             {scanState === 'success' ? <Check className="h-5 w-5 text-green-600" /> : <ScanLine className="h-5 w-5 text-brand-600" />}
           </div>
           <div className="text-left">
-            <p className="font-bold text-ink text-sm">Passport Scanner</p>
-            <p className="text-xs text-slate-500">Upload image or paste text to auto-fill form</p>
+            <p className="font-bold text-ink dark:text-ink-dark text-sm">Passport Scanner</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Upload image or paste text to auto-fill form</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {scanState === 'success' && <span className="text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">{filledFields.length} fields filled</span>}
-          {expanded ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expanded ? <ChevronUp className="h-5 w-5 text-slate-400 dark:text-slate-500" /> : <ChevronDown className="h-5 w-5 text-slate-400 dark:text-slate-500" />}
         </div>
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 space-y-4 border-t border-slate-200 pt-4">
+        <div className="px-4 pb-4 space-y-4 border-t border-slate-200 dark:border-slate-700 pt-4">
           {/* Progress Bar */}
           {scanState === 'scanning' && (
             <div className="space-y-2">
@@ -143,16 +146,16 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
           )}
 
           {/* Image Preview */}
-          {imageSrc && <img src={imageSrc} alt="Passport" className="max-h-40 rounded-xl border border-slate-200 object-contain mx-auto" />}
+          {imageSrc && <img src={imageSrc} alt="Passport" className="max-h-40 rounded-xl border border-slate-200 dark:border-slate-700 object-contain mx-auto" />}
 
           {/* Upload Area */}
           {scanState !== 'scanning' && (
             <div onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed p-6 transition-colors ${dragActive ? 'border-brand-500 bg-brand-50' : 'border-slate-300 hover:border-brand-400 hover:bg-slate-50'}`}>
-              <Camera className="h-8 w-8 text-slate-400" />
-              <p className="text-sm font-medium text-slate-600">Click or drop passport image here</p>
-              <p className="text-xs text-slate-400">Supports JPG, PNG (max 10MB)</p>
+              className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed p-6 transition-colors ${dragActive ? 'border-brand-500 bg-brand-50' : 'border-slate-300 dark:border-slate-600 hover:border-brand-400 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
+              <Camera className="h-8 w-8 text-slate-400 dark:text-slate-500" />
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Click or drop passport image here</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Supports JPG, PNG (max 10MB)</p>
               <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
             </div>
           )}
@@ -162,7 +165,7 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
             <div className="rounded-xl bg-green-50 border border-green-200 p-3">
               <p className="text-sm font-bold text-green-800 flex items-center gap-2 mb-2"><Check className="h-4 w-4" /> Auto-Filled Fields</p>
               <div className="flex flex-wrap gap-1.5">
-                {filledFields.map(f => <span key={f} className="px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-green-700 border border-green-200">{f}</span>)}
+                {filledFields.map(f => <span key={f} className="px-2.5 py-1 bg-white dark:bg-slate-800 rounded-lg text-xs font-medium text-green-700 border border-green-200">{f}</span>)}
               </div>
             </div>
           )}
@@ -178,7 +181,7 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
           {/* Manual Text Paste */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-slate-700">Or Paste Passport Text Manually</span>
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Or Paste Passport Text Manually</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -191,14 +194,14 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
               </div>
             </div>
             <textarea value={manualText} onChange={e => setManualText(e.target.value)} placeholder={`Paste passport text here...\nExample:\nSurname: TADESSE\nGiven Names: ABEBE\nNationality: ETHIOPIAN\nPassport No: ET1234567\nDate of Birth: 15/05/1990\nDate of Issue: 10/01/2018\nDate of Expiry: 09/01/2028\nPlace of Issue: ADDIS ABABA\nFather: KEBEDE ALEMU\nMother: TIGIST HAILE`}
-              rows={5} className="w-full rounded-xl border border-slate-300 p-3 text-sm font-mono text-xs" />
+              rows={5} className="w-full rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-sm font-mono text-xs" />
             <div className="flex gap-2">
               <button onClick={handleManualSubmit} disabled={!manualText.trim()} className="flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-xs font-bold text-white hover:bg-brand-700 disabled:opacity-50">
                 <Zap className="h-3.5 w-3.5" />Parse & Auto-Fill
               </button>
-              <button onClick={reset} className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50">Clear</button>
+              <button onClick={reset} className="rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50">Clear</button>
             </div>
-            <p className="text-xs text-slate-400">Tip: Click &quot;Load Sample&quot; to test auto-fill with demo Ethiopian passport data</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">Tip: Click &quot;Load Sample&quot; to test auto-fill with demo Ethiopian passport data</p>
           </div>
         </div>
       )}

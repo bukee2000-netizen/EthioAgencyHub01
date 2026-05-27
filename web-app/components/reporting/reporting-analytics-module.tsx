@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { BarChart3, PieChart, TrendingUp, Download, Filter, Calendar, Users, FileText, DollarSign } from 'lucide-react';
@@ -56,10 +56,10 @@ export function ReportingAnalyticsModule() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-ink">Reporting & Analytics</h2>
+            <h2 className="text-3xl font-bold text-ink dark:text-ink-dark">Reporting & Analytics</h2>
           </div>
           <BarChart3 className="h-8 w-8 text-brand-600 opacity-20" />
         </div>
@@ -70,7 +70,7 @@ export function ReportingAnalyticsModule() {
         <select
           value={dateRange}
           onChange={(e) => setDateRange(e.target.value)}
-          className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm focus:border-brand-600 focus:outline-none"
+          className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm focus:border-brand-600 focus:outline-none"
         >
           <option value="week">This Week</option>
           <option value="month">This Month</option>
@@ -79,7 +79,7 @@ export function ReportingAnalyticsModule() {
           <option value="custom">Custom Range</option>
         </select>
 
-        <button className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50">
+        <button className="flex items-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50">
           <Calendar className="h-4 w-4" />
           Select Dates
         </button>
@@ -111,18 +111,18 @@ export function ReportingAnalyticsModule() {
             <Link
               key={report.href}
               href={report.href}
-              className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-lg transition-shadow"
+              className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-lg transition-shadow"
             >
               <div className="flex items-start justify-between mb-4">
                 <Icon className="h-8 w-8 text-brand-600" />
                 {report.lastGenerated && (
-                  <span className="text-xs text-slate-500">{report.lastGenerated}</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">{report.lastGenerated}</span>
                 )}
               </div>
-              <h3 className="font-semibold text-ink">{report.title}</h3>
-              <p className="mt-2 text-sm text-slate-600">{report.description}</p>
+              <h3 className="font-semibold text-ink dark:text-ink-dark">{report.title}</h3>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{report.description}</p>
               <div className="mt-4 flex items-center justify-between">
-                <p className="text-xs font-medium text-brand-600">Generate Report →</p>
+                <p className="text-xs font-medium text-brand-600">Generate Report â†’</p>
               </div>
             </Link>
           );
@@ -130,13 +130,13 @@ export function ReportingAnalyticsModule() {
       </div>
 
       {/* Analytics Dashboard Preview */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-ink mb-6">Agency Performance Overview</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
+        <h3 className="text-lg font-semibold text-ink dark:text-ink-dark mb-6">Agency Performance Overview</h3>
         
         <div className="grid gap-6 md:grid-cols-2">
           {/* Sample Chart 1 */}
-          <div className="rounded-xl border border-slate-200 p-4">
-            <p className="text-sm font-medium text-slate-600 mb-4">Employee Status Distribution</p>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-4">Employee Status Distribution</p>
             <div className="space-y-3">
               {[
                 { label: 'Deployed', value: 45, color: 'bg-emerald-500' },
@@ -147,17 +147,17 @@ export function ReportingAnalyticsModule() {
                 <div key={item.label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className={`h-3 w-3 rounded-full ${item.color}`} />
-                    <span className="text-sm text-slate-600">{item.label}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{item.label}</span>
                   </div>
-                  <span className="text-sm font-medium text-ink">{item.value}</span>
+                  <span className="text-sm font-medium text-ink dark:text-ink-dark">{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Sample Chart 2 */}
-          <div className="rounded-xl border border-slate-200 p-4">
-            <p className="text-sm font-medium text-slate-600 mb-4">Top Destinations</p>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-4">Top Destinations</p>
             <div className="space-y-3">
               {[
                 { destination: 'Saudi Arabia', count: 45, percent: 28 },
@@ -168,7 +168,7 @@ export function ReportingAnalyticsModule() {
               ].map((item) => (
                 <div key={item.destination}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-slate-600">{item.destination}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{item.destination}</span>
                     <span className="text-sm font-medium">{item.count}</span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-slate-200">
@@ -185,8 +185,8 @@ export function ReportingAnalyticsModule() {
       </div>
 
       {/* Suggested Reports */}
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-        <h3 className="font-semibold text-ink mb-4">Suggested Reports</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-6">
+        <h3 className="font-semibold text-ink dark:text-ink-dark mb-4">Suggested Reports</h3>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {[
             'Monthly KPI Summary',
@@ -198,7 +198,7 @@ export function ReportingAnalyticsModule() {
           ].map((report) => (
             <button
               key={report}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+              className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
             >
               {report}
             </button>

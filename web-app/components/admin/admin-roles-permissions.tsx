@@ -14,49 +14,49 @@ export function AdminRolesPermissions() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-ink">Roles & Permissions</h1>
+        <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">Roles & Permissions</h1>
       </div>
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 bg-gradient-to-br from-red-50 to-red-100/50">
-          <p className="text-sm text-slate-600">Total Roles</p>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 bg-gradient-to-br from-red-50 to-red-100/50">
+          <p className="text-sm text-slate-600 dark:text-slate-300">Total Roles</p>
           <p className="mt-2 text-2xl font-bold text-red-600">5</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 bg-gradient-to-br from-purple-50 to-purple-100/50">
-          <p className="text-sm text-slate-600">Permissions</p>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 bg-gradient-to-br from-purple-50 to-purple-100/50">
+          <p className="text-sm text-slate-600 dark:text-slate-300">Permissions</p>
           <p className="mt-2 text-2xl font-bold text-purple-600">96</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 bg-gradient-to-br from-pink-50 to-pink-100/50">
-          <p className="text-sm text-slate-600">Assigned Users</p>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 bg-gradient-to-br from-pink-50 to-pink-100/50">
+          <p className="text-sm text-slate-600 dark:text-slate-300">Assigned Users</p>
           <p className="mt-2 text-2xl font-bold text-pink-600">187</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 bg-gradient-to-br from-rose-50 to-rose-100/50">
-          <p className="text-sm text-slate-600">Last Modified</p>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 bg-gradient-to-br from-rose-50 to-rose-100/50">
+          <p className="text-sm text-slate-600 dark:text-slate-300">Last Modified</p>
           <p className="mt-2 text-2xl font-bold text-rose-600">2 days</p>
         </div>
       </div>
 
       {/* Roles Table */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-        <div className="border-b border-slate-200 px-6 py-4">
-          <h3 className="text-lg font-bold text-ink">Role Matrix</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+        <div className="border-b border-slate-200 dark:border-slate-700 px-6 py-4">
+          <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Role Matrix</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Role</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Users</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Permissions</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Status</th>
+              <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50">
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Role</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Users</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Permissions</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {roles.map((role, idx) => (
-                <tr key={idx} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 font-semibold text-slate-700">{role.name}</td>
-                  <td className="px-6 py-4 flex items-center gap-1 text-slate-600">
+                <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 dark:bg-slate-700/50">
+                  <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-200">{role.name}</td>
+                  <td className="px-6 py-4 flex items-center gap-1 text-slate-600 dark:text-slate-300">
                     <Users className="h-4 w-4" /> {role.users}
                   </td>
                   <td className="px-6 py-4">

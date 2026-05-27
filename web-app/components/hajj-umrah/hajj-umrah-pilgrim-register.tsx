@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,6 +8,7 @@ import {
   CheckCircle2, AlertCircle, Clock, UploadCloud, Image, File, Download,
   ChevronDown, ChevronUp, Shield, Activity, Briefcase, Eye, IdCard
 } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 interface PilgrimDocument {
   id: string;
@@ -91,6 +92,7 @@ interface HajjUmrahPilgrimRegisterProps {
 
 export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUmrahPilgrimRegisterProps) {
   const router = useRouter();
+  const { addToast } = useToast();
   const [pilgrims, setPilgrims] = useState<Pilgrim[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [telegramConfigured, setTelegramConfigured] = useState(true);
@@ -138,6 +140,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       });
     } catch (error) {
       console.error('WhatsApp notification error:', error);
+      addToast({ title: 'Error', description: 'Failed to send WhatsApp notification.', type: 'error' });
     }
   };
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -229,7 +232,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      registered: 'bg-slate-100 text-slate-700',
+      registered: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
       documents_pending: 'bg-yellow-100 text-yellow-800',
       requirements_met: 'bg-blue-100 text-blue-800',
       medical_cleared: 'bg-indigo-100 text-indigo-800',
@@ -237,7 +240,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       ready: 'bg-green-100 text-green-800',
       deployed: 'bg-teal-100 text-teal-800',
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
   };
 
   const handleOpenModal = (pilgrim?: Pilgrim) => {
@@ -358,6 +361,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       return data;
     } catch (error) {
       console.error('Upload error:', error);
+      addToast({ title: 'Error', description: 'Failed to upload file. Please try again.', type: 'error' });
       return { success: false, error: 'Upload failed' };
     }
   };
@@ -449,7 +453,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       <div className="rounded-3xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-ink flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <Users className="h-7 w-7 text-purple-600" />
               Pilgrim Registration & Management
               {telegramConfigured && whatsappConfigured ? (
@@ -462,7 +466,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                 </span>
               )}
             </h2>
-            <p className="mt-1 text-slate-600">
+            <p className="mt-1 text-slate-600 dark:text-slate-300">
               Register, edit, delete pilgrims and manage their documents. 
               Documents are securely stored in a private Telegram channel.
             </p>
@@ -478,7 +482,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       </div>
 
       {/* Search */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input 
@@ -486,7 +490,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
             placeholder="Search by name, passport, phone, or group..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-purple-500 focus:outline-none"
           />
         </div>
       </div>
@@ -494,7 +498,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       {/* Pilgrims Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredPilgrims.map((pilgrim) => (
-          <div key={pilgrim.id} className="rounded-2xl border border-slate-200 bg-white p-5 hover:shadow-md transition-shadow">
+          <div key={pilgrim.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className={`h-12 w-12 rounded-full flex items-center justify-center text-lg font-bold ${
@@ -503,8 +507,8 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                   {pilgrim.firstName[0]}{pilgrim.lastName[0]}
                 </div>
                 <div>
-                  <p className="font-semibold text-ink">{pilgrim.firstName} {pilgrim.lastName}</p>
-                  <p className="text-sm text-slate-500">{pilgrim.passportNumber}</p>
+                  <p className="font-semibold text-ink dark:text-ink-dark">{pilgrim.firstName} {pilgrim.lastName}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{pilgrim.passportNumber}</p>
                 </div>
               </div>
               <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusColor(pilgrim.status)}`}>
@@ -513,20 +517,20 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
             </div>
 
             <div className="space-y-2 text-sm mb-4">
-              <div className="flex items-center gap-2 text-slate-600">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                 <Phone className="h-4 w-4 text-slate-400" />
                 {pilgrim.phone}
               </div>
-              <div className="flex items-center gap-2 text-slate-600">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                 <MapPin className="h-4 w-4 text-slate-400" />
                 {pilgrim.city}, {pilgrim.region}
               </div>
-              <div className="flex items-center gap-2 text-slate-600">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                 {pilgrim.destination === 'Hajj' ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-blue-500" />}
                 {pilgrim.destination} - {pilgrim.season}
               </div>
               {pilgrim.groupName && (
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                   <Users className="h-4 w-4 text-slate-400" />
                   {pilgrim.groupName}
                 </div>
@@ -535,7 +539,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
 
             {/* Document Status */}
             <div className="mb-4">
-              <p className="text-xs text-slate-500 mb-2">Documents: {pilgrim.documents.length} uploaded</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Documents: {pilgrim.documents.length} uploaded</p>
               <div className="flex gap-1">
                 {['passport', 'visa', 'health_certificate', 'vaccination', 'insurance'].map((docType) => {
                   const doc = pilgrim.documents.find(d => d.type === docType);
@@ -584,8 +588,8 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       {/* View/Edit/New Modal */}
       {isModalOpen && (isViewModalOpen ? selectedPilgrim : true) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl">
-            <div className="sticky top-0 border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 shadow-xl">
+            <div className="sticky top-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold ${
                   selectedPilgrim ? (selectedPilgrim?.destination === 'Hajj' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600') : 'bg-purple-100 text-purple-600'
@@ -593,20 +597,20 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                   {selectedPilgrim ? (selectedPilgrim?.firstName?.[0] || '') + (selectedPilgrim?.lastName?.[0] || '') : 'NP'}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-ink">{selectedPilgrim ? `${selectedPilgrim?.firstName} ${selectedPilgrim?.lastName}` : 'New Pilgrim Registration'}</h3>
-                  <p className="text-sm text-slate-500">{selectedPilgrim ? selectedPilgrim?.passportNumber : 'Fill in the details below'}</p>
+                  <h3 className="text-xl font-bold text-ink dark:text-ink-dark">{selectedPilgrim ? `${selectedPilgrim?.firstName} ${selectedPilgrim?.lastName}` : 'New Pilgrim Registration'}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{selectedPilgrim ? selectedPilgrim?.passportNumber : 'Fill in the details below'}</p>
                 </div>
               </div>
               <button 
                 onClick={() => { setIsModalOpen(false); setIsViewModalOpen(false); setSelectedPilgrim(null); }}
-                className="p-2 rounded-lg hover:bg-slate-100"
+                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
               >
-                <X className="h-5 w-5 text-slate-500" />
+                <X className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               </button>
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-slate-200 px-6">
+            <div className="border-b border-slate-200 dark:border-slate-700 px-6">
               <nav className="flex gap-6">
                 {[
                   { id: 'info', label: 'Personal Info', icon: Users },
@@ -619,7 +623,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                     className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm ${
                       activeTab === tab.id 
                         ? 'border-purple-500 text-purple-600' 
-                        : 'border-transparent text-slate-500 hover:text-slate-700'
+                        : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700'
                     }`}
                   >
                     <tab.icon className="h-4 w-4" />
@@ -634,73 +638,73 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
               {activeTab === 'info' && (
                 <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <h4 className="font-semibold text-ink mb-4">Basic Information</h4>
+                    <h4 className="font-semibold text-ink dark:text-ink-dark mb-4">Basic Information</h4>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">First Name *</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">First Name *</label>
                           <input 
                             type="text" 
                             value={isModalOpen ? formData.firstName : selectedPilgrim?.firstName}
                             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Last Name *</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Last Name *</label>
                           <input 
                             type="text" 
                             value={isModalOpen ? formData.lastName : selectedPilgrim?.lastName}
                             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Gender</label>
                           <select 
                             value={isModalOpen ? formData.gender : selectedPilgrim?.gender}
                             onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           >
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth *</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Date of Birth *</label>
                           <input 
                             type="date" 
                             value={isModalOpen ? formData.dateOfBirth : selectedPilgrim?.dateOfBirth}
                             onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Place of Birth</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Place of Birth</label>
                           <input 
                             type="text" 
                             value={isModalOpen ? formData.placeOfBirth : (selectedPilgrim?.placeOfBirth || '')}
                             onChange={(e) => setFormData({ ...formData, placeOfBirth: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Nationality</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Nationality</label>
                           <input 
                             type="text" 
                             value={isModalOpen ? formData.nationality : selectedPilgrim?.nationality}
                             onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                       </div>
@@ -708,57 +712,57 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-ink mb-4">Contact Information</h4>
+                    <h4 className="font-semibold text-ink dark:text-ink-dark mb-4">Contact Information</h4>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Phone *</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Phone *</label>
                         <input 
                           type="tel" 
                           value={isModalOpen ? formData.phone : (selectedPilgrim?.phone || '')}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Email</label>
                         <input 
                           type="email" 
                           value={isModalOpen ? formData.email : selectedPilgrim?.email || ''}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Address</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Address</label>
                         <input 
                           type="text" 
                           value={isModalOpen ? formData.address : selectedPilgrim?.address}
                           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">City</label>
                           <input 
                             type="text" 
                             value={isModalOpen ? formData.city : selectedPilgrim?.city}
                             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Region</label>
+                          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Region</label>
                           <input 
                             type="text" 
                             value={isModalOpen ? formData.region : selectedPilgrim?.region}
                             onChange={(e) => setFormData({ ...formData, region: e.target.value })}
                             disabled={!isModalOpen}
-                            className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                           />
                         </div>
                       </div>
@@ -766,63 +770,63 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                   </div>
 
                   <div className="md:col-span-2">
-                    <h4 className="font-semibold text-ink mb-4">Emergency Contact</h4>
+                    <h4 className="font-semibold text-ink dark:text-ink-dark mb-4">Emergency Contact</h4>
                     <div className="grid gap-4 md:grid-cols-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Name</label>
                         <input 
                           type="text" 
                           value={isModalOpen ? formData.emergencyContactName : selectedPilgrim?.emergencyContactName}
                           onChange={(e) => setFormData({ ...formData, emergencyContactName: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Phone</label>
                         <input 
                           type="tel" 
                           value={isModalOpen ? formData.emergencyContactPhone : selectedPilgrim?.emergencyContactPhone}
                           onChange={(e) => setFormData({ ...formData, emergencyContactPhone: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Relation</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Relation</label>
                         <input 
                           type="text" 
                           value={isModalOpen ? formData.emergencyContactRelation : selectedPilgrim?.emergencyContactRelation}
                           onChange={(e) => setFormData({ ...formData, emergencyContactRelation: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="md:col-span-2">
-                    <h4 className="font-semibold text-ink mb-4">Trip Information</h4>
+                    <h4 className="font-semibold text-ink dark:text-ink-dark mb-4">Trip Information</h4>
                     <div className="grid gap-4 md:grid-cols-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Destination</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Destination</label>
                         <select 
                           value={isModalOpen ? formData.destination : selectedPilgrim?.destination}
                           onChange={(e) => setFormData({ ...formData, destination: e.target.value as any })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         >
                           <option value="Hajj">Hajj</option>
                           <option value="Umrah">Umrah</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Season</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Season</label>
                         <select 
                           value={isModalOpen ? formData.season : selectedPilgrim?.season}
                           onChange={(e) => setFormData({ ...formData, season: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         >
                           <option value="2025">2025</option>
                           <option value="2026">2026</option>
@@ -830,12 +834,12 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Group</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Group</label>
                         <select 
                           value={isModalOpen ? formData.groupId : selectedPilgrim?.groupId || ''}
                           onChange={(e) => setFormData({ ...formData, groupId: e.target.value })}
                           disabled={!isModalOpen}
-                          className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm disabled:bg-slate-100"
+                          className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm disabled:bg-slate-100"
                         >
                           <option value="">Select Group</option>
                           {groups.map(g => (
@@ -983,15 +987,15 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                     const isCurrentlyUploading = progress > 0 && progress < 100;
 
                     return (
-                      <div key={doc.type} className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white">
+                      <div key={doc.type} className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
                         <div className="flex items-center gap-4">
-                          <div className="p-3 rounded-lg bg-slate-100">
-                            <doc.icon className="h-5 w-5 text-slate-600" />
+                          <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-700/50">
+                            <doc.icon className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                           </div>
                           <div>
-                            <p className="font-medium text-ink">{doc.label}</p>
+                            <p className="font-medium text-ink dark:text-ink-dark">{doc.label}</p>
                             {pilgrimDoc && (
-                              <p className="text-sm text-slate-500">{pilgrimDoc.fileName}</p>
+                              <p className="text-sm text-slate-500 dark:text-slate-400">{pilgrimDoc.fileName}</p>
                             )}
                           </div>
                         </div>
@@ -1011,14 +1015,14 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                                   <CheckCircle2 className="h-3 w-3" /> Telegram
                                 </span>
                               )}
-                              <button className="p-2 rounded-lg hover:bg-slate-100" title="Download from Telegram">
-                                <Download className="h-4 w-4 text-slate-500" />
+                              <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="Download from Telegram">
+                                <Download className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                               </button>
                             </>
                           ) : isCurrentlyUploading ? (
                             <div className="flex items-center gap-2">
                               <div className="w-24">
-                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
                                   <div className="h-full bg-purple-500 transition-all" style={{ width: `${progress}%` }} />
                                 </div>
                               </div>
@@ -1061,10 +1065,10 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 border-t border-slate-200 bg-white px-6 py-4 flex justify-end gap-3">
+            <div className="sticky bottom-0 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 py-4 flex justify-end gap-3">
               <button 
                 onClick={() => { setIsModalOpen(false); setIsViewModalOpen(false); setSelectedPilgrim(null); }}
-                className="px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800"
+                className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800"
               >
                 Cancel
               </button>
@@ -1085,20 +1089,20 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
       {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && selectedPilgrim && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <div className="text-center">
               <div className="mx-auto h-12 w-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <AlertCircle className="h-6 w-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-ink mb-2">Delete Pilgrim?</h3>
-              <p className="text-slate-600 mb-6">
+              <h3 className="text-xl font-bold text-ink dark:text-ink-dark mb-2">Delete Pilgrim?</h3>
+              <p className="text-slate-600 dark:text-slate-300 mb-6">
                 Are you sure you want to delete <strong>{selectedPilgrim?.firstName} {selectedPilgrim?.lastName}</strong>? 
                 This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-center">
                 <button 
                   onClick={() => setIsDeleteConfirmOpen(false)}
-                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                 >
                   Cancel
                 </button>

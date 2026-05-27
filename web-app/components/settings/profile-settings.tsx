@@ -1,9 +1,11 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { Save, User, Mail, Building, Phone } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 export function ProfileSettings() {
+  const { addToast } = useToast();
   const [profile, setProfile] = useState({
     name: 'Admin User',
     email: 'admin@ethioagency.com',
@@ -25,6 +27,7 @@ export function ProfileSettings() {
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
       console.error('Error saving profile:', error);
+      addToast({ title: 'Error', description: 'Failed to save profile. Please try again.', type: 'error' });
     } finally {
       setSaving(false);
     }
@@ -32,7 +35,7 @@ export function ProfileSettings() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <h3 className="text-lg font-bold">Profile Information</h3>
         
         <div className="mt-6 grid gap-6 md:grid-cols-2">
@@ -44,7 +47,7 @@ export function ProfileSettings() {
                 type="text"
                 value={profile.name}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 pl-10 pr-4"
               />
             </div>
           </div>
@@ -57,7 +60,7 @@ export function ProfileSettings() {
                 type="email"
                 value={profile.email}
                 onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 pl-10 pr-4"
               />
             </div>
           </div>
@@ -70,7 +73,7 @@ export function ProfileSettings() {
                 type="tel"
                 value={profile.phone}
                 onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 pl-10 pr-4"
               />
             </div>
           </div>
@@ -82,7 +85,7 @@ export function ProfileSettings() {
               <select
                 value={profile.role}
                 disabled
-                className="w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4 bg-slate-50"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 pl-10 pr-4 bg-slate-50 dark:bg-slate-800/50"
               >
                 <option value="AGENCY_ADMIN">Agency Admin</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
@@ -103,17 +106,17 @@ export function ProfileSettings() {
         </button>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <h3 className="text-lg font-bold">Avatar</h3>
         <div className="mt-4 flex items-center gap-6">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-100 text-2xl font-bold text-brand-600">
             {profile.name.charAt(0)}
           </div>
           <div>
-            <button className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50">
+            <button className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50">
               Upload Photo
             </button>
-            <p className="mt-2 text-sm text-slate-500">JPG, PNG. Max 2MB.</p>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">JPG, PNG. Max 2MB.</p>
           </div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Users, Calendar, CheckCircle2, FileText } from 'lucide-react';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ export function HajjUmrahModule() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-ink">Hajj & Umrah Management</h1>
+        <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">Hajj & Umrah Management</h1>
       </div>
 
       {/* Stats */}
@@ -29,41 +29,41 @@ export function HajjUmrahModule() {
 
       {/* Quick Links */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Link href="/hajj-umrah/pilgrim-detail" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
+        <Link href="/hajj-umrah/pilgrim-detail" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
           <Users className="h-5 w-5 text-purple-600 mb-3" />
-          <p className="font-semibold text-ink">Pilgrim Details</p>
-          <p className="text-xs text-slate-500 mt-1">View pilgrim profiles</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Pilgrim Details</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">View pilgrim profiles</p>
         </Link>
-        <Link href="/hajj-umrah/requirements" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
+        <Link href="/hajj-umrah/requirements" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
           <CheckCircle2 className="h-5 w-5 text-purple-600 mb-3" />
-          <p className="font-semibold text-ink">Requirements</p>
-          <p className="text-xs text-slate-500 mt-1">Check requirements</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Requirements</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Check requirements</p>
         </Link>
-        <Link href="/hajj-umrah/documentation" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
+        <Link href="/hajj-umrah/documentation" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
           <FileText className="h-5 w-5 text-purple-600 mb-3" />
-          <p className="font-semibold text-ink">Documentation</p>
-          <p className="text-xs text-slate-500 mt-1">Document management</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Documentation</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Document management</p>
         </Link>
-        <Link href="/hajj-umrah" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
+        <Link href="/hajj-umrah" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-purple-200 hover:bg-purple-50/50 transition-all">
           <Calendar className="h-5 w-5 text-purple-600 mb-3" />
-          <p className="font-semibold text-ink">Groups</p>
-          <p className="text-xs text-slate-500 mt-1">Manage pilgrim groups</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Groups</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage pilgrim groups</p>
         </Link>
       </div>
 
       {/* Recent Groups */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h3 className="text-lg font-bold text-ink mb-4">Pilgrim Groups</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
+        <h3 className="text-lg font-bold text-ink dark:text-ink-dark mb-4">Pilgrim Groups</h3>
         <div className="space-y-3">
           {[
             { name: 'Ramadan Umrah 2026 - Group A', pilgrims: 45, status: 'registered', departure: '2026-04-15' },
             { name: 'Hajj 2026 - Main Group', pilgrims: 156, status: 'approved', departure: '2026-07-15' },
             { name: 'Umrah - Business Group', pilgrims: 32, status: 'planning', departure: '2026-06-01' },
           ].map((group, idx) => (
-            <div key={idx} className="flex items-center justify-between rounded-lg border border-slate-200 p-4 hover:bg-slate-50">
+            <div key={idx} className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50">
               <div>
-                <p className="font-semibold text-ink">{group.name}</p>
-                <p className="text-xs text-slate-500">{group.pilgrims} pilgrims</p>
+                <p className="font-semibold text-ink dark:text-ink-dark">{group.name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{group.pilgrims} pilgrims</p>
               </div>
               <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
                 group.status === 'approved' ? 'bg-green-100 text-green-700' :

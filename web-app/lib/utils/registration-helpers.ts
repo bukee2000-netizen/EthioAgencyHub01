@@ -17,10 +17,35 @@ export function getAllRegions(): string[] {
   return ethiopianRegions.map((r) => r.region);
 }
 
+interface PersonalData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  contactPhone?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  region?: string;
+  zone?: string;
+  [key: string]: unknown;
+}
+
+interface SkillsData {
+  role?: string;
+  destination?: string;
+  languages?: string[];
+  [key: string]: unknown;
+}
+
+interface RegistrationData {
+  personal?: PersonalData;
+  skills?: SkillsData;
+  [key: string]: unknown;
+}
+
 /**
  * Format employee data for display
  */
-export function formatEmployeeData(data: any) {
+export function formatEmployeeData(data: RegistrationData) {
   return {
     name: `${data.personal?.firstName} ${data.personal?.lastName}`.trim(),
     email: data.personal?.email,
@@ -36,7 +61,7 @@ export function formatEmployeeData(data: any) {
 /**
  * Validate registration data
  */
-export function validateRegistrationData(data: any): { valid: boolean; errors: string[] } {
+export function validateRegistrationData(data: RegistrationData): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   if (!data.personal?.firstName?.trim()) errors.push('First name is required');
@@ -63,7 +88,7 @@ export function validateRegistrationData(data: any): { valid: boolean; errors: s
 /**
  * Export registration data as JSON
  */
-export function exportRegistrationData(data: any): string {
+export function exportRegistrationData(data: RegistrationData): string {
   return JSON.stringify(data, null, 2);
 }
 

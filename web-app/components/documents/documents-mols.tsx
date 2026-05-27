@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { Landmark, Search, CheckCircle2, AlertCircle, Clock, Upload, Download, FileText, Plus, X, Eye, RefreshCw, Link2, Shield, CheckSquare, Send, ChevronDown, ChevronUp, Building2, Globe, Lock } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 interface MolsEmployee {
   id: string;
@@ -29,6 +30,7 @@ const STAGES = [
 ];
 
 export function DocumentsMols() {
+  const { addToast } = useToast();
   const [employees, setEmployees] = useState<MolsEmployee[]>([]);
   const [molsRecords, setMolsRecords] = useState<MolsEmployee[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,7 +66,7 @@ export function DocumentsMols() {
         }));
         setEmployees(mapped);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
     finally { setLoading(false); }
   };
 
@@ -121,17 +123,17 @@ export function DocumentsMols() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-orange-50/30 to-white p-8 shadow-sm flex items-center justify-between">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-white via-orange-50/30 to-white p-8 shadow-sm dark:shadow-soft-dark flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-ink">MOLS Processing</h1>
+          <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">MOLS Processing</h1>
         </div>
-        <button onClick={() => setShowLinkModal(true)} className="flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 shadow-sm">
+        <button onClick={() => setShowLinkModal(true)} className="flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 shadow-sm dark:shadow-soft-dark">
           <Link2 className="h-4 w-4" />Link Contract
         </button>
       </div>
 
       {statusMsg && (
-        <div className={`rounded-2xl border p-4 shadow-sm ${statusMsg.ok ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+        <div className={`rounded-2xl border p-4 shadow-sm dark:shadow-soft-dark ${statusMsg.ok ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
           <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5" /><span className="font-semibold">{statusMsg.text}</span></div>
         </div>
       )}
@@ -144,7 +146,7 @@ export function DocumentsMols() {
           { label: 'Approved', value: molsRecords.filter(r => r.molsApproved).length, icon: CheckCircle2, color: 'from-emerald-50 to-emerald-100/50 text-emerald-800 text-emerald-700' },
           { label: 'Unlocked for Visa', value: molsRecords.filter(r => r.molsApproved).length, icon: Lock, color: 'from-green-50 to-green-100/50 text-green-800 text-green-700' },
         ].map(s => (
-          <div key={s.label} className={`rounded-2xl bg-gradient-to-br border ${s.color} p-4 shadow-sm`}>
+          <div key={s.label} className={`rounded-2xl bg-gradient-to-br border ${s.color} p-4 shadow-sm dark:shadow-soft-dark`}>
             <s.icon className="h-5 w-5 mb-2" />
             <p className="text-2xl font-bold">{s.value}</p>
             <p className="text-xs font-medium">{s.label}</p>
@@ -153,41 +155,41 @@ export function DocumentsMols() {
       </div>
 
       {/* Overall Progress Bar */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-ink">MOLS Status: {progress}% Complete</h3>
-          <span className="text-sm text-slate-500">{molsRecords.filter(r => r.molsApproved).length}/{molsRecords.length} approved</span>
+          <h3 className="font-bold text-ink dark:text-ink-dark">MOLS Status: {progress}% Complete</h3>
+          <span className="text-sm text-slate-500 dark:text-slate-400">{molsRecords.filter(r => r.molsApproved).length}/{molsRecords.length} approved</span>
         </div>
-        <div className="h-4 w-full rounded-full bg-slate-100 overflow-hidden">
+        <div className="h-4 w-full rounded-full bg-slate-100 dark:bg-slate-700/50 overflow-hidden">
           <div className="h-full rounded-full bg-gradient-to-r from-orange-500 via-purple-500 to-emerald-500 transition-all duration-700" style={{ width: `${progress}%` }} />
         </div>
-        <p className="text-xs text-slate-500 mt-2">Once MOLS approves, the employee is automatically unlocked for the Visa and Ticket sections.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Once MOLS approves, the employee is automatically unlocked for the Visa and Ticket sections.</p>
       </div>
 
       {/* Link Contract Modal */}
       {showLinkModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-              <h3 className="font-bold text-ink">Link Contract to Employee</h3>
-              <button onClick={() => setShowLinkModal(false)} className="p-1 rounded-lg hover:bg-slate-100"><X className="h-5 w-5 text-slate-500" /></button>
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-800 shadow-xl">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <h3 className="font-bold text-ink dark:text-ink-dark">Link Contract to Employee</h3>
+              <button onClick={() => setShowLinkModal(false)} className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><X className="h-5 w-5 text-slate-500 dark:text-slate-400" /></button>
             </div>
             <div className="p-6">
-              <p className="text-sm text-slate-500 mb-4">Select an employee to link the abroad agent's digital contract. The system will pull their ID, Passport, and registration data instantly.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Select an employee to link the abroad agent's digital contract. The system will pull their ID, Passport, and registration data instantly.</p>
               <input type="text" value={empSearch} onChange={e => setEmpSearch(e.target.value)} placeholder="Search employee..."
-                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm mb-3 focus:border-orange-500 focus:outline-none" />
+                className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm mb-3 focus:border-orange-500 focus:outline-none" />
               <div className="max-h-60 overflow-y-auto space-y-1">
                 {filteredEmployees.filter(e => !molsRecords.find(r => r.id === e.id)).slice(0, 10).map(emp => (
                   <button key={emp.id} onClick={() => linkContract(emp.id)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 text-left">
                     <div className="h-9 w-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">{emp.name.charAt(0)}</div>
                     <div className="flex-1">
                       <p className="font-medium text-sm">{emp.name}</p>
-                      <p className="text-xs text-slate-400">Passport: {emp.passportNumber || 'N/A'} • {emp.destination}</p>
+                      <p className="text-xs text-slate-400">Passport: {emp.passportNumber || 'N/A'} â€¢ {emp.destination}</p>
                     </div>
                     <Link2 className="h-4 w-4 text-orange-500" />
                   </button>
                 ))}
-                {filteredEmployees.filter(e => !molsRecords.find(r => r.id === e.id)).length === 0 && <p className="text-sm text-slate-500 text-center py-4">All employees linked. Register new employees first.</p>}
+                {filteredEmployees.filter(e => !molsRecords.find(r => r.id === e.id)).length === 0 && <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">All employees linked. Register new employees first.</p>}
               </div>
             </div>
           </div>
@@ -198,9 +200,9 @@ export function DocumentsMols() {
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search by name or passport..." className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-4 text-sm focus:border-orange-500 focus:outline-none" />
+          <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search by name or passport..." className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2 pl-9 pr-4 text-sm focus:border-orange-500 focus:outline-none" />
         </div>
-        <select value={stageFilter} onChange={e => setStageFilter(e.target.value)} className="rounded-xl border border-slate-300 px-3 py-2 text-sm">
+        <select value={stageFilter} onChange={e => setStageFilter(e.target.value)} className="rounded-xl border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm">
           <option value="all">All Stages</option>
           {STAGES.map((s, i) => <option key={s.key} value={i}>{s.label}</option>)}
         </select>
@@ -208,9 +210,9 @@ export function DocumentsMols() {
 
       {/* MOLS Records */}
       {molsRecords.length === 0 ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-16 text-center shadow-sm">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-16 text-center shadow-sm dark:shadow-soft-dark">
           <Landmark className="h-12 w-12 mx-auto text-slate-300 mb-3" />
-          <p className="font-medium text-slate-500">No contracts linked yet</p>
+          <p className="font-medium text-slate-500 dark:text-slate-400">No contracts linked yet</p>
           <p className="text-sm text-slate-400 mt-1">Click "Link Contract" to pull employee data from registration and start the MOLS process.</p>
         </div>
       ) : (
@@ -219,16 +221,16 @@ export function DocumentsMols() {
             const s = stage(rec);
             const isExpanded = expandedId === rec.id;
             return (
-              <div key={rec.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <div key={rec.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm dark:shadow-soft-dark overflow-hidden">
+                <div className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                   <div className="flex items-center gap-4 flex-1">
                     <button onClick={() => setExpandedId(isExpanded ? null : rec.id)} className="text-slate-400">
                       {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </button>
                     <div className="h-10 w-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">{rec.name.charAt(0)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold text-ink">{rec.name}</p>
-                      <p className="text-xs text-slate-400">Passport: {rec.passportNumber || 'N/A'} • {rec.destination}</p>
+                      <p className="font-bold text-ink dark:text-ink-dark">{rec.name}</p>
+                      <p className="text-xs text-slate-400">Passport: {rec.passportNumber || 'N/A'} â€¢ {rec.destination}</p>
                     </div>
                   </div>
                   {/* Stage Progress Bar */}
@@ -237,7 +239,7 @@ export function DocumentsMols() {
                       {STAGES.map((st, i) => (
                         <div key={st.key} className="flex items-center flex-1">
                           <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold ${s > i ? 'bg-emerald-500' : s === i ? 'bg-orange-500 animate-pulse' : 'bg-slate-200'}`}>
-                            {s > i ? '✓' : i + 1}
+                            {s > i ? 'âœ“' : i + 1}
                           </div>
                           {i < STAGES.length - 1 && <div className={`flex-1 h-1 ${s > i ? 'bg-emerald-500' : 'bg-slate-200'}`} />}
                         </div>
@@ -252,24 +254,24 @@ export function DocumentsMols() {
                     {rec.embassyLegalization && !rec.molsSubmitted && <button onClick={() => advance(rec.id, 'molsSubmitted')} className="px-3 py-1.5 bg-orange-600 text-white rounded-lg text-xs font-bold hover:bg-orange-700">Submit to MOLS</button>}
                     {rec.molsSubmitted && !rec.molsApproved && <button onClick={() => advance(rec.id, 'molsApproved')} className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700">Mark Approved</button>}
                     {rec.molsApproved && <span className="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5" />Unlocked</span>}
-                    <button onClick={() => generateMolsFolder(rec)} className="px-3 py-1.5 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-50"><Download className="h-3.5 w-3.5 inline-block mr-1" />Export</button>
+                    <button onClick={() => generateMolsFolder(rec)} className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700/50"><Download className="h-3.5 w-3.5 inline-block mr-1" />Export</button>
                   </div>
                 </div>
 
                 {isExpanded && (
-                  <div className="px-6 py-5 bg-slate-50 border-t border-slate-200">
+                  <div className="px-6 py-5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
                     <div className="grid gap-5 md:grid-cols-3">
-                      <div className="rounded-xl border border-slate-200 bg-white p-4">
-                        <h4 className="font-bold text-ink text-sm mb-3 flex items-center gap-2"><FileText className="h-4 w-4 text-orange-600" /> Employee Data</h4>
+                      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                        <h4 className="font-bold text-ink dark:text-ink-dark text-sm mb-3 flex items-center gap-2"><FileText className="h-4 w-4 text-orange-600" /> Employee Data</h4>
                         <div className="space-y-2 text-xs">
-                          <div className="flex justify-between"><span className="text-slate-500">Name:</span><span className="font-medium">{rec.name}</span></div>
-                          <div className="flex justify-between"><span className="text-slate-500">Passport:</span><span className="font-medium">{rec.passportNumber || '-'}</span></div>
-                          <div className="flex justify-between"><span className="text-slate-500">Destination:</span><span className="font-medium">{rec.destination}</span></div>
-                          <div className="flex justify-between"><span className="text-slate-500">Registered:</span><span className="font-medium">{new Date(rec.createdAt).toLocaleDateString()}</span></div>
+                          <div className="flex justify-between"><span className="text-slate-500 dark:text-slate-400">Name:</span><span className="font-medium">{rec.name}</span></div>
+                          <div className="flex justify-between"><span className="text-slate-500 dark:text-slate-400">Passport:</span><span className="font-medium">{rec.passportNumber || '-'}</span></div>
+                          <div className="flex justify-between"><span className="text-slate-500 dark:text-slate-400">Destination:</span><span className="font-medium">{rec.destination}</span></div>
+                          <div className="flex justify-between"><span className="text-slate-500 dark:text-slate-400">Registered:</span><span className="font-medium">{new Date(rec.createdAt).toLocaleDateString()}</span></div>
                         </div>
                       </div>
-                      <div className="rounded-xl border border-slate-200 bg-white p-4">
-                        <h4 className="font-bold text-ink text-sm mb-3 flex items-center gap-2"><CheckSquare className="h-4 w-4 text-purple-600" /> Authentication Tracker</h4>
+                      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                        <h4 className="font-bold text-ink dark:text-ink-dark text-sm mb-3 flex items-center gap-2"><CheckSquare className="h-4 w-4 text-purple-600" /> Authentication Tracker</h4>
                         <div className="space-y-2">
                           {[
                             { label: 'Contract Linked', done: rec.contractLinked },
@@ -278,15 +280,15 @@ export function DocumentsMols() {
                             { label: 'MOLS Submission', done: rec.molsSubmitted },
                             { label: 'MOLS Approved', done: rec.molsApproved },
                           ].map((item, i) => (
-                            <label key={i} className={`flex items-center gap-2 p-2 rounded-lg text-xs cursor-pointer ${item.done ? 'bg-emerald-50' : 'bg-slate-50 hover:bg-slate-100'}`}>
-                              <input type="checkbox" checked={item.done} readOnly className="h-3.5 w-3.5 rounded border-slate-300 text-emerald-600" />
-                              <span className={item.done ? 'text-emerald-700 font-medium' : 'text-slate-600'}>{item.label}</span>
+                            <label key={i} className={`flex items-center gap-2 p-2 rounded-lg text-xs cursor-pointer ${item.done ? 'bg-emerald-50' : 'bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
+                              <input type="checkbox" checked={item.done} readOnly className="h-3.5 w-3.5 rounded border-slate-300 dark:border-slate-600 text-emerald-600" />
+                              <span className={item.done ? 'text-emerald-700 font-medium' : 'text-slate-600 dark:text-slate-300'}>{item.label}</span>
                             </label>
                           ))}
                         </div>
                       </div>
-                      <div className="rounded-xl border border-slate-200 bg-white p-4">
-                        <h4 className="font-bold text-ink text-sm mb-3 flex items-center gap-2"><Upload className="h-4 w-4 text-green-600" /> MOLS Folder Package</h4>
+                      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                        <h4 className="font-bold text-ink dark:text-ink-dark text-sm mb-3 flex items-center gap-2"><Upload className="h-4 w-4 text-green-600" /> MOLS Folder Package</h4>
                         <div className="space-y-2 text-xs">
                           <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-600" /><span>Passport ({rec.passportNumber || 'N/A'})</span></div>
                           <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-600" /><span>Certificate of Competency (COC)</span></div>

@@ -32,18 +32,18 @@ export default function TeachingPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-white dark:from-slate-800 via-brand-50/30 dark:via-brand-800/30 to-white dark:to-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-brand-100"><BookOpen className="h-8 w-8 text-brand-600" /></div>
           <div>
-            <h1 className="text-3xl font-bold text-ink">Teaching / Demo Data</h1>
+            <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">Teaching / Demo Data</h1>
           </div>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         {sections.map(s => (
-          <div key={s.id} className={`rounded-2xl border ${s.border} ${s.color} p-4 shadow-sm`}>
+          <div key={s.id} className={`rounded-2xl border ${s.border} ${s.color} p-4 shadow-sm dark:shadow-soft-dark`}>
             <s.icon className="h-6 w-6 mb-2" />
             <p className="text-xl font-bold">{Array.isArray(s.data) ? s.data.length : 0}</p>
             <p className="text-sm font-medium">{s.label}</p>
@@ -53,33 +53,33 @@ export default function TeachingPage() {
 
       <div className="space-y-4">
         {sections.map(section => (
-          <div key={section.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <button onClick={() => toggle(section.id)} className="w-full flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
+          <div key={section.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm dark:shadow-soft-dark overflow-hidden">
+            <button onClick={() => toggle(section.id)} className="w-full flex items-center justify-between px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-xl ${section.color}`}><section.icon className="h-5 w-5" /></div>
-                <span className="font-bold text-ink">{section.label}</span>
-                <span className="text-xs text-slate-400">({Array.isArray(section.data) ? section.data.length : 0} records)</span>
+                <span className="font-bold text-ink dark:text-ink-dark">{section.label}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">({Array.isArray(section.data) ? section.data.length : 0} records)</span>
               </div>
-              {expanded.includes(section.id) ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+              {expanded.includes(section.id) ? <ChevronUp className="h-5 w-5 text-slate-400 dark:text-slate-500" /> : <ChevronDown className="h-5 w-5 text-slate-400 dark:text-slate-500" />}
             </button>
 
             {expanded.includes(section.id) && (
-              <div className="border-t border-slate-200">
+              <div className="border-t border-slate-200 dark:border-slate-700">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-slate-50 border-b border-slate-200">
+                    <thead className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
                       <tr>
                         {Array.isArray(section.data) && section.data.length > 0 && Object.keys(section.data[0]).map(key => (
-                          <th key={key} className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">{key}</th>
+                          <th key={key} className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase whitespace-nowrap">{key}</th>
                         ))}
-                        <th className="px-4 py-2.5 text-xs font-bold text-slate-500 uppercase">Copy</th>
+                        <th className="px-4 py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Copy</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                       {Array.isArray(section.data) && section.data.map((row: any, i: number) => (
-                        <tr key={i} className="hover:bg-slate-50 text-xs">
+                        <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 text-xs">
                           {Object.keys(section.data[0]).map(key => (
-                            <td key={key} className="px-4 py-2.5 text-slate-700 max-w-[200px] truncate whitespace-nowrap">
+                            <td key={key} className="px-4 py-2.5 text-slate-700 dark:text-slate-200 max-w-[200px] truncate whitespace-nowrap">
                               {typeof row[key] === 'boolean' ? (row[key] ? '✓' : '✗') : String(row[key] || '')}
                             </td>
                           ))}

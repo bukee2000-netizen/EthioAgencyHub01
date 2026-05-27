@@ -12,18 +12,18 @@ export function PlanSelector() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-600">Subscription billing</p>
-        <h2 className="mt-2 text-3xl font-bold text-ink">Choose a plan in Ethiopian Birr</h2>
-        <p className="mt-3 max-w-3xl text-slate-600">Select a billing cycle and subscription level for your agency.</p>
-        <div className="mt-6 inline-flex rounded-2xl bg-slate-100 p-1">
+        <h2 className="mt-2 text-3xl font-bold text-ink dark:text-ink-dark">Choose a plan in Ethiopian Birr</h2>
+        <p className="mt-3 max-w-3xl text-slate-600 dark:text-slate-300">Select a billing cycle and subscription level for your agency.</p>
+        <div className="mt-6 inline-flex rounded-2xl bg-slate-100 dark:bg-slate-700/50 p-1">
           {billingCycles.map((option) => (
             <button
               key={option.id}
               type="button"
               onClick={() => setCycle(option.id)}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                cycle === option.id ? 'bg-white text-brand-700 shadow' : 'text-slate-500 hover:text-ink'
+                cycle === option.id ? 'bg-white dark:bg-slate-800 text-brand-700 shadow' : 'text-slate-500 dark:text-slate-400 hover:text-ink dark:hover:text-ink-dark'
               }`}
             >
               {option.label}
@@ -41,18 +41,18 @@ export function PlanSelector() {
               key={plan.id}
               type="button"
               onClick={() => setSelected(plan.id)}
-              className={`rounded-3xl border p-6 text-left shadow-sm transition ${
-                isSelected ? 'border-brand-600 bg-brand-50/50 ring-2 ring-brand-200' : 'border-slate-200 bg-white hover:border-brand-400'
+              className={`rounded-3xl border p-6 text-left shadow-sm dark:shadow-soft-dark transition ${
+                isSelected ? 'border-brand-600 bg-brand-50/50 ring-2 ring-brand-200' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-brand-400 dark:hover:border-brand-500'
               }`}
             >
-              <h3 className="text-xl font-bold text-ink">{plan.name}</h3>
-              <p className="mt-2 min-h-12 text-sm text-slate-500">{plan.description}</p>
+              <h3 className="text-xl font-bold text-ink dark:text-ink-dark">{plan.name}</h3>
+              <p className="mt-2 min-h-12 text-sm text-slate-500 dark:text-slate-400">{plan.description}</p>
               <p className="mt-5 text-3xl font-bold text-brand-700">{formatEtb(plan.pricesEtb[cycle])}</p>
-              <p className="text-xs text-slate-500">per {cycle === 'monthly' ? 'month' : cycle === 'quarterly' ? 'quarter' : 'year'}</p>
-              <p className="mt-4 text-sm font-semibold text-ink">Employees: {plan.employeeLimit}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">per {cycle === 'monthly' ? 'month' : cycle === 'quarterly' ? 'quarter' : 'year'}</p>
+              <p className="mt-4 text-sm font-semibold text-ink dark:text-ink-dark">Employees: {plan.employeeLimit}</p>
               <ul className="mt-4 space-y-2">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex gap-2 text-sm text-slate-600">
+                  <li key={feature} className="flex gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
                     {feature}
                   </li>
@@ -63,20 +63,20 @@ export function PlanSelector() {
         })}
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-ink">Order summary</h3>
-        <p className="mt-1 text-sm text-slate-500">Review your selection before confirming your subscription.</p>
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
+        <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Order summary</h3>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Review your selection before confirming your subscription.</p>
         <dl className="mt-4 grid gap-3 md:grid-cols-3">
           <div>
-            <dt className="text-xs uppercase tracking-widest text-slate-400">Plan</dt>
-            <dd className="mt-1 text-lg font-semibold text-ink">{selectedPlan.name}</dd>
+            <dt className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500">Plan</dt>
+            <dd className="mt-1 text-lg font-semibold text-ink dark:text-ink-dark">{selectedPlan.name}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-widest text-slate-400">Billing cycle</dt>
-            <dd className="mt-1 text-lg font-semibold text-ink">{billingCycles.find((c) => c.id === cycle)?.label}</dd>
+            <dt className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500">Billing cycle</dt>
+            <dd className="mt-1 text-lg font-semibold text-ink dark:text-ink-dark">{billingCycles.find((c) => c.id === cycle)?.label}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-widest text-slate-400">Total</dt>
+            <dt className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500">Total</dt>
             <dd className="mt-1 text-lg font-bold text-brand-700">{formatEtb(selectedPlan.pricesEtb[cycle])}</dd>
           </div>
         </dl>

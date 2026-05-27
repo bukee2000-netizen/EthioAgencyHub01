@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { BarChart3, PieChart, TrendingUp, FileText, Download } from 'lucide-react';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ export function ReportingAnalyticsModule() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-ink">Reporting & Analytics</h1>
+        <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">Reporting & Analytics</h1>
       </div>
 
       {/* Stats */}
@@ -29,36 +29,36 @@ export function ReportingAnalyticsModule() {
 
       {/* Quick Links */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Link href="/reporting-analytics/overview" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
+        <Link href="/reporting-analytics/overview" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
           <BarChart3 className="h-5 w-5 text-green-600 mb-3" />
-          <p className="font-semibold text-ink">Overview</p>
-          <p className="text-xs text-slate-500 mt-1">Dashboard</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Overview</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Dashboard</p>
         </Link>
-        <Link href="/reporting-analytics/employee-reports" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
+        <Link href="/reporting-analytics/employee-reports" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
           <FileText className="h-5 w-5 text-green-600 mb-3" />
-          <p className="font-semibold text-ink">Employee</p>
-          <p className="text-xs text-slate-500 mt-1">Employee reports</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Employee</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Employee reports</p>
         </Link>
-        <Link href="/reporting-analytics/document-reports" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
+        <Link href="/reporting-analytics/document-reports" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
           <FileText className="h-5 w-5 text-green-600 mb-3" />
-          <p className="font-semibold text-ink">Documents</p>
-          <p className="text-xs text-slate-500 mt-1">Document reports</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Documents</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Document reports</p>
         </Link>
-        <Link href="/reporting-analytics/financial-reports" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
+        <Link href="/reporting-analytics/financial-reports" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
           <TrendingUp className="h-5 w-5 text-green-600 mb-3" />
-          <p className="font-semibold text-ink">Financial</p>
-          <p className="text-xs text-slate-500 mt-1">Revenue reports</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Financial</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Revenue reports</p>
         </Link>
-        <Link href="/reporting-analytics/export" className="rounded-2xl border border-slate-200 bg-white p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
+        <Link href="/reporting-analytics/export" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-green-200 hover:bg-green-50/50 transition-all">
           <Download className="h-5 w-5 text-green-600 mb-3" />
-          <p className="font-semibold text-ink">Export</p>
-          <p className="text-xs text-slate-500 mt-1">Download data</p>
+          <p className="font-semibold text-ink dark:text-ink-dark">Export</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Download data</p>
         </Link>
       </div>
 
       {/* Available Reports */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h3 className="text-lg font-bold text-ink mb-4">Available Reports</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
+        <h3 className="text-lg font-bold text-ink dark:text-ink-dark mb-4">Available Reports</h3>
         <div className="grid gap-3 md:grid-cols-2">
           {[
             'Monthly Employee Summary',
@@ -70,9 +70,9 @@ export function ReportingAnalyticsModule() {
           ].map((report, idx) => (
             <button
               key={idx}
-              className="text-left p-4 rounded-lg border border-slate-200 hover:border-green-300 hover:bg-green-50/50 transition-all flex items-center justify-between group"
+              className="text-left p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-green-300 hover:bg-green-50/50 transition-all flex items-center justify-between group"
             >
-              <span className="font-medium text-slate-700 group-hover:text-green-700">{report}</span>
+              <span className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-green-700">{report}</span>
               <Download className="h-4 w-4 text-slate-400 group-hover:text-green-600" />
             </button>
           ))}

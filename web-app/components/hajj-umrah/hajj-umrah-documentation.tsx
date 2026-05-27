@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -59,7 +59,7 @@ export function HajjUmrahDocumentation() {
       verified: 'bg-green-100 text-green-700',
       rejected: 'bg-red-100 text-red-700',
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
   };
 
   const getTypeLabel = (type: string) => {
@@ -78,16 +78,16 @@ export function HajjUmrahDocumentation() {
 
   const getTypeIcon = (type: string) => {
     const icons: Record<string, string> = {
-      passport: '📘',
-      visa: '🛂',
-      health_certificate: '🏥',
-      vaccination: '💉',
-      insurance: '🛡️',
-      consent: '📝',
-      photo: '📸',
-      other: '📄',
+      passport: 'ðŸ“˜',
+      visa: 'ðŸ›‚',
+      health_certificate: 'ðŸ¥',
+      vaccination: 'ðŸ’‰',
+      insurance: 'ðŸ›¡ï¸',
+      consent: 'ðŸ“',
+      photo: 'ðŸ“¸',
+      other: 'ðŸ“„',
     };
-    return icons[type] || '📄';
+    return icons[type] || 'ðŸ“„';
   };
 
   const verifiedCount = documents.filter(d => d.status === 'verified').length;
@@ -101,7 +101,7 @@ export function HajjUmrahDocumentation() {
       <div className="rounded-3xl border border-blue-200 bg-blue-50 p-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-ink flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <FileText className="h-8 w-8 text-blue-600" />
               Documentation Tracking
             </h1>
@@ -160,7 +160,7 @@ export function HajjUmrahDocumentation() {
           <Upload className="h-4 w-4" />
           Upload Document
         </button>
-        <button className="flex items-center gap-2 rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-700 hover:bg-blue-50">
+        <button className="flex items-center gap-2 rounded-xl border border-blue-200 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-blue-700 hover:bg-blue-50">
           <Download className="h-4 w-4" />
           Export Report
         </button>
@@ -175,13 +175,13 @@ export function HajjUmrahDocumentation() {
             placeholder="Search documents..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none"
           />
         </div>
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
+          className="rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
         >
           <option value="all">All Types</option>
           <option value="passport">Passport</option>
@@ -195,7 +195,7 @@ export function HajjUmrahDocumentation() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
+          className="rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
         >
           <option value="all">All Status</option>
           <option value="uploaded">Uploaded</option>
@@ -207,39 +207,39 @@ export function HajjUmrahDocumentation() {
       </div>
 
       {/* Documents Table */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-ink">All Documents</h3>
-          <span className="text-sm text-slate-500">{filteredDocuments.length} documents</span>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-ink dark:text-ink-dark">All Documents</h3>
+          <span className="text-sm text-slate-500 dark:text-slate-400">{filteredDocuments.length} documents</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Document</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Pilgrim</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Type</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">File</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Status</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Upload Date</th>
-                <th className="px-6 py-3 text-left font-semibold text-slate-600">Actions</th>
+              <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Document</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Pilgrim</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Type</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">File</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Status</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Upload Date</th>
+                <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredDocuments.map((doc) => (
-                <tr key={doc.id} className="hover:bg-slate-50">
+                <tr key={doc.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                   <td className="px-6 py-3">
                     <span className="text-lg">{getTypeIcon(doc.type)}</span>
                   </td>
                   <td className="px-6 py-3">
-                    <p className="font-medium text-ink">{doc.pilgrimName}</p>
-                    <p className="text-xs text-slate-500">{doc.pilgrimId}</p>
+                    <p className="font-medium text-ink dark:text-ink-dark">{doc.pilgrimName}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{doc.pilgrimId}</p>
                   </td>
                   <td className="px-6 py-3">
-                    <span className="text-slate-600">{getTypeLabel(doc.type)}</span>
+                    <span className="text-slate-600 dark:text-slate-300">{getTypeLabel(doc.type)}</span>
                   </td>
                   <td className="px-6 py-3">
-                    <p className="font-mono text-xs text-slate-600 max-w-[150px] truncate">{doc.fileName}</p>
+                    <p className="font-mono text-xs text-slate-600 dark:text-slate-300 max-w-[150px] truncate">{doc.fileName}</p>
                     {doc.fileSize && <p className="text-xs text-slate-400">{doc.fileSize}</p>}
                   </td>
                   <td className="px-6 py-3">
@@ -248,18 +248,18 @@ export function HajjUmrahDocumentation() {
                     </span>
                   </td>
                   <td className="px-6 py-3">
-                    <p className="text-slate-600">{doc.uploadDate || '-'}</p>
+                    <p className="text-slate-600 dark:text-slate-300">{doc.uploadDate || '-'}</p>
                     {doc.verifiedDate && (
                       <p className="text-xs text-green-600">Verified: {doc.verifiedDate}</p>
                     )}
                   </td>
                   <td className="px-6 py-3">
                     <div className="flex gap-2">
-                      <button className="p-1.5 rounded-lg hover:bg-slate-100" title="View">
-                        <Eye className="h-4 w-4 text-slate-500" />
+                      <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="View">
+                        <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                       </button>
-                      <button className="p-1.5 rounded-lg hover:bg-slate-100" title="Download">
-                        <Download className="h-4 w-4 text-slate-500" />
+                      <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="Download">
+                        <Download className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                       </button>
                       {doc.status === 'rejected' && doc.notes && (
                         <span className="text-xs text-red-600 ml-2" title={doc.notes}>!</span>
@@ -275,48 +275,48 @@ export function HajjUmrahDocumentation() {
 
       {/* Document by Type Summary */}
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">📘</span>
+            <span className="text-2xl">ðŸ“˜</span>
             <div>
-              <p className="font-semibold text-ink">Passport</p>
-              <p className="text-xs text-slate-500">{documents.filter(d => d.type === 'passport').length} documents</p>
+              <p className="font-semibold text-ink dark:text-ink-dark">Passport</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{documents.filter(d => d.type === 'passport').length} documents</p>
             </div>
           </div>
           <div className="text-sm text-green-600">
             {documents.filter(d => d.type === 'passport' && d.status === 'verified').length} verified
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">🛂</span>
+            <span className="text-2xl">ðŸ›‚</span>
             <div>
-              <p className="font-semibold text-ink">Visa</p>
-              <p className="text-xs text-slate-500">{documents.filter(d => d.type === 'visa').length} documents</p>
+              <p className="font-semibold text-ink dark:text-ink-dark">Visa</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{documents.filter(d => d.type === 'visa').length} documents</p>
             </div>
           </div>
           <div className="text-sm text-yellow-600">
             {documents.filter(d => d.type === 'visa' && (d.status === 'pending' || d.status === 'under_review')).length} pending
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">🏥</span>
+            <span className="text-2xl">ðŸ¥</span>
             <div>
-              <p className="font-semibold text-ink">Health Cert</p>
-              <p className="text-xs text-slate-500">{documents.filter(d => d.type === 'health_certificate').length} documents</p>
+              <p className="font-semibold text-ink dark:text-ink-dark">Health Cert</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{documents.filter(d => d.type === 'health_certificate').length} documents</p>
             </div>
           </div>
           <div className="text-sm text-green-600">
             {documents.filter(d => d.type === 'health_certificate' && d.status === 'verified').length} verified
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">💉</span>
+            <span className="text-2xl">ðŸ’‰</span>
             <div>
-              <p className="font-semibold text-ink">Vaccination</p>
-              <p className="text-xs text-slate-500">{documents.filter(d => d.type === 'vaccination').length} documents</p>
+              <p className="font-semibold text-ink dark:text-ink-dark">Vaccination</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{documents.filter(d => d.type === 'vaccination').length} documents</p>
             </div>
           </div>
           <div className="text-sm text-green-600">

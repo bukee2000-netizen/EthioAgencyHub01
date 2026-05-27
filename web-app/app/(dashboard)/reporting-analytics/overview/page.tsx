@@ -33,8 +33,8 @@ export default function AnalyticsOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
-        <h1 className="text-3xl font-bold text-ink">Reporting & Analytics</h1>
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm dark:shadow-soft-dark">
+        <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">Reporting & Analytics</h1>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -44,26 +44,26 @@ export default function AnalyticsOverviewPage() {
           { label: 'Deployed', value: stats.deployed, icon: BarChart3, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { label: 'Documents', value: stats.docs, icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' },
         ].map(item => (
-          <div key={item.label} className={`rounded-2xl border border-slate-200 ${item.bg} p-5 shadow-sm`}>
+          <div key={item.label} className={`rounded-2xl border border-slate-200 dark:border-slate-700 ${item.bg} p-5 shadow-sm dark:shadow-soft-dark`}>
             <item.icon className={`h-6 w-6 ${item.color} mb-3`} />
-            <p className="text-3xl font-bold text-ink">{loading ? '...' : item.value}</p>
-            <p className="mt-1 text-sm font-medium text-slate-600">{item.label}</p>
+            <p className="text-3xl font-bold text-ink dark:text-ink-dark">{loading ? '...' : item.value}</p>
+            <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{item.label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         {reportTypes.map(r => (
-          <Link key={r.href} href={r.href} className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-6 hover:border-brand-300 hover:bg-brand-50/40 transition-all shadow-sm">
+          <Link key={r.href} href={r.href} className="group flex items-start gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:border-brand-300 hover:bg-brand-50/40 transition-all shadow-sm dark:shadow-soft-dark">
             <div className={`rounded-xl ${r.color} p-3 text-white group-hover:scale-105 transition-transform shrink-0`}>
               <r.icon className="h-6 w-6" />
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-ink text-lg">{r.title}</h3>
+                <h3 className="font-bold text-ink dark:text-ink-dark text-lg">{r.title}</h3>
                 <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-brand-500 group-hover:translate-x-1 transition-all" />
               </div>
-              <p className="text-sm text-slate-500 mt-1">{r.desc}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{r.desc}</p>
             </div>
           </Link>
         ))}

@@ -15,6 +15,12 @@ export type Dictionary = {
     profile: string; security: string; notifications: string; preferences: string;
     appearance: string; password: string; twoFactor: string; dangerZone: string;
     deleteAccount: string; notificationsDesc: string;
+    refresh: string; registerNewEmployee: string; generateCv: string;
+    bookTravel: string; viewDocuments: string; cvDatabase: string;
+    viewProfiles: string; totalEmployees: string; pendingDocs: string;
+    travelReady: string; deployed: string; kpiCards: string;
+    analytics: string; tasks: string; activities: string;
+    overview: string; trends: string;
   };
   travel: {
     commandCenter: string; schedule: string; tickets: string;
@@ -52,6 +58,23 @@ const en: Dictionary = {
     profile: 'Profile', security: 'Security', notifications: 'Notifications', preferences: 'Preferences',
     appearance: 'Appearance', password: 'Password', twoFactor: 'Two-Factor Authentication', dangerZone: 'Danger Zone',
     deleteAccount: 'Delete Account', notificationsDesc: 'Configure your notification preferences',
+    refresh: 'Refresh',
+    registerNewEmployee: 'Register New Employee',
+    generateCv: 'Generate CV',
+    bookTravel: 'Book Travel',
+    viewDocuments: 'View Documents',
+    cvDatabase: 'CV Database',
+    viewProfiles: 'View Profiles',
+    totalEmployees: 'Total Employees',
+    pendingDocs: 'Pending Docs',
+    travelReady: 'Travel Ready',
+    deployed: 'Deployed',
+    kpiCards: 'KPI cards & quick actions',
+    analytics: 'Registration & deployment analytics',
+    tasks: 'Pending tasks & assignments',
+    activities: 'Recent system activity log',
+    overview: 'Overview',
+    trends: 'Trends',
   },
   travel: {
     commandCenter: 'Command Center', schedule: 'Schedule', tickets: 'Tickets',
@@ -93,6 +116,23 @@ const am: Dictionary = {
     profile: 'መገለጫ', security: 'ደህንነት', notifications: 'ማሳወቂያዎች', preferences: 'ምርጫዎች',
     appearance: 'መልክ', password: 'የይለፍ ቃል', twoFactor: 'ሁለት-ደረጃ ማረጋገጫ', dangerZone: 'አደገኛ ዞን',
     deleteAccount: 'መለያ ሰርዝ', notificationsDesc: 'የማሳወቂያ ምርጫዎችዎን ያዋቅሩ',
+    refresh: 'አድስ',
+    registerNewEmployee: 'አዲስ ሰራተኛ ይመዝገቡ',
+    generateCv: 'ሲቪ ያመንጩ',
+    bookTravel: 'ጉዞ ይያዙ',
+    viewDocuments: 'ሰነዶችን ይመልከቱ',
+    cvDatabase: 'የሲቪ ዳታቤዝ',
+    viewProfiles: 'መገለጫዎችን ይመልከቱ',
+    totalEmployees: 'ጠቅላላ ሰራተኞች',
+    pendingDocs: 'በመጠባበቅ ላይ ያሉ ሰነዶች',
+    travelReady: 'ለጉዞ ዝግጁ',
+    deployed: 'ተሰማርተዋል',
+    kpiCards: 'የKPI ካርዶች እና ፈጣን ተግባራት',
+    analytics: 'የምዝገባ እና የማሰማራት ትንታኔ',
+    tasks: 'በመጠባበቅ ላይ ያሉ ተግባራት',
+    activities: 'የቅርብ ጊዜ የስርዓት እንቅስቃሴ ምዝግብ',
+    overview: 'አጠቃላይ እይታ',
+    trends: 'አዝማሚያዎች',
   },
   travel: {
     commandCenter: 'የትእዛዝ ማዕከል', schedule: 'መርሐግብር', tickets: 'ቲኬቶች',
@@ -134,6 +174,23 @@ const om: Dictionary = {
     profile: 'Proofaayilii', security: 'Nageenya', notifications: 'Beeksisota', preferences: 'Filannoo',
     appearance: 'Mul\'ata', password: 'Jecha Iccitii', twoFactor: 'Mirkaneessa Sadarkaa Lamaa', dangerZone: 'Bakka Diigamaa',
     deleteAccount: 'Herrega Haqi', notificationsDesc: 'Beeksisota kee qindeessi',
+    refresh: 'Haaraa',
+    registerNewEmployee: 'Hojjetaa Haaraa Galmeessi',
+    generateCv: 'CV Oomishi',
+    bookTravel: 'Imala Qindeessi',
+    viewDocuments: 'Galmee Ilaali',
+    cvDatabase: 'CV Database',
+    viewProfiles: 'Proofaayilii Ilaali',
+    totalEmployees: 'Hojjettota Walii',
+    pendingDocs: 'Galmee Eegaa',
+    travelReady: 'Imalaaf Qophaa\'e',
+    deployed: 'Hojiirra Oole',
+    kpiCards: 'KPI kaardii fi gochaalee',
+    analytics: 'Galmeessaa fi hojiirra oolmaa xiinxala',
+    tasks: 'Hojiwwan Eegaa',
+    activities: 'Sochii Sirnaa Kan Dhihoo',
+    overview: 'Yaala Waliigalaa',
+    trends: 'Karoora',
   },
   travel: {
     commandCenter: 'Buufata Ajaja', schedule: 'Karoora', tickets: 'Tikeetota',
@@ -175,6 +232,23 @@ const ar: Dictionary = {
     profile: 'الملف الشخصي', security: 'الأمان', notifications: 'الإشعارات', preferences: 'التفضيلات',
     appearance: 'المظهر', password: 'كلمة المرور', twoFactor: 'المصادقة الثنائية', dangerZone: 'منطقة الخطر',
     deleteAccount: 'حذف الحساب', notificationsDesc: 'قم بتكوين تفضيلات الإشعارات الخاصة بك',
+    refresh: 'تحديث',
+    registerNewEmployee: 'تسجيل موظف جديد',
+    generateCv: 'إنشاء السيرة الذاتية',
+    bookTravel: 'حجز سفر',
+    viewDocuments: 'عرض المستندات',
+    cvDatabase: 'قاعدة بيانات السير الذاتية',
+    viewProfiles: 'عرض الملفات الشخصية',
+    totalEmployees: 'إجمالي الموظفين',
+    pendingDocs: 'المستندات المعلقة',
+    travelReady: 'جاهز للسفر',
+    deployed: 'تم النشر',
+    kpiCards: 'بطاقات المؤشرات والإجراءات السريعة',
+    analytics: 'تحليلات التسجيل والنشر',
+    tasks: 'المهام المعلقة',
+    activities: 'سجل نشاط النظام الأخير',
+    overview: 'نظرة عامة',
+    trends: 'الاتجاهات',
   },
   travel: {
     commandCenter: 'مركز القيادة', schedule: 'الجدول', tickets: 'التذاكر',

@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { Save, Bell, Mail, MessageSquare, AlertTriangle } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 export function NotificationSettings() {
+  const { addToast } = useToast();
   const [notifications, setNotifications] = useState({
     emailDocuments: true,
     emailTravel: true,
@@ -29,6 +31,7 @@ export function NotificationSettings() {
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
       console.error('Error saving notifications:', error);
+      addToast({ title: 'Error', description: 'Failed to save notification preferences. Please try again.', type: 'error' });
     } finally {
       setSaving(false);
     }

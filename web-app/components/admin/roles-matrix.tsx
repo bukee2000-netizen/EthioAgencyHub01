@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { Shield, Save, RotateCcw } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 type Permission = 'create' | 'read' | 'update' | 'delete';
 type Role = 'SUPER_ADMIN' | 'AGENCY_ADMIN' | 'AGENT' | 'VIEWER';
@@ -87,6 +88,7 @@ const PERMISSION_LABELS: Record<Permission, string> = {
 };
 
 export function RolesMatrixEditor() {
+  const { addToast } = useToast();
   const [permissions, setPermissions] = useState<RolePermissions>(DEFAULT_PERMISSIONS);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -118,6 +120,7 @@ export function RolesMatrixEditor() {
       }
     } catch (error) {
       console.error('Error saving permissions:', error);
+      addToast({ title: 'Error', description: 'Failed to save permissions. Please try again.', type: 'error' });
     }
   };
 
@@ -128,7 +131,7 @@ export function RolesMatrixEditor() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-lg font-bold">
@@ -139,7 +142,7 @@ export function RolesMatrixEditor() {
           <div className="flex gap-2">
             <button
               onClick={handleReset}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50"
             >
               <RotateCcw className="h-4 w-4" />
               Reset
@@ -158,14 +161,14 @@ export function RolesMatrixEditor() {
         <div className="mt-6 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-200">
-                <th className="pb-3 text-left font-medium text-slate-500">Resource</th>
+              <tr className="border-b border-slate-200 dark:border-slate-700">
+                <th className="pb-3 text-left font-medium text-slate-500 dark:text-slate-400">Resource</th>
                 {Object.entries(ROLE_LABELS).map(([role, label]) => (
-                  <th key={role} className="pb-3 text-center font-medium text-slate-500">{label}</th>
+                  <th key={role} className="pb-3 text-center font-medium text-slate-500 dark:text-slate-400">{label}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {RESOURCES.map(resource => (
                 <tr key={resource}>
                   <td className="py-3 font-medium capitalize">{resource}</td>
@@ -181,7 +184,7 @@ export function RolesMatrixEditor() {
                               className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
                                 hasPerm
                                   ? 'bg-brand-100 text-brand-700'
-                                  : 'bg-slate-100 text-slate-400'
+                                  : 'bg-slate-100 dark:bg-slate-700/50 text-slate-400'
                               }`}
                               title={PERMISSION_LABELS[perm]}
                             >
@@ -199,7 +202,7 @@ export function RolesMatrixEditor() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <h3 className="text-lg font-bold">Permission Legend</h3>
         <div className="mt-4 flex flex-wrap gap-4">
           {Object.entries(PERMISSION_LABELS).map(([key, label]) => (
@@ -207,7 +210,7 @@ export function RolesMatrixEditor() {
               <span className="rounded bg-brand-100 px-2 py-1 text-xs font-medium text-brand-700">
                 {key.charAt(0).toUpperCase()}
               </span>
-              <span className="text-sm text-slate-600">{label}</span>
+              <span className="text-sm text-slate-600 dark:text-slate-300">{label}</span>
             </div>
           ))}
         </div>

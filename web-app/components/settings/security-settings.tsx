@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { Save, Key, Lock, Shield, Eye, EyeOff, Copy, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -120,7 +120,7 @@ export function SecuritySettings() {
   const InputPassword = ({ value, onChange, show, onToggle, placeholder }: any) => (
     <div className="relative">
       <input type={show ? 'text' : 'password'} value={value} onChange={onChange} placeholder={placeholder}
-        className="w-full rounded-xl border border-slate-200 py-2.5 pl-3 pr-10 text-sm focus:border-brand-600 focus:outline-none" />
+        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 pl-3 pr-10 text-sm focus:border-brand-600 focus:outline-none" />
       <button type="button" onClick={onToggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </button>
@@ -129,12 +129,12 @@ export function SecuritySettings() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-amber-100 p-2"><Lock className="h-5 w-5 text-amber-600" /></div>
           <div>
             <h3 className="text-lg font-bold">Change Password</h3>
-            <p className="text-sm text-slate-500">Update your password to keep your account secure.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Update your password to keep your account secure.</p>
           </div>
         </div>
         <div className="mt-6 space-y-4">
@@ -165,12 +165,12 @@ export function SecuritySettings() {
         </button>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-emerald-100 p-2"><Shield className="h-5 w-5 text-emerald-600" /></div>
           <div>
             <h3 className="text-lg font-bold">Two-Factor Authentication</h3>
-            <p className="text-sm text-slate-500">Add an extra layer of security to your account.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Add an extra layer of security to your account.</p>
           </div>
         </div>
 
@@ -184,7 +184,7 @@ export function SecuritySettings() {
                   </span>
                 ) : 'Status: Not Enabled'}
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 {mfaEnabled ? 'Your account is protected with 2FA' : 'Enable 2FA for enhanced security'}
               </p>
             </div>
@@ -198,27 +198,27 @@ export function SecuritySettings() {
         {setupMode === 'setup' && (
           <div className="mt-6 text-center py-4">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-brand-600" />
-            <p className="mt-2 text-sm text-slate-500">Setting up 2FA...</p>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Setting up 2FA...</p>
           </div>
         )}
 
         {setupMode === 'verify' && setupData && (
           <div className="mt-6 space-y-4">
-            <p className="text-sm font-medium text-ink">Scan this QR code with your authenticator app:</p>
+            <p className="text-sm font-medium text-ink dark:text-ink-dark">Scan this QR code with your authenticator app:</p>
             <div className="flex justify-center py-4">
-              <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-800">
                 <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.otpauth)}`}
                   alt="QR Code" className="w-48 h-48" />
               </div>
             </div>
-            <p className="text-xs text-slate-500 text-center">Or manually enter: <code className="bg-slate-100 px-2 py-0.5 rounded text-xs font-mono">{setupData.secret}</code></p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 text-center">Or manually enter: <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded text-xs font-mono">{setupData.secret}</code></p>
 
-            <div className="border-t border-slate-100 pt-4">
-              <p className="text-sm font-medium text-ink mb-3">Backup Codes</p>
-              <p className="text-xs text-slate-500 mb-2">Save these codes somewhere safe. Each code can be used once.</p>
+            <div className="border-t border-slate-100 dark:border-slate-700 pt-4">
+              <p className="text-sm font-medium text-ink dark:text-ink-dark mb-3">Backup Codes</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Save these codes somewhere safe. Each code can be used once.</p>
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {setupData.backupCodes.map((code, i) => (
-                  <code key={i} className="bg-slate-50 px-3 py-1.5 rounded text-sm font-mono text-center text-slate-700 border border-slate-200">
+                  <code key={i} className="bg-slate-50 dark:bg-slate-800/50 px-3 py-1.5 rounded text-sm font-mono text-center text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                     {code}
                   </code>
                 ))}
@@ -229,13 +229,13 @@ export function SecuritySettings() {
               </button>
             </div>
 
-            <div className="border-t border-slate-100 pt-4">
-              <p className="text-sm font-medium text-ink mb-2">Verify Setup</p>
-              <p className="text-xs text-slate-500 mb-3">Enter the 6-digit code from your authenticator app to confirm setup.</p>
+            <div className="border-t border-slate-100 dark:border-slate-700 pt-4">
+              <p className="text-sm font-medium text-ink dark:text-ink-dark mb-2">Verify Setup</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Enter the 6-digit code from your authenticator app to confirm setup.</p>
               <div className="flex gap-3 items-center">
                 <input type="text" maxLength={6} placeholder="000000" value={verifyToken}
                   onChange={(e) => setVerifyToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-32 rounded-xl border border-slate-300 px-4 py-2.5 text-center text-lg font-mono tracking-widest focus:border-brand-600 focus:outline-none" />
+                  className="w-32 rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-center text-lg font-mono tracking-widest focus:border-brand-600 focus:outline-none" />
                 <button onClick={handleVerify2FA} disabled={verifying || verifyToken.length < 6}
                   className="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50">
                   {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Verify'}
@@ -249,20 +249,20 @@ export function SecuritySettings() {
         {setupMode === 'done' && (
           <div className="mt-6 text-center py-6">
             <CheckCircle2 className="h-12 w-12 mx-auto text-green-600 mb-3" />
-            <h4 className="text-lg font-bold text-ink">2FA Enabled Successfully</h4>
-            <p className="text-sm text-slate-500 mt-1">Your account is now protected with two-factor authentication.</p>
+            <h4 className="text-lg font-bold text-ink dark:text-ink-dark">2FA Enabled Successfully</h4>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Your account is now protected with two-factor authentication.</p>
           </div>
         )}
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <h3 className="text-lg font-bold">Active Sessions</h3>
-        <p className="mt-1 text-sm text-slate-500">Manage your active login sessions.</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage your active login sessions.</p>
         <div className="mt-4 space-y-3">
-          <div className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
+          <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 p-4">
             <div>
               <p className="font-medium">Current Session</p>
-              <p className="text-sm text-slate-500">Chrome on Windows - Addis Ababa, ET</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Chrome on Windows - Addis Ababa, ET</p>
             </div>
             <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">Active</span>
           </div>

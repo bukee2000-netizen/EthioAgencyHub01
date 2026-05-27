@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { Download, DollarSign, TrendingUp, BarChart3 } from 'lucide-react';
@@ -92,11 +92,11 @@ export function FinancialReportsModule() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-ink">Financial Reports</h2>
-            <p className="mt-2 text-slate-600">
+            <h2 className="text-3xl font-bold text-ink dark:text-ink-dark">Financial Reports</h2>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">
               {loading ? 'Loading...' : `${data?.recordCount || 0} bookings, ${data?.totalRevenue?.toLocaleString() || 0} ETB total revenue`}
             </p>
           </div>
@@ -108,32 +108,32 @@ export function FinancialReportsModule() {
       </div>
 
       <select value={dateRange} onChange={(e) => setDateRange(e.target.value)}
-        className="rounded-lg border border-slate-200 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
+        className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none">
         <option value="week">This Week</option>
         <option value="month">This Month</option>
         <option value="quarter">This Quarter</option>
         <option value="year">This Year</option>
       </select>
 
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-emerald-50 to-cyan-50 p-6">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-emerald-50 to-cyan-50 p-6">
         <div className="grid gap-6 md:grid-cols-4">
           <div>
-            <p className="text-sm font-medium text-slate-600">Total Revenue</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Total Revenue</p>
             <p className="mt-3 text-3xl font-bold text-emerald-700">{loading ? '...' : `${(data?.totalRevenue || 0).toLocaleString()} ETB`}</p>
             <p className="text-xs text-emerald-600 mt-2">From travel bookings</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-600">Collected</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Collected</p>
             <p className="mt-3 text-3xl font-bold text-green-600">{loading ? '...' : `${(data?.paidTotal || 0).toLocaleString()} ETB`}</p>
             <p className="text-xs text-green-600 mt-2">Paid bookings</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-600">Outstanding</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Outstanding</p>
             <p className="mt-3 text-3xl font-bold text-amber-600">{loading ? '...' : `${(data?.pendingTotal || 0).toLocaleString()} ETB`}</p>
             <p className="text-xs text-amber-600 mt-2">Pending collection</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-600">Collection Rate</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Collection Rate</p>
             <p className="mt-3 text-3xl font-bold text-blue-700">{loading ? '...' : `${data?.totalRevenue > 0 ? Math.round((data?.paidTotal / data?.totalRevenue) * 100) : 0}%`}</p>
             <p className="text-xs text-emerald-600 mt-2">Of total billed</p>
           </div>
@@ -142,19 +142,19 @@ export function FinancialReportsModule() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {financialMetrics.map(report => (
-          <div key={report.id} className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-lg transition-shadow">
+          <div key={report.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-ink">{report.title}</h3>
-                <p className="text-sm text-slate-600 mt-1">{report.description}</p>
+                <h3 className="text-lg font-semibold text-ink dark:text-ink-dark">{report.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{report.description}</p>
               </div>
               <DollarSign className="h-8 w-8 text-brand-600 opacity-30" />
             </div>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {report.metrics.map((metric, idx) => (
-                <div key={idx} className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs text-slate-600">{metric.label}</p>
-                  <p className="mt-1 text-xl font-bold text-ink">{metric.value}</p>
+                <div key={idx} className="rounded-lg bg-slate-50 dark:bg-slate-800/50 p-3">
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{metric.label}</p>
+                  <p className="mt-1 text-xl font-bold text-ink dark:text-ink-dark">{metric.value}</p>
                   <p className="text-xs text-emerald-600 mt-1">{metric.trend}</p>
                 </div>
               ))}
@@ -166,31 +166,31 @@ export function FinancialReportsModule() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h3 className="text-lg font-semibold text-ink mb-6">Revenue Overview</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6">
+        <h3 className="text-lg font-semibold text-ink dark:text-ink-dark mb-6">Revenue Overview</h3>
         <div className="grid gap-8 md:grid-cols-2">
           <div>
-            <p className="font-medium text-slate-700 mb-3">Revenue Distribution</p>
+            <p className="font-medium text-slate-700 dark:text-slate-200 mb-3">Revenue Distribution</p>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-xl bg-emerald-50 p-4">
-                <p className="text-xs text-slate-500">Collected</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Collected</p>
                 <p className="text-lg font-bold text-emerald-700">{loading ? '...' : `${(data?.paidTotal || 0).toLocaleString()} ETB`}</p>
               </div>
               <div className="rounded-xl bg-amber-50 p-4">
-                <p className="text-xs text-slate-500">Outstanding</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Outstanding</p>
                 <p className="text-lg font-bold text-amber-700">{loading ? '...' : `${(data?.pendingTotal || 0).toLocaleString()} ETB`}</p>
               </div>
             </div>
           </div>
           <div>
-            <p className="font-medium text-slate-700 mb-3">Booking Summary</p>
+            <p className="font-medium text-slate-700 dark:text-slate-200 mb-3">Booking Summary</p>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-xl bg-blue-50 p-4">
-                <p className="text-xs text-slate-500">Total Bookings</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Total Bookings</p>
                 <p className="text-lg font-bold text-blue-700">{loading ? '...' : data?.recordCount || 0}</p>
               </div>
               <div className="rounded-xl bg-purple-50 p-4">
-                <p className="text-xs text-slate-500">Destinations</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Destinations</p>
                 <p className="text-lg font-bold text-purple-700">{loading ? '...' : data?.destinations || 0}</p>
               </div>
             </div>

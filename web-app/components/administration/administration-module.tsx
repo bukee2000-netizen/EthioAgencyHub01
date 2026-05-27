@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -68,21 +68,21 @@ export function AdministrationModule() {
     { id: 'AGENCY_ADMIN', name: 'Agency Admin', description: 'Agency-level administration', permissions: ['employees', 'documents', 'travel', 'agents', 'reports'], usersCount: 3, color: 'bg-blue-500' },
     { id: 'AGENT', name: 'Agent', description: 'Can manage CVs and employees', permissions: ['cv_view', 'employees_view', 'employees_edit'], usersCount: 12, color: 'bg-green-500' },
     { id: 'HR_MANAGER', name: 'HR Manager', description: 'Manage employees and documents', permissions: ['employees', 'documents', 'reports'], usersCount: 2, color: 'bg-purple-500' },
-    { id: 'VIEWER', name: 'Viewer', description: 'Read-only access', permissions: ['reports_view'], usersCount: 8, color: 'bg-slate-500' },
+    { id: 'VIEWER', name: 'Viewer', description: 'Read-only access', permissions: ['reports_view'], usersCount: 8, color: 'bg-slate-50 dark:bg-slate-800/500' },
   ];
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       active: 'bg-green-100 text-green-700',
-      inactive: 'bg-slate-100 text-slate-700',
+      inactive: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
       pending: 'bg-yellow-100 text-yellow-700',
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
   };
 
   const getRoleColor = (role: string) => {
     const roleData = roles.find(r => r.id === role);
-    return roleData?.color || 'bg-slate-500';
+    return roleData?.color || 'bg-slate-50 dark:bg-slate-800/500';
   };
 
   const activeUsers = users.filter(u => u.status === 'active').length;
@@ -94,7 +94,7 @@ export function AdministrationModule() {
       <div className="rounded-3xl border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-ink flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <BadgeCheck className="h-7 w-7 text-red-600" />
               Administration
             </h2>
@@ -143,14 +143,14 @@ export function AdministrationModule() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200">
+      <div className="border-b border-slate-200 dark:border-slate-700">
         <nav className="flex gap-6">
           <button
             onClick={() => setActiveTab('users')}
             className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm ${
               activeTab === 'users' 
                 ? 'border-red-500 text-red-600' 
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'
             }`}
           >
             <Users className="h-4 w-4" />
@@ -161,7 +161,7 @@ export function AdministrationModule() {
             className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm ${
               activeTab === 'roles' 
                 ? 'border-red-500 text-red-600' 
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'
             }`}
           >
             <Lock className="h-4 w-4" />
@@ -173,7 +173,7 @@ export function AdministrationModule() {
       {activeTab === 'users' ? (
         <>
           {/* Search and Filters */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -182,13 +182,13 @@ export function AdministrationModule() {
                   placeholder="Search users..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-red-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-red-500 focus:outline-none"
                 />
               </div>
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-red-500 focus:outline-none"
+                className="rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm focus:border-red-500 focus:outline-none"
               >
                 <option value="all">All Roles</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
@@ -201,30 +201,30 @@ export function AdministrationModule() {
           </div>
 
           {/* Users Table */}
-          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-slate-200 bg-slate-50">
+                <thead className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                   <tr>
-                    <th className="px-6 py-4 text-left font-semibold text-slate-600">User</th>
-                    <th className="px-6 py-4 text-left font-semibold text-slate-600">Role</th>
-                    <th className="px-6 py-4 text-left font-semibold text-slate-600">Department</th>
-                    <th className="px-6 py-4 text-left font-semibold text-slate-600">Status</th>
-                    <th className="px-6 py-4 text-left font-semibold text-slate-600">Last Login</th>
-                    <th className="px-6 py-4 text-left font-semibold text-slate-600">Actions</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">User</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Role</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Department</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Status</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Last Login</th>
+                    <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-slate-50">
+                    <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center font-bold text-red-600">
                             {user.name.split(' ').map(n => n[0]).join('')}
                           </div>
                           <div>
-                            <p className="font-medium text-ink">{user.name}</p>
-                            <p className="text-xs text-slate-500">{user.email}</p>
+                            <p className="font-medium text-ink dark:text-ink-dark">{user.name}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
                           </div>
                         </div>
                       </td>
@@ -233,22 +233,22 @@ export function AdministrationModule() {
                           {user.role.replace(/_/g, ' ')}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">{user.department}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{user.department}</td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(user.status)}`}>
                           {user.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 text-xs">
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">
                         {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never'}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
-                          <button className="p-1.5 rounded-lg hover:bg-slate-100" title="Edit">
-                            <Edit className="h-4 w-4 text-slate-500" />
+                          <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="Edit">
+                            <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                           </button>
-                          <button className="p-1.5 rounded-lg hover:bg-slate-100" title="View">
-                            <Eye className="h-4 w-4 text-slate-500" />
+                          <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="View">
+                            <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                           </button>
                           <button className="p-1.5 rounded-lg hover:bg-red-50" title="Delete">
                             <Trash2 className="h-4 w-4 text-red-500" />
@@ -265,35 +265,35 @@ export function AdministrationModule() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {roles.map((role) => (
-            <div key={role.id} className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div key={role.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-lg ${role.color} flex items-center justify-center`}>
                     <Lock className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-ink">{role.name}</h3>
-                    <p className="text-xs text-slate-500">{role.description}</p>
+                    <h3 className="font-semibold text-ink dark:text-ink-dark">{role.name}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{role.description}</p>
                   </div>
                 </div>
               </div>
               <div className="mb-4">
-                <p className="text-xs text-slate-500 mb-2">Permissions:</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Permissions:</p>
                 <div className="flex flex-wrap gap-1">
                   {role.permissions.slice(0, 4).map((perm) => (
-                    <span key={perm} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs">
+                    <span key={perm} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded text-xs">
                       {perm.replace(/_/g, ' ')}
                     </span>
                   ))}
                   {role.permissions.length > 4 && (
-                    <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs">
+                    <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded text-xs">
                       +{role.permissions.length - 4} more
                     </span>
                   )}
                 </div>
               </div>
-              <div className="flex items-center justify-between border-t border-slate-200 pt-4">
-                <span className="text-sm text-slate-600">{role.usersCount} users</span>
+              <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-700 pt-4">
+                <span className="text-sm text-slate-600 dark:text-slate-300">{role.usersCount} users</span>
                 <button className="text-xs font-medium text-red-600 hover:text-red-800">Edit Role</button>
               </div>
             </div>
@@ -303,71 +303,71 @@ export function AdministrationModule() {
 
       {/* Quick Links */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Link href="/administration/settings" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-red-200 hover:shadow-md transition-all">
+        <Link href="/administration/settings" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-red-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-red-100">
               <Settings className="h-5 w-5 text-red-600" />
             </div>
-            <h3 className="font-semibold text-ink">System Settings</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">System Settings</h3>
           </div>
-          <p className="text-sm text-slate-500">Configure system preferences</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Configure system preferences</p>
         </Link>
-        <Link href="/administration/logs" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-red-200 hover:shadow-md transition-all">
+        <Link href="/administration/logs" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-red-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-blue-100">
               <BarChart3 className="h-5 w-5 text-blue-600" />
             </div>
-            <h3 className="font-semibold text-ink">System Logs</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">System Logs</h3>
           </div>
-          <p className="text-sm text-slate-500">View system activity logs</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">View system activity logs</p>
         </Link>
-        <Link href="/administration/audit" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-red-200 hover:shadow-md transition-all">
+        <Link href="/administration/audit" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-red-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-green-100">
               <Shield className="h-5 w-5 text-green-600" />
             </div>
-            <h3 className="font-semibold text-ink">Audit Trail</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">Audit Trail</h3>
           </div>
-          <p className="text-sm text-slate-500">Track user actions</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Track user actions</p>
         </Link>
-        <Link href="/administration/billing" className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-red-200 hover:shadow-md transition-all">
+        <Link href="/administration/billing" className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-red-200 hover:shadow-md transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 rounded-lg bg-purple-100">
               <Key className="h-5 w-5 text-purple-600" />
             </div>
-            <h3 className="font-semibold text-ink">Billing</h3>
+            <h3 className="font-semibold text-ink dark:text-ink-dark">Billing</h3>
           </div>
-          <p className="text-sm text-slate-500">Manage subscriptions</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Manage subscriptions</p>
         </Link>
       </div>
 
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-ink">Add New User</h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-lg hover:bg-slate-100">
-                <X className="h-5 w-5 text-slate-500" />
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-800 shadow-xl">
+            <div className="border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-ink dark:text-ink-dark">Add New User</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                <X className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               </button>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
-                  <input type="text" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="John Doe" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Full Name *</label>
+                  <input type="text" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="John Doe" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Email *</label>
-                  <input type="email" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="john@example.com" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Email *</label>
+                  <input type="email" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="john@example.com" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                  <input type="tel" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="+251911234567" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Phone</label>
+                  <input type="tel" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="+251911234567" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Role *</label>
-                  <select className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Role *</label>
+                  <select className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
                     <option value="">Select Role</option>
                     <option value="SUPER_ADMIN">Super Admin</option>
                     <option value="AGENCY_ADMIN">Agency Admin</option>
@@ -377,13 +377,13 @@ export function AdministrationModule() {
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Department</label>
-                  <input type="text" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="e.g., IT, Operations" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Department</label>
+                  <input type="text" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., IT, Operations" />
                 </div>
               </div>
             </div>
-            <div className="border-t border-slate-200 px-6 py-4 flex justify-end gap-3">
-              <button onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium text-slate-600">Cancel</button>
+            <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4 flex justify-end gap-3">
+              <button onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300">Cancel</button>
               <button className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white">
                 <Save className="h-4 w-4" />
                 Add User

@@ -122,17 +122,17 @@ export function Sidebar({ dict }: Props) {
         {(isOpen || isHovering) && (
           <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3 shrink-0">
             <div className="grid grid-cols-3 gap-2">
-              <Link href="/employee-management/registration" className="flex flex-col items-center gap-1 rounded-xl bg-brand-50 py-2 text-brand-700 hover:bg-brand-100 transition-colors" title="Register Employee">
+              <Link href="/employee-management/registration" className="flex flex-col items-center gap-1 rounded-xl bg-brand-50 py-2 text-brand-700 hover:bg-brand-100 transition-colors" title={dict.common.registerNewEmployee}>
                 <PlusCircle className="h-4 w-4" />
-                <span className="text-[10px] font-semibold">Register</span>
+                <span className="text-[10px] font-semibold">{dict.common.register}</span>
               </Link>
-              <Link href="/travel" className="flex flex-col items-center gap-1 rounded-xl bg-blue-50 py-2 text-blue-700 hover:bg-blue-100 transition-colors" title="Travel">
+              <Link href="/travel" className="flex flex-col items-center gap-1 rounded-xl bg-blue-50 py-2 text-blue-700 hover:bg-blue-100 transition-colors" title={dict.common.travel}>
                 <Plane className="h-4 w-4" />
-                <span className="text-[10px] font-semibold">Travel</span>
+                <span className="text-[10px] font-semibold">{dict.common.travel}</span>
               </Link>
-              <Link href="/documents" className="flex flex-col items-center gap-1 rounded-xl bg-purple-50 py-2 text-purple-700 hover:bg-purple-100 transition-colors" title="Documents">
+              <Link href="/documents" className="flex flex-col items-center gap-1 rounded-xl bg-purple-50 py-2 text-purple-700 hover:bg-purple-100 transition-colors" title={dict.common.documents}>
                 <FileText className="h-4 w-4" />
-                <span className="text-[10px] font-semibold">Documents</span>
+                <span className="text-[10px] font-semibold">{dict.common.documents}</span>
               </Link>
             </div>
           </div>

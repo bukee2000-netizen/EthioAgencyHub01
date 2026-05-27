@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Upload, CheckCircle2, FileText, AlertCircle, Search, User, FileType, Loader2, Cloud, X } from 'lucide-react';
+import { useToast } from '@/components/ui/toast-provider';
 
 interface UploadedFile {
   id: string;
@@ -19,6 +20,7 @@ interface Employee {
 }
 
 export function DocumentsUpload() {
+  const { addToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedDocType, setSelectedDocType] = useState('');
@@ -46,6 +48,7 @@ export function DocumentsUpload() {
         }
       } catch (error) {
         console.error('Failed to fetch employees:', error);
+        addToast({ title: 'Error', description: 'Failed to load employees list.', type: 'error' });
       } finally {
         setLoadingEmployees(false);
       }
@@ -122,23 +125,23 @@ export function DocumentsUpload() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-ink">Upload Documents</h1>
+        <h1 className="text-3xl font-bold text-ink dark:text-ink-dark">Upload Documents</h1>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Upload Form Configuration */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-ink mb-6">New Document Upload</h3>
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
+          <h3 className="text-lg font-bold text-ink dark:text-ink-dark mb-6">New Document Upload</h3>
 
           <div className="grid gap-6 md:grid-cols-2 mb-8">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">1. Select Employee</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">1. Select Employee</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-500" />
                 <select
                   value={selectedEmployee}
                   onChange={(e) => setSelectedEmployee(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 py-3 pl-11 pr-4 text-sm font-medium text-slate-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none bg-white cursor-pointer"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-3 pl-11 pr-4 text-sm font-medium text-slate-700 dark:text-slate-200 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none bg-white dark:bg-slate-800 cursor-pointer"
                   disabled={loadingEmployees}
                 >
                   <option value="" disabled>{loadingEmployees ? 'Loading employees...' : 'Choose an employee...'}</option>
@@ -148,13 +151,13 @@ export function DocumentsUpload() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">2. Document Type</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">2. Document Type</label>
               <div className="relative">
                 <FileType className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-500" />
                 <select
                   value={selectedDocType}
                   onChange={(e) => setSelectedDocType(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 py-3 pl-11 pr-4 text-sm font-medium text-slate-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none bg-white cursor-pointer"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-3 pl-11 pr-4 text-sm font-medium text-slate-700 dark:text-slate-200 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none bg-white dark:bg-slate-800 cursor-pointer"
                 >
                   <option value="" disabled>Choose document type...</option>
                   {docTypes.map(doc => <option key={doc} value={doc}>{doc}</option>)}
@@ -163,9 +166,9 @@ export function DocumentsUpload() {
             </div>
           </div>
 
-          <label className="block sm:hidden text-sm font-semibold text-slate-700 mb-2">3. Upload File</label>
+          <label className="block sm:hidden text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">3. Upload File</label>
           <div 
-            className={`relative rounded-2xl border-2 border-dashed ${canUpload ? 'border-brand-300 bg-brand-50/30 hover:border-brand-400 hover:bg-brand-50 transition-colors cursor-pointer' : 'border-slate-200 bg-slate-50/50 opacity-70 cursor-not-allowed'} p-10 text-center`}
+            className={`relative rounded-2xl border-2 border-dashed ${canUpload ? 'border-brand-300 bg-brand-50/30 hover:border-brand-400 hover:bg-brand-50 transition-colors cursor-pointer' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50/50 opacity-70 cursor-not-allowed'} p-10 text-center`}
             onClick={() => canUpload && fileInputRef.current?.click()}
           >
             <input
@@ -180,27 +183,27 @@ export function DocumentsUpload() {
             {uploading ? (
               <div className="flex flex-col items-center">
                 <Loader2 className="h-10 w-10 text-brand-600 animate-spin mb-4" />
-                <p className="text-lg font-bold text-ink">Uploading to Teledrive...</p>
+                <p className="text-lg font-bold text-ink dark:text-ink-dark">Uploading to Teledrive...</p>
                 <div className="mt-4 w-64 h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-brand-500 transition-all duration-300" 
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
-                <p className="mt-2 text-sm text-slate-500">{uploadProgress}%</p>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{uploadProgress}%</p>
               </div>
             ) : (
               <>
                 <div className="flex justify-center mb-4">
-                  <div className={`rounded-full p-4 ${canUpload ? 'bg-brand-100 text-brand-600 shadow-sm' : 'bg-slate-200 text-slate-400'}`}>
+                  <div className={`rounded-full p-4 ${canUpload ? 'bg-brand-100 text-brand-600 shadow-sm dark:shadow-soft-dark' : 'bg-slate-200 text-slate-400'}`}>
                     <Cloud className="h-8 w-8" />
                   </div>
                 </div>
-                <h4 className="text-lg font-bold text-ink">
+                <h4 className="text-lg font-bold text-ink dark:text-ink-dark">
                   {canUpload ? 'Click or drag file to upload' : 'Select an employee & document type first'}
                 </h4>
-                <p className="text-sm font-medium text-slate-500 mt-2">
-                  Supports PDF, JPG, PNG up to 50MB • Files sync to Teledrive cloud
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">
+                  Supports PDF, JPG, PNG up to 50MB â€¢ Files sync to Teledrive cloud
                 </p>
               </>
             )}
@@ -225,28 +228,28 @@ export function DocumentsUpload() {
 
         {/* Context Stats / Info Panel */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm bg-gradient-to-br from-white to-slate-50">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark bg-gradient-to-br from-white to-slate-50">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-green-100 rounded-lg text-green-600"><CheckCircle2 className="h-5 w-5" /></div>
-              <p className="text-sm font-bold text-slate-700">Today's Uploads</p>
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Today's Uploads</p>
             </div>
-            <p className="text-4xl font-extrabold text-ink">{uploads.length}</p>
+            <p className="text-4xl font-extrabold text-ink dark:text-ink-dark">{uploads.length}</p>
             <p className="mt-2 text-xs font-semibold text-green-600 flex items-center gap-1">
               <span className="text-lg leading-none">+</span> synced to cloud
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-bold text-slate-700 mb-4">Storage Status</p>
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Storage Status</p>
             <div className="flex items-center gap-2 mb-2">
               <Cloud className="h-5 w-5 text-brand-600" />
-              <p className="text-3xl font-extrabold text-slate-800">Teledrive</p>
+              <p className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">Teledrive</p>
             </div>
-            <p className="text-sm text-slate-500 mb-4">300 ETB/month • Unlimited storage</p>
-            <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">300 ETB/month â€¢ Unlimited storage</p>
+            <div className="h-2.5 w-full rounded-full bg-slate-100 dark:bg-slate-700/50 overflow-hidden">
               <div className="h-full rounded-full bg-brand-500" style={{ width: '12.4%' }}></div>
             </div>
-            <p className="mt-3 text-xs font-semibold text-slate-500 flex justify-between">
+            <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400 flex justify-between">
               <span>12.4% Used</span>
               <span>1 TB Limit</span>
             </p>
@@ -265,9 +268,9 @@ export function DocumentsUpload() {
       </div>
 
       {/* Uploads History Table */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm mt-8">
-        <div className="border-b border-slate-200 px-6 py-5 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
-          <h3 className="text-lg font-bold text-ink">Recent Uploads History</h3>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm dark:shadow-soft-dark mt-8">
+        <div className="border-b border-slate-200 dark:border-slate-700 px-6 py-5 flex flex-wrap gap-4 items-center justify-between bg-slate-50 dark:bg-slate-800/50/50">
+          <h3 className="text-lg font-bold text-ink dark:text-ink-dark">Recent Uploads History</h3>
           <div className="relative max-w-sm w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -275,13 +278,13 @@ export function DocumentsUpload() {
               placeholder="Search by employee name or file..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm font-medium focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
         </div>
 
         <table className="w-full">
-          <thead className="bg-slate-50/50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <thead className="bg-slate-50 dark:bg-slate-800/50/50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <tr>
               <th className="px-6 py-4">File Name</th>
               <th className="px-6 py-4">Employee</th>
@@ -291,18 +294,18 @@ export function DocumentsUpload() {
               <th className="px-6 py-4">Storage</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
             {filteredUploads.map((upload) => (
-              <tr key={upload.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr key={upload.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <FileText className="h-5 w-5 text-slate-400" />
-                    <span className="font-medium text-ink">{upload.name}</span>
+                    <span className="font-medium text-ink dark:text-ink-dark">{upload.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-slate-600">{upload.employee}</td>
-                <td className="px-6 py-4 text-slate-600">{upload.type}</td>
-                <td className="px-6 py-4 text-slate-600">{upload.size}</td>
+                <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{upload.employee}</td>
+                <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{upload.type}</td>
+                <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{upload.size}</td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     upload.status === 'Verified' ? 'bg-green-100 text-green-700' :
@@ -326,7 +329,7 @@ export function DocumentsUpload() {
         </table>
 
         {filteredUploads.length === 0 && (
-          <div className="py-12 text-center text-slate-500">
+          <div className="py-12 text-center text-slate-500 dark:text-slate-400">
             No uploads found matching your search.
           </div>
         )}

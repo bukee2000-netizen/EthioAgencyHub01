@@ -56,43 +56,43 @@ export default function SkillMatchingPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-gradient-to-r from-brand-50 to-purple-50 p-6 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-brand-50 to-purple-50 p-6 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-ink">Skill Matching</h2>
+            <h2 className="text-2xl font-bold text-ink dark:text-ink-dark">Skill Matching</h2>
           </div>
         </div>
       </section>
 
       {!loading && (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="font-bold text-ink mb-4 flex items-center gap-2"><Briefcase className="h-5 w-5 text-brand-600" /> Top Roles</h3>
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark">
+            <h3 className="font-bold text-ink dark:text-ink-dark mb-4 flex items-center gap-2"><Briefcase className="h-5 w-5 text-brand-600" /> Top Roles</h3>
             <div className="space-y-2.5">
               {topRoles.map(([role, count]) => (
                 <div key={role} className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-700">{role}</span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{role}</span>
                   <div className="flex items-center gap-3">
-                    <div className="h-2 w-32 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-2 w-32 rounded-full bg-slate-100 dark:bg-slate-700/50 overflow-hidden">
                       <div className="h-full rounded-full bg-brand-500" style={{ width: `${(count / employees.length) * 100}%` }} />
                     </div>
-                    <span className="text-sm font-bold text-slate-600 w-8 text-right">{count}</span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-300 w-8 text-right">{count}</span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="font-bold text-ink mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-brand-600" /> Top Destinations</h3>
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm dark:shadow-soft-dark">
+            <h3 className="font-bold text-ink dark:text-ink-dark mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-brand-600" /> Top Destinations</h3>
             <div className="space-y-2.5">
               {topDests.map(([dest, count]) => (
                 <div key={dest} className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-700">{dest}</span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{dest}</span>
                   <div className="flex items-center gap-3">
-                    <div className="h-2 w-32 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-2 w-32 rounded-full bg-slate-100 dark:bg-slate-700/50 overflow-hidden">
                       <div className="h-full rounded-full bg-purple-500" style={{ width: `${(count / employees.length) * 100}%` }} />
                     </div>
-                    <span className="text-sm font-bold text-slate-600 w-8 text-right">{count}</span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-300 w-8 text-right">{count}</span>
                   </div>
                 </div>
               ))}

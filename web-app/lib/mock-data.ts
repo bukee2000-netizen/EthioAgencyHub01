@@ -50,7 +50,7 @@ export const modules = [
       { title: 'Registration', href: '/employee-management/registration', icon: FileText },
       { title: 'CV Generator', href: '/employee-management/cv-generator', icon: FileText },
       { title: 'CV Database', href: '/employee-management/cv-database', icon: FileText },
-      { title: 'Profiles', href: '/employee-management/profiles', icon: UsersRound }
+      { title: 'Profiles', href: '/employee-management/cv-database/employee-profiles', icon: UsersRound }
     ]
   },
   { 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { Search, Plus, Edit2, Trash2, Eye, Shield } from 'lucide-react';
@@ -29,7 +29,7 @@ export function UserManagementModule() {
       case 'Admin': return 'bg-red-100 text-red-800';
       case 'Supervisor': return 'bg-blue-100 text-blue-800';
       case 'Officer': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-slate-100 text-slate-800';
+      default: return 'bg-slate-100 dark:bg-slate-700/50 text-slate-800 dark:text-slate-100';
     }
   };
 
@@ -40,10 +40,10 @@ export function UserManagementModule() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-ink">User Management</h2>
+            <h2 className="text-3xl font-bold text-ink dark:text-ink-dark">User Management</h2>
           </div>
           <button className="flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700">
             <Plus className="h-5 w-5" />
@@ -55,19 +55,19 @@ export function UserManagementModule() {
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-4">
         <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 p-6 text-center">
-          <p className="text-sm font-medium text-slate-600">Total Users</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Total Users</p>
           <p className="mt-2 text-4xl font-bold text-blue-700">{users.length}</p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 text-center">
-          <p className="text-sm font-medium text-slate-600">Active</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Active</p>
           <p className="mt-2 text-4xl font-bold text-emerald-700">{users.filter(u => u.status === 'Active').length}</p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-red-50 to-red-100 p-6 text-center">
-          <p className="text-sm font-medium text-slate-600">Admins</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Admins</p>
           <p className="mt-2 text-4xl font-bold text-red-700">{users.filter(u => u.role === 'Admin').length}</p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 p-6 text-center">
-          <p className="text-sm font-medium text-slate-600">Inactive</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Inactive</p>
           <p className="mt-2 text-4xl font-bold text-amber-700">{users.filter(u => u.status === 'Inactive').length}</p>
         </div>
       </div>
@@ -81,13 +81,13 @@ export function UserManagementModule() {
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 pl-10 pr-4 py-2 focus:border-brand-600 focus:outline-none"
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 pl-10 pr-4 py-2 focus:border-brand-600 focus:outline-none"
           />
         </div>
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="rounded-lg border border-slate-200 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none"
+          className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-medium focus:border-brand-600 focus:outline-none"
         >
           <option value="all">All Roles</option>
           {roles.map(role => (
@@ -97,24 +97,24 @@ export function UserManagementModule() {
       </div>
 
       {/* Users Table */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
             <tr>
-              <th className="px-6 py-4 text-left font-semibold text-slate-600">User</th>
-              <th className="px-6 py-4 text-left font-semibold text-slate-600">Role</th>
-              <th className="px-6 py-4 text-left font-semibold text-slate-600">Status</th>
-              <th className="px-6 py-4 text-left font-semibold text-slate-600">Join Date</th>
-              <th className="px-6 py-4 text-right font-semibold text-slate-600">Actions</th>
+              <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">User</th>
+              <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Role</th>
+              <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Status</th>
+              <th className="px-6 py-4 text-left font-semibold text-slate-600 dark:text-slate-300">Join Date</th>
+              <th className="px-6 py-4 text-right font-semibold text-slate-600 dark:text-slate-300">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map(user => (
-              <tr key={user.id} className="border-b border-slate-200 hover:bg-slate-50">
+              <tr key={user.id} className="border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                 <td className="px-6 py-4">
                   <div>
-                    <p className="font-medium text-ink">{user.name}</p>
-                    <p className="text-sm text-slate-600">{user.email}</p>
+                    <p className="font-medium text-ink dark:text-ink-dark">{user.name}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">{user.email}</p>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -124,17 +124,17 @@ export function UserManagementModule() {
                 </td>
                 <td className="px-6 py-4">
                   <span className={`font-medium ${getStatusColor(user.status)}`}>
-                    ● {user.status}
+                    â— {user.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-600">{user.joinDate}</td>
+                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{user.joinDate}</td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button className="p-2 hover:bg-slate-100 rounded-lg transition">
-                      <Eye className="h-4 w-4 text-slate-600" />
+                    <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+                      <Eye className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                     </button>
-                    <button className="p-2 hover:bg-slate-100 rounded-lg transition">
-                      <Edit2 className="h-4 w-4 text-slate-600" />
+                    <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+                      <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                     </button>
                     <button className="p-2 hover:bg-red-50 rounded-lg transition">
                       <Trash2 className="h-4 w-4 text-red-600" />
@@ -149,10 +149,10 @@ export function UserManagementModule() {
 
       {/* Empty State */}
       {filteredUsers.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-slate-300 p-12 text-center">
+        <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-12 text-center">
           <Shield className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-600 font-medium">No users found</p>
-          <p className="text-sm text-slate-500 mt-1">Try adjusting your search or filters</p>
+          <p className="text-slate-600 dark:text-slate-300 font-medium">No users found</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Try adjusting your search or filters</p>
         </div>
       )}
     </div>

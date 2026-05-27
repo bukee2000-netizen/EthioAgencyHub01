@@ -33,63 +33,63 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-brand-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-900 via-white dark:via-slate-800 to-brand-50 dark:to-brand-950 px-4">
       <div className="w-full max-w-md">
-        <Link href="/login" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-600">
+        <Link href="/login" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600">
           <ArrowLeft className="h-4 w-4" /> Back to Login
         </Link>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 shadow-sm dark:shadow-soft-dark">
           <div className="text-center mb-8">
             <Building2 className="h-12 w-12 mx-auto text-brand-600 mb-3" />
-            <h1 className="text-2xl font-bold text-ink">Create Account</h1>
-            <p className="mt-2 text-sm text-slate-500">Register your agency to get started</p>
+            <h1 className="text-2xl font-bold text-ink dark:text-ink-dark">Create Account</h1>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Register your agency to get started</p>
           </div>
 
-          {error && <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3 text-sm font-medium text-red-700">{error}</div>}
+          {error && <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 p-3 text-sm font-medium text-red-700 dark:text-red-300">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input type="text" required value={form.name} onChange={e => setForm({...form, name: e.target.value})}
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="e.g. Abebe Kebede" />
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="e.g. Abebe Kebede" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input type="email" required value={form.email} onChange={e => setForm({...form, email: e.target.value})}
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="you@agency.com" />
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="you@agency.com" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Agency Name</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Agency Name</label>
               <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input type="text" required value={form.agency} onChange={e => setForm({...form, agency: e.target.value})}
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="e.g. EthioCare Agency" />
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="e.g. EthioCare Agency" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input type={showPassword ? 'text' : 'password'} required value={form.password} onChange={e => setForm({...form, password: e.target.value})}
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-10 text-sm focus:border-brand-500 focus:outline-none" placeholder="Min 8 characters" />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-10 text-sm focus:border-brand-500 focus:outline-none" placeholder="Min 8 characters" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Confirm Password</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">Confirm Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input type="password" required value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})}
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="Repeat password" />
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none" placeholder="Repeat password" />
               </div>
             </div>
             <button type="submit" disabled={submitting}
@@ -98,8 +98,7 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
-            Already have an account? <Link href="/login" className="font-bold text-brand-600 hover:text-brand-800">Sign in</Link>
+          <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">\n            Already have an account? <Link href="/login" className="font-bold text-brand-600 hover:text-brand-800">Sign in</Link>
           </p>
         </div>
       </div>

@@ -125,7 +125,7 @@ export function CVGeneratorModule() {
         const def = templates.find((t: CVTemplateConfig) => t.isDefault);
         if (def) applyTemplate(def);
       }
-    } catch {}
+    } catch { notify('Failed to load saved templates'); }
   };
 
   const loadRecentCvs = async () => {
@@ -133,7 +133,7 @@ export function CVGeneratorModule() {
       const res = await fetch('/api/cvs?limit=5');
       const data = await res.json();
       if (data.success) setGeneratedCvs(data.data || []);
-    } catch {}
+    } catch { notify('Failed to load recent CVs'); }
   };
 
   const searchEmployees = async (q: string) => {
@@ -827,7 +827,7 @@ export function CVGeneratorModule() {
                       const res = await fetch('/api/upload', { method: 'POST', body: fd });
                       const data = await res.json();
                       if (data.success && data.data?.url) setConfig({ ...config, logoUrl: data.data.url });
-                    } catch {} finally { setUploadingLogo(false); }
+                    } catch { notify('Failed to upload logo'); } finally { setUploadingLogo(false); }
                   }} />
                 </div>
                 <div>
