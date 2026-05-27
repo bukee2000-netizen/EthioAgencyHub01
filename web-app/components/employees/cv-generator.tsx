@@ -680,12 +680,21 @@ export function CVGeneratorModule() {
         ) : employees.length > 0 ? (
           employees.map((emp) => (
             <button key={emp.id} type="button" onClick={() => loadEmployeeData(emp)}
-              style={{ display: 'block', width: '100%', padding: '10 12', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', textAlign: 'left', cursor: 'pointer', fontSize: 13 }}
+              style={{ display: 'flex', alignItems: 'center', width: '100%', padding: '10 12', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', textAlign: 'left', cursor: 'pointer', fontSize: 13, gap: 10 }}
               onMouseEnter={(e) => (e.target as HTMLElement).style.background = '#f8fafc'}
               onMouseLeave={(e) => (e.target as HTMLElement).style.background = 'white'}>
-              <div style={{ fontWeight: 600, color: '#1e293b' }}>{emp.firstName} {emp.lastName}</div>
-              <div style={{ fontSize: 11, color: '#64748b' }}>
-                {[emp.passportNumber, emp.contactPhone, emp.role].filter(Boolean).join(' Â· ')}
+              {getPhotoUrl(emp.passportSizePhotoPath || emp.photoUrl) ? (
+                <img src={getPhotoUrl(emp.passportSizePhotoPath || emp.photoUrl)!} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+              ) : (
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#f1f5f9', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#94a3b8' }}>
+                  {(emp.firstName?.[0] || '?').toUpperCase()}
+                </div>
+              )}
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 600, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{emp.firstName} {emp.lastName}</div>
+                <div style={{ fontSize: 11, color: '#64748b' }}>
+                  {[emp.passportNumber, emp.contactPhone, emp.role].filter(Boolean).join(' · ')}
+                </div>
               </div>
             </button>
           ))
