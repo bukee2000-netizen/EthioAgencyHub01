@@ -15,7 +15,6 @@ export function ReportingAnalyticsModule() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Reporting & Analytics</h1>
-        <p className="mt-2 text-slate-500">Generate operational reports and analytics insights</p>
       </div>
 
       {/* Stats */}

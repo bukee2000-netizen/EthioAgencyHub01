@@ -122,7 +122,6 @@ export function SystemSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">System Settings</h2>
-          <p className="text-slate-500">Configure your agency and system preferences.</p>
         </div>
         <button
           onClick={handleSave}

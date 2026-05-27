@@ -35,9 +35,6 @@ export function BillingModule() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold text-ink">Billing & Subscription</h2>
-            <p className="mt-2 text-slate-600">
-              Manage subscription plans, invoices, and billing details.
-            </p>
           </div>
           <button className="flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700">
             <Plus className="h-5 w-5" />

@@ -120,9 +120,6 @@ export function DocumentManagementModule() {
       {/* Header */}
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <h2 className="text-3xl font-bold text-ink">Document Management</h2>
-        <p className="mt-2 text-slate-600">
-          Manage {filteredDocuments.length} documents. Track visa, MOLS, passport, medical records, and verify completeness.
-        </p>
       </div>
 
       {/* Stats */}

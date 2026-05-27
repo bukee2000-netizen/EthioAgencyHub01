@@ -109,7 +109,6 @@ export function HajjUmrahPilgrimDetail() {
               <Users className="h-8 w-8 text-purple-600" />
               Pilgrim Details
             </h1>
-            <p className="mt-2 text-slate-600">View and manage individual pilgrim profiles, documents, and status</p>
           </div>
           <Link href="/hajj-umrah" className="flex items-center gap-2 text-purple-600 hover:text-purple-800">
             <ChevronRight className="h-4 w-4 rotate-180" />

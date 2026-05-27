@@ -148,9 +148,6 @@ export function EmployeeProfilesComponent() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-3xl font-extrabold text-ink">Employee Profiles</h2>
-            <p className="mt-2 text-slate-600">
-              Browse and manage <span className="font-bold text-brand-600">{filteredEmployees.length}</span> active profiles.
-            </p>
           </div>
           <div className="flex gap-2">
             <button

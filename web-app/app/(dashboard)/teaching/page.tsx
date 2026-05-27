@@ -37,7 +37,6 @@ export default function TeachingPage() {
           <div className="p-3 rounded-2xl bg-brand-100"><BookOpen className="h-8 w-8 text-brand-600" /></div>
           <div>
             <h1 className="text-3xl font-bold text-ink">Teaching / Demo Data</h1>
-            <p className="mt-2 text-slate-600 max-w-2xl">Sample data for training and testing purposes. All records are fictional and for demonstration only.</p>
           </div>
         </div>
       </div>

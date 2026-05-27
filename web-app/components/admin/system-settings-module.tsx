@@ -31,9 +31,6 @@ export function SystemSettingsModule() {
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div>
           <h2 className="text-3xl font-bold text-ink">System Settings</h2>
-          <p className="mt-2 text-slate-600">
-            Configure platform-wide settings and system preferences.
-          </p>
         </div>
       </div>
 

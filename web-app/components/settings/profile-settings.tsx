@@ -34,7 +34,6 @@ export function ProfileSettings() {
     <div className="space-y-6">
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="text-lg font-bold">Profile Information</h3>
-        <p className="mt-1 text-sm text-slate-500">Update your personal information and contact details.</p>
         
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <div>

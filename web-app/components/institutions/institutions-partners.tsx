@@ -13,7 +13,6 @@ export function InstitutionPartners() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Partner Contacts</h1>
-        <p className="mt-2 text-slate-500">Manage institutional partner contacts and relationships</p>
       </div>
 
       {/* Stats */}

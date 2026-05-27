@@ -57,9 +57,6 @@ export function AdministrationOverviewModule() {
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-3xl font-bold text-ink">Administration</h2>
-            <p className="mt-2 text-slate-600">
-              Configure users, roles, permissions, settings, audit logs, and platform-level security controls.
-            </p>
           </div>
           <Settings className="h-8 w-8 text-brand-600 opacity-20" />
         </div>

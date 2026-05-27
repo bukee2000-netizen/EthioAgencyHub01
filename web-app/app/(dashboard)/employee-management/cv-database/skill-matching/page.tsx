@@ -60,7 +60,6 @@ export default function SkillMatchingPage() {
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold text-ink">Skill Matching</h2>
-            <p className="mt-2 text-slate-600">Match {loading ? '...' : employees.length} employees to deployment opportunities.</p>
           </div>
         </div>
       </section>

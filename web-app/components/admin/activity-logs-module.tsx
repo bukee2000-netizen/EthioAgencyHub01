@@ -85,9 +85,6 @@ export function ActivityLogsModule() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold text-ink">Activity Logs</h2>
-            <p className="mt-2 text-slate-600">
-              View system activity and user actions across the platform.
-            </p>
           </div>
           <button className="flex items-center gap-2 rounded-lg border border-slate-300 px-6 py-3 font-medium text-slate-700 hover:bg-slate-50">
             <Download className="h-5 w-5" />

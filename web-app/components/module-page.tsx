@@ -3,18 +3,16 @@ import { ArrowRight, CircleCheckBig } from 'lucide-react';
 
 type ModulePageProps = {
   title: string;
-  description: string;
   workflows: string[];
   actions: { label: string; href: string }[];
 };
 
-export function ModulePage({ title, description, workflows, actions }: ModulePageProps) {
+export function ModulePage({ title, workflows, actions }: ModulePageProps) {
   return (
     <div className="space-y-6">
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-600">Operations module</p>
         <h2 className="mt-2 text-3xl font-bold text-ink">{title}</h2>
-        <p className="mt-3 max-w-3xl text-slate-600">{description}</p>
         <div className="mt-6 flex flex-wrap gap-3">
           {actions.map((action) => (
             <Link key={action.href} href={action.href} className="rounded-2xl bg-brand-600 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-700">

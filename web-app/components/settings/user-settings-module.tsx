@@ -134,9 +134,6 @@ export function UserSettingsModule() {
               <User className="h-7 w-7 text-cyan-600 dark:text-cyan-400" />
               {dict.common.settings}
             </h2>
-            <p className="mt-1 text-slate-600 dark:text-slate-400">
-              {dict.common.preferences}
-            </p>
           </div>
           {saveMessage && (
             <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${

@@ -184,9 +184,6 @@ export function EmployeeManagementModule() {
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
           <div>
             <h2 className="text-3xl font-extrabold text-ink">Employee Management</h2>
-            <p className="mt-3 text-slate-600 max-w-lg">
-              Register new workers, manage their lifecycle, generate CVs, and track deployment readiness across <span className="font-bold text-brand-600">{stats.total}</span> employees.
-            </p>
           </div>
           
           {/* Search and Actions */}

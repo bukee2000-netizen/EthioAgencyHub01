@@ -9,9 +9,6 @@ export default function RegistrationLayout({ children }: { children: ReactNode }
         <div className="flex items-center justify-between">
           <div className="max-w-3xl">
             <h2 className="text-2xl font-bold text-ink">Employee Registration</h2>
-            <p className="mt-2 text-slate-600">
-              Register a new worker. Fill in all sections - Personal, Skills, Assessment, Documents - then review and submit.
-            </p>
           </div>
           <Link
             href="/employee-management"

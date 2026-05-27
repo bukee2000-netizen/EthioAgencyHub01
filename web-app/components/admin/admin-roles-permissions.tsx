@@ -15,7 +15,6 @@ export function AdminRolesPermissions() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Roles & Permissions</h1>
-        <p className="mt-2 text-slate-500">Manage role-based access control and permissions</p>
       </div>
 
       {/* Stats */}

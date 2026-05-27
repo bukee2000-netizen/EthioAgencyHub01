@@ -60,9 +60,6 @@ export function ReportingAnalyticsModule() {
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-3xl font-bold text-ink">Reporting & Analytics</h2>
-            <p className="mt-2 text-slate-600">
-              Generate comprehensive reports on employees, documents, finances, and agency performance.
-            </p>
           </div>
           <BarChart3 className="h-8 w-8 text-brand-600 opacity-20" />
         </div>

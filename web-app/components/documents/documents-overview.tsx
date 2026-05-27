@@ -46,7 +46,6 @@ export function DocumentsOverview() {
     <div className="space-y-8">
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
         <h1 className="text-3xl font-bold text-ink">Document Management</h1>
-        <p className="mt-2 text-slate-600 max-w-2xl">Centralized document processing, MOLS integration, and compliance tracking for all employees.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">

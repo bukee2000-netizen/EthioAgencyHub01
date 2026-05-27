@@ -108,7 +108,6 @@ export function DocumentsCrossMatch() {
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-green-50/30 to-white p-8 shadow-sm flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-ink">Cross-Match: Pre-Flight Safety Gate</h1>
-          <p className="mt-2 text-slate-600 max-w-xl">Automated data collision check between Passport, Visa, and Ticket. Catches spelling errors and expiry issues before the employee reaches the airport.</p>
         </div>
         <button onClick={runCrossMatch} className="flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-700 shadow-sm">
           <RefreshCw className={`h-4 w-4 ${running ? 'animate-spin' : ''}`} />Run Check

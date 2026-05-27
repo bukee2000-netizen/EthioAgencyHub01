@@ -95,7 +95,6 @@ export function DocumentsVisaModule() {
     <div className="space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-purple-50/30 to-white p-8 shadow-sm">
         <h1 className="text-3xl font-bold text-ink">Visa Management</h1>
-        <p className="mt-2 text-slate-600 max-w-2xl">Manage visa applications across all embassies. Track document collection, submission, stamping, and approval.</p>
       </div>
 
       {/* Summary */}

@@ -35,9 +35,6 @@ export default function AnalyticsOverviewPage() {
     <div className="space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
         <h1 className="text-3xl font-bold text-ink">Reporting & Analytics</h1>
-        <p className="mt-2 text-slate-600 max-w-2xl">
-          {loading ? 'Loading...' : `${stats.employees} employees tracked across ${stats.docs} documents`}
-        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

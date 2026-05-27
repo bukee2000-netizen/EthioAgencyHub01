@@ -13,7 +13,6 @@ export function AdminAudit() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Audit Trail</h1>
-        <p className="mt-2 text-slate-500">Track and monitor administrative actions and changes</p>
       </div>
 
       {/* Stats */}

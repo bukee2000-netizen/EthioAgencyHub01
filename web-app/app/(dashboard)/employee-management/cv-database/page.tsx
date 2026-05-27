@@ -21,7 +21,6 @@ export default function CVDatabasePage() {
     <div className="space-y-6">
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
         <h2 className="text-3xl font-bold text-ink">CV Database</h2>
-        <p className="mt-2 text-slate-600">Search, filter, and review employee CV records across all agency registration pipelines.</p>
       </section>
 
       <div className="grid gap-4 md:grid-cols-4">

@@ -301,9 +301,6 @@ export function TravelManagementModule({ initialTab }: TravelModuleProps) {
               <Plane className="h-7 w-7 text-blue-600" />
               Travel Management
             </h2>
-            <p className="mt-1 text-slate-600">
-              Logistics bridge for rural workers - from village to destination
-            </p>
           </div>
           <div className="flex gap-3">
             <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">

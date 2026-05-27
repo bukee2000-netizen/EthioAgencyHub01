@@ -13,7 +13,6 @@ export function InstitutionDetail() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Institution Details</h1>
-        <p className="mt-2 text-slate-500">Comprehensive information about partner institutions</p>
       </div>
 
       {/* Stats */}

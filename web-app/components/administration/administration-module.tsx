@@ -98,7 +98,6 @@ export function AdministrationModule() {
               <BadgeCheck className="h-7 w-7 text-red-600" />
               Administration
             </h2>
-            <p className="mt-1 text-slate-600">Manage users, roles, permissions, and system settings</p>
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}

@@ -48,9 +48,6 @@ export function ExportDataModule() {
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <div>
           <h2 className="text-3xl font-bold text-ink">Export Data</h2>
-          <p className="mt-2 text-slate-600">
-            Export agency data in multiple formats for reporting, analysis, and integration.
-          </p>
         </div>
       </div>
 

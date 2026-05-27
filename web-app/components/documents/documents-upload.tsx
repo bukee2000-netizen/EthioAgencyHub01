@@ -123,9 +123,6 @@ export function DocumentsUpload() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Upload Documents</h1>
-        <p className="mt-2 text-slate-500">
-          Securely assign and upload required documents to Teledrive cloud storage.
-        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

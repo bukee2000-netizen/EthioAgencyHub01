@@ -124,7 +124,6 @@ export function DocumentsMols() {
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-orange-50/30 to-white p-8 shadow-sm flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-ink">MOLS Processing</h1>
-          <p className="mt-2 text-slate-600 max-w-xl">Contract legalization & authentication tracking. Stage-based document flow from Agent Contract → MOFA → Embassy → MOLS Approval.</p>
         </div>
         <button onClick={() => setShowLinkModal(true)} className="flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 shadow-sm">
           <Link2 className="h-4 w-4" />Link Contract

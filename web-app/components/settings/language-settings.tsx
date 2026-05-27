@@ -30,9 +30,6 @@ export function LanguageSettings() {
           <Globe className="h-10 w-10 text-brand-600" />
           <div>
             <h1 className="text-3xl font-bold text-ink">Language Settings</h1>
-            <p className="mt-2 text-slate-600 max-w-xl">
-              Choose your preferred interface language. The system supports English, Amharic, Oromo, and Arabic.
-            </p>
           </div>
         </div>
       </div>

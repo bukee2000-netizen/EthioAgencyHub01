@@ -119,7 +119,6 @@ export function DocumentsMissingReport() {
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-red-50/30 to-white p-8 shadow-sm flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-ink">Missing Reports</h1>
-          <p className="mt-2 text-slate-600 max-w-xl">Post-deployment incident tracking. Rapid reporting of runaway or missing employees with automated legal letters to MOLS.</p>
         </div>
         <button onClick={() => setShowForm(true)} className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-red-700 shadow-sm">
           <AlertCircle className="h-4 w-4" />Report Missing

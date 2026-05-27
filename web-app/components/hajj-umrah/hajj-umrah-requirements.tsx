@@ -98,7 +98,6 @@ export function HajjUmrahRequirements() {
               <Shield className="h-8 w-8 text-green-600" />
               Requirements & Eligibility
             </h1>
-            <p className="mt-2 text-slate-600">Check eligibility, health requirements, and documentation checklist for pilgrims</p>
           </div>
           <Link href="/hajj-umrah" className="flex items-center gap-2 text-green-600 hover:text-green-800">
             <ChevronRight className="h-4 w-4 rotate-180" />

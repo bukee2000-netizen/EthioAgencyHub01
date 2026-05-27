@@ -153,9 +153,6 @@ export function HajjUmrahManagementModule() {
               <Heart className="h-8 w-8 text-purple-600" />
               Hajj & Umrah Management
             </h2>
-            <p className="mt-2 text-slate-600">
-              Manage {pilgrims.length} pilgrims across {groups.length} groups. Register pilgrims, organize groups, verify requirements, and track religious travel documents.
-            </p>
           </div>
           <div className="flex gap-3">
             <button 

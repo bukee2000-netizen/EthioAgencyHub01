@@ -105,7 +105,6 @@ export function HajjUmrahDocumentation() {
               <FileText className="h-8 w-8 text-blue-600" />
               Documentation Tracking
             </h1>
-            <p className="mt-2 text-slate-600">Track pilgrim documents, upload status, and verification process</p>
           </div>
           <div className="flex gap-3">
             <Link href="/hajj-umrah" className="flex items-center gap-2 text-blue-600 hover:text-blue-800">

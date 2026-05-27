@@ -81,7 +81,6 @@ export function InstitutionManagementModule() {
       {/* Header */}
       <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm">
         <h1 className="text-3xl font-bold text-ink">Institutions Network</h1>
-        <p className="mt-2 text-slate-600 max-w-2xl">Single source of truth for all external entities. Banks, Hospitals, Embassies, and Partners linked directly to the employee journey.</p>
       </div>
 
       {/* Tabs */}

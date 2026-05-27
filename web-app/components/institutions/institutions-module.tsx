@@ -15,7 +15,6 @@ export function InstitutionsModule() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-ink">Institution Management</h1>
-        <p className="mt-2 text-slate-500">Manage institutional partners and collaboration agreements</p>
       </div>
 
       {/* Stats */}
