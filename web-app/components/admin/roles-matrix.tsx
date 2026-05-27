@@ -135,7 +135,6 @@ export function RolesMatrixEditor() {
               <Shield className="h-5 w-5 text-brand-600" />
               Roles & Permissions Matrix
             </h3>
-            <p className="mt-1 text-sm text-slate-500">Configure what each role can access and modify.</p>
           </div>
           <div className="flex gap-2">
             <button
