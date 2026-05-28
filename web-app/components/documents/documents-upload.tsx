@@ -54,7 +54,7 @@ export function DocumentsUpload() {
       }
     };
     fetchEmployees();
-  }, []);
+  }, [addToast]);
 
   const filteredUploads = uploads.filter(u =>
     u.employee.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -38,16 +38,17 @@ export function DocumentsMissingReport() {
     missingSince: '', lastContactDate: '', notes: ''
   });
 
-  useEffect(() => { fetchData(); }, []);
-
-  const fetchData = async () => {
-    try {
-      const res = await fetch('/api/employees?limit=100');
-      const data = await res.json();
-      if (data.success && data.data) setEmployees(data.data);
-    } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
-    finally { setLoading(false); }
-  };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/employees?limit=100');
+        const data = await res.json();
+        if (data.success && data.data) setEmployees(data.data);
+      } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
+      finally { setLoading(false); }
+    };
+    load();
+  }, [addToast]);
 
   const filteredEmployees = employees.filter((e: any) =>
     !form.employeeId && (!form.employeeSearch || (e.name || '').toLowerCase().includes(form.employeeSearch.toLowerCase()))

@@ -95,7 +95,7 @@ export function PassportScanner({ onAutoFill }: PassportScannerProps) {
       setErrorMsg('OCR failed. Paste the passport text manually below.');
       setScanState('error');
     }
-  }, [runAutoFill]);
+  }, [runAutoFill, addToast]);
 
   const handleFile = useCallback((file: File) => {
     const maxSize = 10 * 1024 * 1024;

@@ -105,7 +105,26 @@ export function CVGeneratorModule() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  useEffect(() => { loadSavedTemplates(); loadRecentCvs(); }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/api/cvs/templates');
+        const data = await res.json();
+        if (data.success) {
+          const templates = (data.data || []).map((t: any) => ({ ...t, isDefault: t.isDefault }));
+          setSavedTemplates(templates);
+          const def = templates.find((t: CVTemplateConfig) => t.isDefault);
+          if (def) applyTemplate(def);
+        }
+      } catch { notify('Failed to load saved templates'); }
+
+      try {
+        const res = await fetch('/api/cvs?limit=5');
+        const data = await res.json();
+        if (data.success) setGeneratedCvs(data.data || []);
+      } catch { notify('Failed to load recent CVs'); }
+    })();
+  }, []);
 
   useEffect(() => {
     if (searchProgrammaticRef.current) { searchProgrammaticRef.current = false; return; }

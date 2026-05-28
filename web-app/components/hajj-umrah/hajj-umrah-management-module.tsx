@@ -50,65 +50,34 @@ export function HajjUmrahManagementModule() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
+    (async () => {
+      try {
+        setLoading(true);
+        const mockPilgrims: Pilgrim[] = [
+          { id: 'P001', name: 'Ahmed Hassan Mohammed', passportNumber: 'EP123456', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-001', groupName: 'Hajj 2026 - Group A', status: 'ready_for_travel', documents: 5, totalDocuments: 5, registeredAt: '2024-01-10', phone: '+251911234567', age: 45, gender: 'male' },
+          { id: 'P002', name: 'Fatima Ibrahim Ali', passportNumber: 'EP234567', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-002', groupName: 'Ramadan Umrah 2026', status: 'visa_approved', documents: 5, totalDocuments: 5, registeredAt: '2024-01-15', phone: '+251912345678', age: 38, gender: 'female' },
+          { id: 'P003', name: 'Ibrahim Mohamed Tessema', passportNumber: 'EP345678', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-001', groupName: 'Hajj 2026 - Group A', status: 'requirements_met', documents: 4, totalDocuments: 5, registeredAt: '2024-01-20', phone: '+251913456789', age: 52, gender: 'male' },
+          { id: 'P004', name: 'Amina Ahmed Seid', passportNumber: 'EP456789', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-003', groupName: 'Umrah Business Group', status: 'medical_clearance', documents: 4, totalDocuments: 5, registeredAt: '2024-02-01', phone: '+251914567890', age: 35, gender: 'female' },
+          { id: 'P005', name: 'Mohammed Osman Ahmed', passportNumber: 'EP567890', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-004', groupName: 'Hajj 2026 - Group B', status: 'documents_pending', documents: 2, totalDocuments: 5, registeredAt: '2024-02-05', phone: '+251915678901', age: 48, gender: 'male' },
+          { id: 'P006', name: 'Zainab Abebe Demissie', passportNumber: 'EP678901', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-002', groupName: 'Ramadan Umrah 2026', status: 'requirements_met', documents: 4, totalDocuments: 5, registeredAt: '2024-02-10', phone: '+251916789012', age: 42, gender: 'female' },
+          { id: 'P007', name: 'Abebe Tekle Kebede', passportNumber: 'EP789012', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-001', groupName: 'Hajj 2026 - Group A', status: 'registered', documents: 1, totalDocuments: 5, registeredAt: '2024-02-15', phone: '+251917890123', age: 55, gender: 'male' },
+          { id: 'P008', name: 'Sara Mohammed Yassin', passportNumber: 'EP890123', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-003', groupName: 'Umrah Business Group', status: 'deployed', documents: 5, totalDocuments: 5, registeredAt: '2024-01-05', phone: '+251918901234', age: 40, gender: 'female' },
+        ];
+        setPilgrims(mockPilgrims);
+      } catch (err) { console.error('Failed to fetch pilgrims:', err); }
+      finally { setLoading(false); }
+    })();
   }, []);
 
   useEffect(() => {
-    filterPilgrims();
-  }, [pilgrims, destinationFilter, statusFilter, searchQuery]);
-
-  const fetchData = async () => {
-    try {
-      const mockPilgrims: Pilgrim[] = [
-        { id: 'P001', name: 'Ahmed Hassan Mohammed', passportNumber: 'EP123456', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-001', groupName: 'Hajj 2026 - Group A', status: 'ready_for_travel', documents: 5, totalDocuments: 5, registeredAt: '2024-01-10', phone: '+251911234567', age: 45, gender: 'male' },
-        { id: 'P002', name: 'Fatima Ibrahim Ali', passportNumber: 'EP234567', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-002', groupName: 'Ramadan Umrah 2026', status: 'visa_approved', documents: 5, totalDocuments: 5, registeredAt: '2024-01-15', phone: '+251912345678', age: 38, gender: 'female' },
-        { id: 'P003', name: 'Ibrahim Mohamed Tessema', passportNumber: 'EP345678', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-001', groupName: 'Hajj 2026 - Group A', status: 'requirements_met', documents: 4, totalDocuments: 5, registeredAt: '2024-01-20', phone: '+251913456789', age: 52, gender: 'male' },
-        { id: 'P004', name: 'Amina Ahmed Seid', passportNumber: 'EP456789', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-003', groupName: 'Umrah Business Group', status: 'medical_clearance', documents: 4, totalDocuments: 5, registeredAt: '2024-02-01', phone: '+251914567890', age: 35, gender: 'female' },
-        { id: 'P005', name: 'Mohammed Osman Ahmed', passportNumber: 'EP567890', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-004', groupName: 'Hajj 2026 - Group B', status: 'documents_pending', documents: 2, totalDocuments: 5, registeredAt: '2024-02-05', phone: '+251915678901', age: 48, gender: 'male' },
-        { id: 'P006', name: 'Zainab Abebe Demissie', passportNumber: 'EP678901', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-002', groupName: 'Ramadan Umrah 2026', status: 'requirements_met', documents: 4, totalDocuments: 5, registeredAt: '2024-02-10', phone: '+251916789012', age: 42, gender: 'female' },
-        { id: 'P007', name: 'Abebe Tekle Kebede', passportNumber: 'EP789012', season: '2026 Hajj', destination: 'Hajj', groupId: 'GRP-001', groupName: 'Hajj 2026 - Group A', status: 'registered', documents: 1, totalDocuments: 5, registeredAt: '2024-02-15', phone: '+251917890123', age: 55, gender: 'male' },
-        { id: 'P008', name: 'Sara Mohammed Yassin', passportNumber: 'EP890123', season: '2026 Umrah', destination: 'Umrah', groupId: 'GRP-003', groupName: 'Umrah Business Group', status: 'deployed', documents: 5, totalDocuments: 5, registeredAt: '2024-01-05', phone: '+251918901234', age: 40, gender: 'female' },
-      ];
-
-      const mockGroups: Group[] = [
-        { id: 'GRP-001', name: 'Hajj 2026 - Group A', type: 'Hajj', season: '2026', pilgrims: 45, departureDate: '2026-07-14', status: 'ready', leader: 'Ahmed Hassan' },
-        { id: 'GRP-002', name: 'Ramadan Umrah 2026', type: 'Umrah', season: '2026', pilgrims: 32, departureDate: '2026-03-15', status: 'approved', leader: 'Fatima Ibrahim' },
-        { id: 'GRP-003', name: 'Umrah Business Group', type: 'Umrah', season: '2026', pilgrims: 18, departureDate: '2026-04-20', status: 'registered' },
-        { id: 'GRP-004', name: 'Hajj 2026 - Group B', type: 'Hajj', season: '2026', pilgrims: 28, departureDate: '2026-07-15', status: 'planning' },
-        { id: 'GRP-005', name: 'Ramadan Umrah 2027', type: 'Umrah', season: '2027', pilgrims: 0, departureDate: '2027-02-20', status: 'planning' },
-      ];
-
-      setPilgrims(mockPilgrims);
-      setGroups(mockGroups);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-      addToast({ title: 'Error', description: 'Failed to load pilgrim data.', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterPilgrims = () => {
-    let filtered = [...pilgrims];
-
-    if (searchQuery) {
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.passportNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.groupName?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    if (destinationFilter !== 'all') {
-      filtered = filtered.filter((p) => p.destination === destinationFilter);
-    }
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((p) => p.status === statusFilter);
-    }
-
+    const filtered = pilgrims.filter(p => {
+      const matchesDestination = destinationFilter === 'all' || p.destination === destinationFilter;
+      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+      const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.passportNumber.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesDestination && matchesStatus && matchesSearch;
+    });
     setFilteredPilgrims(filtered);
-  };
+  }, [pilgrims, destinationFilter, statusFilter, searchQuery]);
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {

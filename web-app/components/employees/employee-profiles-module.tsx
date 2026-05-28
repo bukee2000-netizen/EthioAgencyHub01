@@ -22,61 +22,42 @@ export function EmployeeProfilesComponent() {
   const [profileTab, setProfileTab] = useState<'personal' | 'skills' | 'documents' | 'notes'>('personal');
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    const load = async () => {
+      try {
+        setError(null);
+        const res = await fetch('/api/employees?limit=100');
+        const data = await res.json();
+        if (data.success && data.data) {
+          setEmployees(data.data);
+        } else {
+          throw new Error(data.error?.message || 'Failed to fetch employees');
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch employees';
+        setError(errorMessage);
+        console.error('Failed to fetch employees:', error);
+        addToast({ title: 'Error', description: 'Failed to fetch employees. Showing demo data.', type: 'error' });
+
+        const mockEmployees: EmployeeBasic[] = [
+          { id: '1', name: 'Yohannes Tefera', email: 'yohannes@example.com', role: 'Nurse', destination: 'Saudi Arabia', status: 'TRAVEL_READY', createdAt: new Date().toISOString() },
+        ];
+        setEmployees(mockEmployees);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [addToast]);
 
   useEffect(() => {
-    filterEmployees();
-  }, [employees, searchQuery, statusFilter, destinationFilter]);
-
-  const fetchEmployees = async () => {
-    try {
-      setError(null);
-      const res = await fetch('/api/employees?limit=100');
-      const data = await res.json();
-      if (data.success && data.data) {
-        setEmployees(data.data);
-      } else {
-        throw new Error(data.error?.message || 'Failed to fetch employees');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch employees';
-      setError(errorMessage);
-      console.error('Failed to fetch employees:', error);
-      addToast({ title: 'Error', description: 'Failed to fetch employees. Showing demo data.', type: 'error' });
-      
-      // Fallback mock data
-      const mockEmployees: EmployeeBasic[] = [
-        { id: '1', name: 'Yohannes Tefera', email: 'yohannes@example.com', role: 'Nurse', destination: 'Saudi Arabia', status: 'TRAVEL_READY', createdAt: new Date().toISOString() },
-        { id: '2', name: 'Senait Assefa', email: 'senait@example.com', role: 'Driver', destination: 'UAE', status: 'INTERVIEW_UPLOADED', createdAt: new Date().toISOString() },
-      ];
-      setEmployees(mockEmployees);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterEmployees = () => {
-    let filtered = employees;
-
-    if (searchQuery) {
-      filtered = filtered.filter((emp) =>
-        (emp.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         emp.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         emp.role?.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((emp) => emp.status === statusFilter);
-    }
-
-    if (destinationFilter !== 'all') {
-      filtered = filtered.filter((emp) => emp.destination === destinationFilter);
-    }
-
+    const filtered = employees.filter(emp => {
+      const matchesSearch = !searchQuery || (emp.name && emp.name.toLowerCase().includes(searchQuery.toLowerCase())) || (emp.email && emp.email.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesStatus = statusFilter === 'all' || emp.status === statusFilter;
+      const matchesDestination = destinationFilter === 'all' || emp.destination === destinationFilter;
+      return matchesSearch && matchesStatus && matchesDestination;
+    });
     setFilteredEmployees(filtered);
-  };
+  }, [employees, searchQuery, statusFilter, destinationFilter]);
 
   const handleSelectAll = () => {
     if (selectedEmployees.length === filteredEmployees.length) {

@@ -63,8 +63,39 @@ export function EmployeeManagementModule() {
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    const load = async () => {
+      try {
+        setError(null);
+        const [statsRes, recentRes] = await Promise.all([
+          fetch('/api/employees/stats'),
+          fetch('/api/employees?limit=10&sortBy=createdAt&order=desc')
+        ]);
+
+        const statsData = await statsRes.json();
+        const recentData = await recentRes.json();
+
+        if (statsData.success) {
+          setStats(statsData.data);
+        } else {
+          throw new Error(statsData.error?.message || 'Failed to fetch stats');
+        }
+
+        if (recentData.success) {
+          setRecentEmployees(recentData.data || []);
+        } else {
+          throw new Error(recentData.error?.message || 'Failed to fetch recent employees');
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch data';
+        setError(errorMessage);
+        console.error('Failed to fetch stats:', error);
+        addToast({ title: 'Error', description: 'Failed to fetch dashboard statistics.', type: 'error' });
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [addToast]);
 
   const fetchStats = async () => {
     try {

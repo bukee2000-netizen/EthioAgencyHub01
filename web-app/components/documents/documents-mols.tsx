@@ -41,34 +41,35 @@ export function DocumentsMols() {
   const [loading, setLoading] = useState(true);
   const [statusMsg, setStatusMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  useEffect(() => { fetchData(); }, []);
-
-  const fetchData = async () => {
-    try {
-      const res = await fetch('/api/employees?limit=100');
-      const data = await res.json();
-      if (data.success && data.data) {
-        const mapped = data.data.map((e: any, i: number) => ({
-          id: e.id,
-          name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
-          passportNumber: e.passportNumber || '',
-          destination: e.destination || e.country || 'Open',
-          contractLinked: false,
-          mofaAuth: false,
-          embassyLegalization: false,
-          molsSubmitted: false,
-          molsApproved: false,
-          stage: 0,
-          healthCert: false,
-          insurance: false,
-          coc: false,
-          createdAt: e.createdAt || new Date().toISOString(),
-        }));
-        setEmployees(mapped);
-      }
-    } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
-    finally { setLoading(false); }
-  };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/employees?limit=100');
+        const data = await res.json();
+        if (data.success && data.data) {
+          const mapped = data.data.map((e: any, i: number) => ({
+            id: e.id,
+            name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
+            passportNumber: e.passportNumber || '',
+            destination: e.destination || e.country || 'Open',
+            contractLinked: false,
+            mofaAuth: false,
+            embassyLegalization: false,
+            molsSubmitted: false,
+            molsApproved: false,
+            stage: 0,
+            healthCert: false,
+            insurance: false,
+            coc: false,
+            createdAt: e.createdAt || new Date().toISOString(),
+          }));
+          setEmployees(mapped);
+        }
+      } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
+      finally { setLoading(false); }
+    };
+    load();
+  }, [addToast]);
 
   const stage = (rec: MolsEmployee) => {
     if (rec.molsApproved) return 4;

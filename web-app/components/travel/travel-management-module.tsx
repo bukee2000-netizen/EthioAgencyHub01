@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Plane, Calendar, Ticket, CheckCircle2, Clock, Users,
   MapPin, FileText, Download, Upload, Search, Filter,
@@ -48,10 +48,6 @@ export function TravelManagementModule({ initialTab }: TravelModuleProps) {
     bookingReference: ''
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const handleCreateBooking = async () => {
     try {
       const res = await fetch('/api/travel/booking', {
@@ -70,7 +66,7 @@ export function TravelManagementModule({ initialTab }: TravelModuleProps) {
     }
   };
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [travelRes, bookingRes, employeesRes] = await Promise.all([
@@ -169,7 +165,9 @@ export function TravelManagementModule({ initialTab }: TravelModuleProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast, employees.length]);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   const filteredEmployees = employees.filter(e =>
     e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

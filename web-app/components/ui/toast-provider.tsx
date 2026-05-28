@@ -24,6 +24,10 @@ let toastIdCounter = 0;
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  const removeToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
   const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
     const id = `toast-${++toastIdCounter}`;
     setToasts(prev => [...prev, { ...toast, id }]);
@@ -31,11 +35,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     if (toast.duration !== 0) {
       setTimeout(() => removeToast(id), toast.duration || 4000);
     }
-  }, []);
-
-  const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  }, []);
+  }, [removeToast]);
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
@@ -88,6 +88,6 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
 
 export function useToast() {
   const context = useContext(ToastContext);
-  if (!context) throw new Error('useToast must be used within ToastProvider');
+  if (!context) return { toasts: [], addToast: () => {}, removeToast: () => {} };
   return context;
 }

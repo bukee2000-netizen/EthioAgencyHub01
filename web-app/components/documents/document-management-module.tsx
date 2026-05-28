@@ -23,56 +23,49 @@ export function DocumentManagementModule() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDocuments();
-  }, []);
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/documents');
+        const payload = await res.json();
+
+        if (res.ok && payload?.success && Array.isArray(payload.data)) {
+          setDocuments(
+            payload.data.map((doc: any) => ({
+              id: String(doc.id),
+              employeeId: String(doc.employeeId ?? ''),
+              type: String(doc.type ?? 'OTHER'),
+              filePath: String(doc.filePath ?? doc.file_path ?? ''),
+              status: String(doc.status ?? 'PENDING'),
+              expiresAt: doc.expiresAt ?? undefined,
+              createdAt: doc.createdAt ?? new Date().toISOString()
+            }))
+          );
+          return;
+        }
+
+        setDocuments([]);
+      } catch (error) {
+        console.error('Failed to fetch documents:', error);
+        addToast({ title: 'Error', description: 'Failed to fetch documents. Please try again.', type: 'error' });
+        setDocuments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [addToast]);
 
   useEffect(() => {
-    filterDocuments();
-  }, [documents, statusFilter, typeFilter]);
-
-  const fetchDocuments = async () => {
-    try {
-      const res = await fetch('/api/documents');
-      const payload = await res.json();
-
-      if (res.ok && payload?.success && Array.isArray(payload.data)) {
-        setDocuments(
-          payload.data.map((doc: any) => ({
-            id: String(doc.id),
-            employeeId: String(doc.employeeId ?? ''),
-            type: String(doc.type ?? 'OTHER'),
-            filePath: String(doc.filePath ?? doc.file_path ?? ''),
-            status: String(doc.status ?? 'PENDING'),
-            expiresAt: doc.expiresAt ?? undefined,
-            createdAt: doc.createdAt ?? new Date().toISOString()
-          }))
-        );
-        return;
-      }
-
-      setDocuments([]);
-    } catch (error) {
-      console.error('Failed to fetch documents:', error);
-      addToast({ title: 'Error', description: 'Failed to fetch documents. Please try again.', type: 'error' });
-      setDocuments([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterDocuments = () => {
     let filtered = documents;
-
     if (statusFilter !== 'all') {
       filtered = filtered.filter((doc) => doc.status === statusFilter);
     }
-
     if (typeFilter !== 'all') {
       filtered = filtered.filter((doc) => doc.type === typeFilter);
     }
-
     setFilteredDocuments(filtered);
-  };
+  }, [documents, statusFilter, typeFilter]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

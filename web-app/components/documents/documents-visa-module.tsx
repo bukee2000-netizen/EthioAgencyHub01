@@ -21,25 +21,26 @@ export function DocumentsVisaModule() {
   const [visaStages, setVisaStages] = useState<Record<string, { embassy: string; stage: number; rejected?: string }>>({});
   const [visaScans, setVisaScans] = useState<Record<string, string>>({});
 
-  useEffect(() => { fetchEmployees(); }, []);
-
-  const fetchEmployees = async () => {
-    try {
-      const res = await fetch('/api/employees?limit=100');
-      const data = await res.json();
-      if (data.success && data.data) {
-        setEmployees(data.data.map((e: any) => ({
-          id: e.id,
-          name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
-          phone: e.contactPhone || e.phone || '',
-          destination: e.destination || e.country || 'Open',
-          passportNumber: e.passportNumber || '',
-          documents: { passport: !!e.passportNumber, visa: false, yellowCard: false, ticket: false, orientationComplete: false }
-        })));
-      }
-    } catch (err) { console.error('Failed to fetch employees:', err); addToast({ title: 'Error', description: 'Failed to fetch employees.', type: 'error' }); }
-    finally { setLoading(false); }
-  };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/employees?limit=100');
+        const data = await res.json();
+        if (data.success && data.data) {
+          setEmployees(data.data.map((e: any) => ({
+            id: e.id,
+            name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
+            phone: e.contactPhone || e.phone || '',
+            destination: e.destination || e.country || 'Open',
+            passportNumber: e.passportNumber || '',
+            documents: { passport: !!e.passportNumber, visa: false, yellowCard: false, ticket: false, orientationComplete: false }
+          })));
+        }
+      } catch (err) { console.error('Failed to fetch employees:', err); addToast({ title: 'Error', description: 'Failed to fetch employees.', type: 'error' }); }
+      finally { setLoading(false); }
+    };
+    load();
+  }, [addToast]);
 
   const embassies = ['Saudi Arabia (KSA)', 'UAE', 'Qatar', 'Kuwait', 'Jordan'];
   const stageNames = ['Document Collection', 'Portal Registration', 'Submitted to Embassy', 'Visa Approved/Stamped', 'Rejected/Correction'];

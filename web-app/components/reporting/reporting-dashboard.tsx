@@ -33,7 +33,7 @@ export function ReportingDashboard() {
         addToast({ title: 'Error', description: 'Failed to load report data. Please try again.', type: 'error' });
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [addToast]);
 
   const employeeStatusData = data?.employees?.byStatus ? Object.entries(data.employees.byStatus).map(([status, count]) => ({
     name: status.replace(/_/g, ' '),

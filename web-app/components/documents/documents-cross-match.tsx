@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CheckCircle2, AlertCircle, Clock, Search, X, ChevronDown, ChevronUp, Shield, FileText, Plane, RefreshCw, Globe, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
 
@@ -33,18 +33,19 @@ export function DocumentsCrossMatch() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pass' | 'fail'>('all');
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/employees?limit=100');
+        const data = await res.json();
+        if (data.success && data.data) setEmployees(data.data);
+      } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
+      finally { setLoading(false); }
+    };
+    load();
+  }, [addToast]);
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch('/api/employees?limit=100');
-      const data = await res.json();
-      if (data.success && data.data) setEmployees(data.data);
-    } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
-    finally { setLoading(false); }
-  };
-
-  const runCrossMatch = () => {
+  const runCrossMatch = useCallback(() => {
     setRunning(true);
     const res: CheckResult[] = employees.slice(0, 30).map((e: any) => {
       const name = e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown';
@@ -89,9 +90,9 @@ export function DocumentsCrossMatch() {
     });
     setResults(res);
     setRunning(false);
-  };
+  }, [employees]);
 
-  useEffect(() => { if (employees.length > 0) runCrossMatch(); }, [employees]);
+  useEffect(() => { if (employees.length > 0) runCrossMatch(); }, [runCrossMatch, employees.length]);
 
   const filtered = results.filter(r => {
     if (statusFilter === 'pass') return r.allPass;

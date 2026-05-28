@@ -48,7 +48,7 @@
 | Layer | Technology | Purpose |
 |---|---|---|
 | **Framework** | Next.js 14 (App Router) | SSR, routing, API routes |
-| **Bundler** | Vite | Fast local development HMR |
+| *Bundler** |  | 
 | **Language** | TypeScript (strict) | Type safety |
 | **Database** | MySQL + Prisma ORM | Employee/agency relational data |
 | **Auth** | JWT + bcrypt | Secure session management |
