@@ -13,7 +13,7 @@ export default function CVDatabasePage() {
     fetch('/api/employees/stats')
       .then(r => r.json())
       .then(data => { if (data.success && data.data) setStats(data.data); })
-      .catch(() => {})
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 

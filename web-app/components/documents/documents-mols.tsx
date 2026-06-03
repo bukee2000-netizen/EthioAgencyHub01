@@ -1,8 +1,9 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Landmark, Search, CheckCircle2, AlertCircle, Clock, Upload, Download, FileText, Plus, X, Eye, RefreshCw, Link2, Shield, CheckSquare, Send, ChevronDown, ChevronUp, Building2, Globe, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 interface MolsEmployee {
   id: string;
@@ -31,45 +32,31 @@ const STAGES = [
 
 export function DocumentsMols() {
   const { addToast } = useToast();
-  const [employees, setEmployees] = useState<MolsEmployee[]>([]);
+  const { employees: rawEmployees, loading } = useEmployees({ limit: 100 });
   const [molsRecords, setMolsRecords] = useState<MolsEmployee[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [empSearch, setEmpSearch] = useState('');
-  const [loading, setLoading] = useState(true);
   const [statusMsg, setStatusMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/employees?limit=100');
-        const data = await res.json();
-        if (data.success && data.data) {
-          const mapped = data.data.map((e: any, i: number) => ({
-            id: e.id,
-            name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
-            passportNumber: e.passportNumber || '',
-            destination: e.destination || e.country || 'Open',
-            contractLinked: false,
-            mofaAuth: false,
-            embassyLegalization: false,
-            molsSubmitted: false,
-            molsApproved: false,
-            stage: 0,
-            healthCert: false,
-            insurance: false,
-            coc: false,
-            createdAt: e.createdAt || new Date().toISOString(),
-          }));
-          setEmployees(mapped);
-        }
-      } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, [addToast]);
+  const employees: MolsEmployee[] = rawEmployees.map((e: any, i: number) => ({
+    id: e.id,
+    name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
+    passportNumber: e.passportNumber || '',
+    destination: e.destination || e.country || 'Open',
+    contractLinked: false,
+    mofaAuth: false,
+    embassyLegalization: false,
+    molsSubmitted: false,
+    molsApproved: false,
+    stage: 0,
+    healthCert: false,
+    insurance: false,
+    coc: false,
+    createdAt: e.createdAt || new Date().toISOString(),
+  }));
 
   const stage = (rec: MolsEmployee) => {
     if (rec.molsApproved) return 4;

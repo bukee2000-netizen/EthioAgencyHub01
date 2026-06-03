@@ -11,10 +11,10 @@ export async function GET() {
       return ok({
         apiEndpoints: true,
         database: false,
-        telegram: !!process.env.TELEGRAM_BOT_TOKEN,
-        teledrive: !!process.env.UPLOAD_PATH,
+        r2: !!process.env.R2_ACCOUNT_ID,
+        supabase: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
         mols: !!(process.env.MOLS_API_URL && process.env.MOLS_API_KEY),
-        whatsapp: !!process.env.WHATSAPP_API_TOKEN,
+        whatsapp: !!process.env.WHATSAPP_ACCESS_TOKEN,
         source: 'mock'
       });
     }
@@ -30,8 +30,8 @@ export async function GET() {
     return ok({
       apiEndpoints: true,
       database: true,
-      telegram: !!process.env.TELEGRAM_BOT_TOKEN,
-      teledrive: !!process.env.UPLOAD_PATH,
+      r2: !!process.env.R2_ACCOUNT_ID,
+      supabase: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       mols: !!(process.env.MOLS_API_URL && process.env.MOLS_API_KEY),
       stats: { users: userCount, employees: employeeCount, agencies: agencyCount, documents: documentCount, travels: travelCount }
     });

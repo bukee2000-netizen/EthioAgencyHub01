@@ -4,15 +4,16 @@ import { getDictionary } from '@/lib/i18n/dictionaries';
 
 export const LANGUAGE_COOKIE_NAME = 'eah_lang';
 
-export function getLanguage(): SupportedLanguageCode {
-  const value = cookies().get(LANGUAGE_COOKIE_NAME)?.value as SupportedLanguageCode | undefined;
+export async function getLanguage(): Promise<SupportedLanguageCode> {
+  const cookieStore = await cookies();
+  const value = cookieStore.get(LANGUAGE_COOKIE_NAME)?.value as SupportedLanguageCode | undefined;
   if (value && supportedLanguages.some((l) => l.code === value)) {
     return value;
   }
   return defaultLanguage;
 }
 
-export function getTranslations() {
-  const code = getLanguage();
+export async function getTranslations() {
+  const code = await getLanguage();
   return { code, dict: getDictionary(code), language: supportedLanguages.find((l) => l.code === code)! };
 }

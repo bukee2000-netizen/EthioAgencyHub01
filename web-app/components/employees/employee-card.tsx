@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { User, MapPin, Briefcase, Calendar, Check, Lock, Eye, FileText, Star, Bookmark, MoreHorizontal, ShieldCheck, X, Globe, Phone, Award, Languages, Download } from 'lucide-react';
 import Link from 'next/link';
 import type { EmployeeBasic } from '@/lib/types/employee';
-import { getStatusColor, getStatusLabel } from '@/lib/types/employee';
+import { getStatusColor, getStatusLabel } from '@/lib/utils/status';
 import { useToast } from '@/components/ui/toast-provider';
 
 interface EmployeeCardProps {

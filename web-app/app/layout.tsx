@@ -8,15 +8,15 @@ export const metadata: Metadata = {
   description: siteConfig.description
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let langCode = 'en';
   let langDir = 'ltr';
   try {
-    const t = getTranslations();
+    const t = await getTranslations();
     langCode = t.language.code;
     langDir = t.language.direction;
   } catch {
-    // cookies() not available during SSR/build
+    // cookies() may throw during build or SSR
   }
 
   return (

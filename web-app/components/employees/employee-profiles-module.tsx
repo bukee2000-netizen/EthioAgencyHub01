@@ -4,17 +4,19 @@ import { useState, useEffect } from 'react';
 import { Search, Filter, Download, Eye, Globe, User, Calendar, Briefcase, ChevronLeft, ChevronRight, X, CheckCircle2, FileText, Users, FileCheck, StickyNote, Phone, Mail, MapPin, Award, Languages } from 'lucide-react';
 import Link from 'next/link';
 import type { EmployeeBasic } from '@/lib/types/employee';
-import { getStatusColor, getStatusLabel, getFullName, getInitials, parseLanguages } from '@/lib/types/employee';
+import { getFullName, getInitials, parseLanguages } from '@/lib/types/employee';
+import { getStatusColor, getStatusLabel } from '@/lib/utils/status';
 import { useToast } from '@/components/ui/toast-provider';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 export function EmployeeProfilesComponent() {
   const { addToast } = useToast();
+  const { employees: fetchedEmployees, loading, error: fetchError } = useEmployees({ limit: 100 });
   const [employees, setEmployees] = useState<EmployeeBasic[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<EmployeeBasic[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [destinationFilter, setDestinationFilter] = useState('all');
-  const [loading, setLoading] = useState(true);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,32 +24,15 @@ export function EmployeeProfilesComponent() {
   const [profileTab, setProfileTab] = useState<'personal' | 'skills' | 'documents' | 'notes'>('personal');
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setError(null);
-        const res = await fetch('/api/employees?limit=100');
-        const data = await res.json();
-        if (data.success && data.data) {
-          setEmployees(data.data);
-        } else {
-          throw new Error(data.error?.message || 'Failed to fetch employees');
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch employees';
-        setError(errorMessage);
-        console.error('Failed to fetch employees:', error);
-        addToast({ title: 'Error', description: 'Failed to fetch employees. Showing demo data.', type: 'error' });
-
-        const mockEmployees: EmployeeBasic[] = [
-          { id: '1', name: 'Yohannes Tefera', email: 'yohannes@example.com', role: 'Nurse', destination: 'Saudi Arabia', status: 'TRAVEL_READY', createdAt: new Date().toISOString() },
-        ];
-        setEmployees(mockEmployees);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [addToast]);
+    if (fetchError) {
+      setError(fetchError);
+      addToast({ title: 'Error', description: 'Failed to fetch employees. Showing demo data.', type: 'error' });
+      setEmployees([{ id: '1', name: 'Yohannes Tefera', email: 'yohannes@example.com', role: 'Nurse', destination: 'Saudi Arabia', status: 'TRAVEL_READY', createdAt: new Date().toISOString() }]);
+    } else if (fetchedEmployees.length > 0) {
+      setEmployees(fetchedEmployees);
+      setError(null);
+    }
+  }, [fetchedEmployees, fetchError, addToast]);
 
   useEffect(() => {
     const filtered = employees.filter(emp => {
@@ -73,16 +58,7 @@ export function EmployeeProfilesComponent() {
     );
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'REGISTERED': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'DOCUMENT_REVIEW': return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'INTERVIEW_UPLOADED': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'TRAVEL_READY': return 'bg-green-50 text-green-700 border-green-200';
-      case 'DEPLOYED': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      default: return 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700';
-    }
-  };
+
 
   const statusOptions = [
     { value: 'all', label: 'All Status' },

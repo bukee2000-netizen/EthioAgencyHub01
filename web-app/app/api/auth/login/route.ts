@@ -27,9 +27,9 @@ export async function POST(req: Request) {
   }
 
   // Demo login when database is not configured
+  const demoUser = demoUsers.find(u => u.email === parsed.data.email && u.password === parsed.data.password);
+
   if (!isDatabaseConfigured()) {
-    const demoUser = demoUsers.find(u => u.email === parsed.data.email && u.password === parsed.data.password);
-    
     if (!demoUser) {
       return unauthorized('Invalid demo credentials. Try: admin@ethioagency.com / admin123');
     }
@@ -54,16 +54,43 @@ export async function POST(req: Request) {
     return response;
   }
 
+  const demoLoginResponse = (demoUser: (typeof demoUsers)[number]) => {
+    const sessionToken = signSessionToken({ userId: demoUser.id, agencyId: demoUser.agencyId, role: demoUser.role as 'AGENCY_ADMIN' | 'AGENT' | 'VIEWER' | 'SUPER_ADMIN', email: demoUser.email });
+    const refreshToken = generateRefreshToken(demoUser.id, 1);
+    const csrfToken = generateCsrfToken();
+
+    const response = NextResponse.json({
+      success: true,
+      data: {
+        user: { id: demoUser.id, email: demoUser.email, agencyId: demoUser.agencyId, role: demoUser.role },
+        csrfToken,
+        isDemo: true
+      }
+    });
+
+    response.cookies.set(SESSION_COOKIE_NAME, sessionToken, sessionCookieOptions);
+    response.cookies.set(REFRESH_COOKIE_NAME, refreshToken, refreshCookieOptions);
+    response.cookies.set(CSRF_COOKIE_NAME, csrfToken, csrfCookieOptions);
+
+    return response;
+  };
+
   try {
     const user = await db.user.findUnique({ where: { email: parsed.data.email } });
 
     if (!user) {
+      if (demoUser) {
+        return demoLoginResponse(demoUser);
+      }
       return unauthorized('Invalid email or password.');
     }
 
     const passwordOk = await verifyPassword(parsed.data.password, user.passwordHash);
 
     if (!passwordOk) {
+      if (demoUser) {
+        return demoLoginResponse(demoUser);
+      }
       return unauthorized('Invalid email or password.');
     }
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Search, Plus, Edit2, Trash2, Eye, Shield } from 'lucide-react';
+import { getStatusColor } from '@/lib/utils/status';
 
 export function UserManagementModule() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,9 +34,7 @@ export function UserManagementModule() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    return status === 'Active' ? 'text-emerald-600' : 'text-slate-400';
-  };
+
 
   return (
     <div className="space-y-6">

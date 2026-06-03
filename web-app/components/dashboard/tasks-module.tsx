@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Plus, CheckCircle2, Circle, Calendar, Trash2, Edit2 } from 'lucide-react';
+import { getStatusColor } from '@/lib/utils/status';
+import { Card } from '@/components/ui/card';
 
 export function TasksModule() {
   const [tasks, setTasks] = useState([
@@ -79,99 +81,89 @@ export function TasksModule() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'line-through text-slate-400 dark:text-slate-500';
-      case 'in-progress': return 'text-blue-600 font-semibold';
-      case 'pending': return 'text-ink dark:text-ink-dark';
-      default: return 'text-ink dark:text-ink-dark';
-    }
-  };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Tasks</h2>
-        <button className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-sm dark:shadow-soft-dark">
-          <Plus className="h-4 w-4" />
-          Create Task
-        </button>
-      </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 p-4 text-center shadow-sm dark:shadow-soft-dark">
-          <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Total Tasks</p>
-          <p className="mt-1 text-2xl font-bold text-blue-700">{tasks.length}</p>
-        </div>
-        <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 p-4 text-center shadow-sm dark:shadow-soft-dark">
-          <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Pending</p>
-          <p className="mt-1 text-2xl font-bold text-amber-700">{tasks.filter(t => t.status === 'pending').length}</p>
-        </div>
-        <div className="rounded-xl bg-gradient-to-br from-blue-50 to-cyan-100 p-4 text-center shadow-sm dark:shadow-soft-dark">
-          <p className="text-xs font-medium text-slate-600 dark:text-slate-300">In Progress</p>
-          <p className="mt-1 text-2xl font-bold text-cyan-700">{tasks.filter(t => t.status === 'in-progress').length}</p>
-        </div>
-        <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 text-center shadow-sm dark:shadow-soft-dark">
-          <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Completed</p>
-          <p className="mt-1 text-2xl font-bold text-emerald-700">{tasks.filter(t => t.status === 'completed').length}</p>
-        </div>
-      </div>
+   return (
+     <div className="space-y-6">
+       {/* Header */}
+       <div className="flex items-center justify-between mb-4">
+         <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Tasks</h2>
+         <button className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-sm dark:shadow-soft-dark">
+           <Plus className="h-4 w-4" />
+           Create Task
+         </button>
+       </div>
 
-      {/* Tasks List */}
-      <div className="space-y-3">
-        {tasks.map(task => (
-          <div
-            key={task.id}
-            className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:shadow-md transition-shadow shadow-sm dark:shadow-soft-dark"
-          >
-            <div className="flex items-start gap-4">
-              <button
-                onClick={() => toggleTaskStatus(task.id)}
-                className="mt-1 flex-shrink-0 flex-none"
-              >
-                {task.status === 'completed' ? (
-                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
-                ) : (
-                  <Circle className="h-6 w-6 text-slate-300 hover:text-slate-400 dark:text-slate-500" />
-                )}
-              </button>
-              <div className="flex-1">
-                <h3 className={`text-lg font-semibold ${getStatusColor(task.status)}`}>
-                  {task.title}
-                </h3>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{task.description}</p>
-                <div className="mt-3 flex flex-wrap gap-3 items-center">
-                  <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${getPriorityColor(task.priority)}`}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                  </span>
-                  <span className="text-xs text-slate-600 dark:text-slate-300">
-                    👤 {task.assignee}
-                  </span>
-                  <span className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
-                    <Calendar className="h-3 w-3" />
-                    {task.dueDate}
-                  </span>
-                  {task.completedAt && (
-                    <span className="text-xs text-emerald-600 font-medium">
-                      ✓ Completed {task.completedAt}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
-                  <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-300" />
-                </button>
-                <button className="p-2 hover:bg-red-50 rounded-lg transition">
-                  <Trash2 className="h-4 w-4 text-red-600" />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+       {/* Stats */}
+       <div className="grid gap-4 md:grid-cols-4">
+         <Card variant="outlined" className="p-4 text-center">
+           <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Total Tasks</p>
+           <p className="mt-1 text-2xl font-bold text-blue-700">{tasks.length}</p>
+         </Card>
+         <Card variant="outlined" className="p-4 text-center">
+           <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Pending</p>
+           <p className="mt-1 text-2xl font-bold text-amber-700">{tasks.filter(t => t.status === 'pending').length}</p>
+         </Card>
+         <Card variant="outlined" className="p-4 text-center">
+           <p className="text-xs font-medium text-slate-600 dark:text-slate-300">In Progress</p>
+           <p className="mt-1 text-2xl font-bold text-cyan-700">{tasks.filter(t => t.status === 'in-progress').length}</p>
+         </Card>
+         <Card variant="outlined" className="p-4 text-center">
+           <p className="text-xs font-medium text-slate-600 dark:text-slate-300">Completed</p>
+           <p className="mt-1 text-2xl font-bold text-emerald-700">{tasks.filter(t => t.status === 'completed').length}</p>
+         </Card>
+       </div>
+
+       {/* Tasks List */}
+       <div className="space-y-3">
+         {tasks.map(task => (
+           <Card key={task.id} className="p-4 hover:shadow-md transition-shadow shadow-sm dark:shadow-soft-dark">
+             <div className="flex items-start gap-4">
+               <button
+                 onClick={() => toggleTaskStatus(task.id)}
+                 className="mt-1 flex-shrink-0 flex-none"
+               >
+                 {task.status === 'completed' ? (
+                   <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                 ) : (
+                   <Circle className="h-6 w-6 text-slate-300 hover:text-slate-400 dark:text-slate-500" />
+                 )}
+               </button>
+               <div className="flex-1">
+                 <h3 className={`text-lg font-semibold ${getStatusColor(task.status)}`}>
+                   {task.title}
+                 </h3>
+                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{task.description}</p>
+                 <div className="mt-3 flex flex-wrap gap-3 items-center">
+                   <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${getPriorityColor(task.priority)}`}>
+                     {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                   </span>
+                   <span className="text-xs text-slate-600 dark:text-slate-300">
+                     👤 {task.assignee}
+                   </span>
+                   <span className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
+                     <Calendar className="h-3 w-3" />
+                     {task.dueDate}
+                   </span>
+                   {task.completedAt && (
+                     <span className="text-xs text-emerald-600 font-medium">
+                       ✓ Completed {task.completedAt}
+                     </span>
+                   )}
+                 </div>
+               </div>
+               <div className="flex items-center gap-2">
+                 <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+                   <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                 </button>
+                 <button className="p-2 hover:bg-red-50 rounded-lg transition">
+                   <Trash2 className="h-4 w-4 text-red-600" />
+                 </button>
+               </div>
+             </div>
+           </Card>
+         ))}
+       </div>
+     </div>
+   );
 }

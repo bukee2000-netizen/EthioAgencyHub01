@@ -3,58 +3,20 @@
 import { useState, useEffect } from 'react';
 import { FileCheck2, Upload, Eye, Download, Trash2, CheckCircle2, AlertCircle, Clock, Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
-
-interface Document {
-  id: string;
-  employeeId: string;
-  type: string;
-  filePath: string;
-  status: string;
-  expiresAt?: string;
-  createdAt: string;
-}
+import { useDocuments, type DocumentRecord } from '@/lib/hooks/use-documents';
 
 export function DocumentManagementModule() {
   const { addToast } = useToast();
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
+  const { documents, loading: loadingDocs, error } = useDocuments();
+  const [filteredDocuments, setFilteredDocuments] = useState<DocumentRecord[]>([]);
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/documents');
-        const payload = await res.json();
-
-        if (res.ok && payload?.success && Array.isArray(payload.data)) {
-          setDocuments(
-            payload.data.map((doc: any) => ({
-              id: String(doc.id),
-              employeeId: String(doc.employeeId ?? ''),
-              type: String(doc.type ?? 'OTHER'),
-              filePath: String(doc.filePath ?? doc.file_path ?? ''),
-              status: String(doc.status ?? 'PENDING'),
-              expiresAt: doc.expiresAt ?? undefined,
-              createdAt: doc.createdAt ?? new Date().toISOString()
-            }))
-          );
-          return;
-        }
-
-        setDocuments([]);
-      } catch (error) {
-        console.error('Failed to fetch documents:', error);
-        addToast({ title: 'Error', description: 'Failed to fetch documents. Please try again.', type: 'error' });
-        setDocuments([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [addToast]);
+    if (error) {
+      addToast({ title: 'Error', description: 'Failed to fetch documents. Please try again.', type: 'error' });
+    }
+  }, [error, addToast]);
 
   useEffect(() => {
     let filtered = documents;
@@ -160,7 +122,7 @@ export function DocumentManagementModule() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-            {loading ? (
+            {loadingDocs ? (
               <tr>
                 <td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                   <Loader2 className="h-5 w-5 animate-spin inline mr-2" />Loading documents...

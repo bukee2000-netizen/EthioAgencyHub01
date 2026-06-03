@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   UsersRound, 
   Plus, 
@@ -62,42 +62,7 @@ export function EmployeeManagementModule() {
   const [showSearch, setShowSearch] = useState(false);
   const [searching, setSearching] = useState(false);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setError(null);
-        const [statsRes, recentRes] = await Promise.all([
-          fetch('/api/employees/stats'),
-          fetch('/api/employees?limit=10&sortBy=createdAt&order=desc')
-        ]);
-
-        const statsData = await statsRes.json();
-        const recentData = await recentRes.json();
-
-        if (statsData.success) {
-          setStats(statsData.data);
-        } else {
-          throw new Error(statsData.error?.message || 'Failed to fetch stats');
-        }
-
-        if (recentData.success) {
-          setRecentEmployees(recentData.data || []);
-        } else {
-          throw new Error(recentData.error?.message || 'Failed to fetch recent employees');
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch data';
-        setError(errorMessage);
-        console.error('Failed to fetch stats:', error);
-        addToast({ title: 'Error', description: 'Failed to fetch dashboard statistics.', type: 'error' });
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [addToast]);
-
-  const fetchStats = async () => {
+  const loadData = useCallback(async (useMockFallback: boolean) => {
     try {
       setError(null);
       const [statsRes, recentRes] = await Promise.all([
@@ -123,32 +88,24 @@ export function EmployeeManagementModule() {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch data';
       setError(errorMessage);
       console.error('Failed to fetch stats:', error);
-      addToast({ title: 'Error', description: 'Failed to fetch stats. Showing demo data.', type: 'error' });
-      
-      // Keep mock data as fallback
-      const mockStats: EmployeeStats = {
-        total: 156,
-        registered: 45,
-        documentReview: 28,
-        interviewUploaded: 32,
-        travelReady: 38,
-        deployed: 13
-      };
+      addToast({ title: 'Error', description: useMockFallback ? 'Failed to fetch stats. Showing demo data.' : 'Failed to fetch dashboard statistics.', type: 'error' });
 
-      const mockRecent: RecentEmployee[] = [
-        { id: '1', name: 'Yohannes Tefera', role: 'Nurse', destination: 'Saudi Arabia', status: 'TRAVEL_READY', registeredAt: '2024-01-28' },
-        { id: '2', name: 'Senait Assefa', role: 'Driver', destination: 'UAE', status: 'INTERVIEW_UPLOADED', registeredAt: '2024-01-25' },
-        { id: '3', name: 'Getnet Kabede', role: 'Security Officer', destination: 'Kuwait', status: 'DOCUMENT_REVIEW', registeredAt: '2024-01-20' },
-        { id: '4', name: 'Meron Alemu', role: 'Housemaid', destination: 'Qatar', status: 'REGISTERED', registeredAt: '2024-01-18' },
-        { id: '5', name: 'Bereket Haile', role: 'Cook', destination: 'Saudi Arabia', status: 'DEPLOYED', registeredAt: '2024-01-10' },
-      ];
-
-      setStats(mockStats);
-      setRecentEmployees(mockRecent);
+      if (useMockFallback) {
+        setStats({ total: 156, registered: 45, documentReview: 28, interviewUploaded: 32, travelReady: 38, deployed: 13 });
+        setRecentEmployees([
+          { id: '1', name: 'Yohannes Tefera', role: 'Nurse', destination: 'Saudi Arabia', status: 'TRAVEL_READY', registeredAt: '2024-01-28' },
+          { id: '2', name: 'Senait Assefa', role: 'Driver', destination: 'UAE', status: 'INTERVIEW_UPLOADED', registeredAt: '2024-01-25' },
+          { id: '3', name: 'Getnet Kabede', role: 'Security Officer', destination: 'Kuwait', status: 'DOCUMENT_REVIEW', registeredAt: '2024-01-20' },
+          { id: '4', name: 'Meron Alemu', role: 'Housemaid', destination: 'Qatar', status: 'REGISTERED', registeredAt: '2024-01-18' },
+          { id: '5', name: 'Bereket Haile', role: 'Cook', destination: 'Saudi Arabia', status: 'DEPLOYED', registeredAt: '2024-01-10' },
+        ]);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => { loadData(false); }, [loadData]);
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -440,7 +397,7 @@ export function EmployeeManagementModule() {
           </div>
           <p className="mt-2 text-sm text-red-600">{error}. Showing cached demo data instead.</p>
           <button
-            onClick={fetchStats}
+            onClick={() => { setLoading(true); loadData(true); }}
             className="mt-3 text-sm font-bold text-red-700 hover:text-red-900 underline underline-offset-2"
           >
             Retry Connection

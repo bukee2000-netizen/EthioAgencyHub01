@@ -9,3 +9,8 @@ node_modules
 coverage
 playwright-report
 test-results
+build-output.txt
+next-build-out.txt
+tsc-out.txt
+.agents/
+skills-lock.json

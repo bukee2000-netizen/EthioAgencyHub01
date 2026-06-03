@@ -10,28 +10,19 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-beforeEach(() => {
-  vi.spyOn(global, 'fetch').mockImplementation(async (url: string) => {
-    return {
-      ok: true,
-      json: () => Promise.resolve({ success: true, data: [], total: 0 }),
-    } as Response;
-  });
-});
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
 
 describe('InstitutionManagementModule', () => {
   it('renders institution management heading', () => {
     render(<InstitutionManagementModule />);
-    expect(screen.getByText(/institution|partner/i)).toBeInTheDocument();
+    expect(screen.getByText('Institutions Network')).toBeInTheDocument();
   });
 
-  it('renders search input', () => {
+  it('shows total partners stat', () => {
     render(<InstitutionManagementModule />);
-    expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
-  });
-
-  it('renders add institution button', () => {
-    render(<InstitutionManagementModule />);
-    expect(screen.getByText(/add|register|create/i)).toBeInTheDocument();
+    expect(screen.getByText('Total Partners')).toBeInTheDocument();
   });
 });

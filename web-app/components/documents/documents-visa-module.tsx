@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FileText, Plane, CheckCircle2, AlertCircle, Clock, Search, Shield, Globe, UserCheck, Send, Upload, Download, CheckSquare2, ChevronDown, ChevronUp, ClipboardList } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 interface Emp {
   id: string; name: string; phone: string; destination: string; passportNumber?: string;
@@ -11,8 +12,7 @@ interface Emp {
 
 export function DocumentsVisaModule() {
   const { addToast } = useToast();
-  const [employees, setEmployees] = useState<Emp[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { employees: rawEmployees, loading } = useEmployees({ limit: 100 });
   const [embassyFilter, setEmbassyFilter] = useState('all');
   const [stageFilter, setStageFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,26 +21,14 @@ export function DocumentsVisaModule() {
   const [visaStages, setVisaStages] = useState<Record<string, { embassy: string; stage: number; rejected?: string }>>({});
   const [visaScans, setVisaScans] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/employees?limit=100');
-        const data = await res.json();
-        if (data.success && data.data) {
-          setEmployees(data.data.map((e: any) => ({
-            id: e.id,
-            name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
-            phone: e.contactPhone || e.phone || '',
-            destination: e.destination || e.country || 'Open',
-            passportNumber: e.passportNumber || '',
-            documents: { passport: !!e.passportNumber, visa: false, yellowCard: false, ticket: false, orientationComplete: false }
-          })));
-        }
-      } catch (err) { console.error('Failed to fetch employees:', err); addToast({ title: 'Error', description: 'Failed to fetch employees.', type: 'error' }); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, [addToast]);
+  const employees: Emp[] = rawEmployees.map((e: any) => ({
+    id: e.id,
+    name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
+    phone: e.contactPhone || e.phone || '',
+    destination: e.destination || e.country || 'Open',
+    passportNumber: e.passportNumber || '',
+    documents: { passport: !!e.passportNumber, visa: false, yellowCard: false, ticket: false, orientationComplete: false }
+  }));
 
   const embassies = ['Saudi Arabia (KSA)', 'UAE', 'Qatar', 'Kuwait', 'Jordan'];
   const stageNames = ['Document Collection', 'Portal Registration', 'Submitted to Embassy', 'Visa Approved/Stamped', 'Rejected/Correction'];
@@ -86,7 +74,7 @@ export function DocumentsVisaModule() {
         fetch('/api/integration/bridge', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'visa_approved', employeeId: emp.id })
-        }).catch(() => {});
+        }).catch((err) => console.error(err));
       }
     }
   };
@@ -259,7 +247,7 @@ export function DocumentsVisaModule() {
                                 <div className="flex items-center gap-2"><span className={emp.documents.passport ? 'text-green-600' : 'text-red-500'}>{emp.documents.passport ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}</span><span>Passport Collected</span></div>
                                 <div className="flex items-center gap-2">
                                   <span>{emp.documents.yellowCard ? (ds.medicalExpiring ? <AlertCircle className="h-4 w-4 text-orange-500" /> : <CheckCircle2 className="h-4 w-4 text-green-600" />) : <Clock className="h-4 w-4 text-amber-500" />}</span>
-                                  <span className={ds.medicalExpiring ? 'text-orange-600 font-medium' : ''}>Medical Result (GAMCA){ds.medicalExpiring ? ' â€“ Expiring within 5 days!' : ''}</span>
+                                  <span className={ds.medicalExpiring ? 'text-orange-600 font-medium' : ''}>Medical Result (GAMCA){ds.medicalExpiring ? ' – Expiring within 5 days!' : ''}</span>
                                 </div>
                                 <div className="flex items-center gap-2"><span className="text-green-600"><CheckCircle2 className="h-4 w-4" /></span><span>MoLS Contract Signed</span></div>
                                 <div className="flex items-center gap-2"><span className="text-green-600"><CheckCircle2 className="h-4 w-4" /></span><span>Police Clearance</span></div>

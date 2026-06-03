@@ -9,7 +9,10 @@ RUN apk add --no-cache libc6-compat
 
 # Copy package files and install ALL dependencies (including dev)
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm ci --network-timeout=1000000
 
 # Copy source code
 COPY . .
@@ -19,6 +22,9 @@ RUN npx prisma generate
 
 # Build Next.js
 RUN npm run build
+
+# Remove devDependencies after build so production stage can reuse node_modules
+RUN npm prune --production
 
 # ============================================
 # Stage 2: Production
@@ -37,16 +43,15 @@ RUN apk add --no-cache libc6-compat bash curl
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy production dependencies
+# Copy production dependencies from the builder stage
+COPY --from=builder /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
-RUN npm ci --only=production && npm cache clean --force
 
 # Copy Prisma schema and generate client (entrypoint will handle provider switch)
 COPY prisma ./prisma
 
 # Copy built application
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/middleware.ts ./
 

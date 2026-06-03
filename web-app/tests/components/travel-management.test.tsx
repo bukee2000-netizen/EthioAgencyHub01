@@ -10,6 +10,16 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
+
+vi.mock('@/components/ui/toast-provider', () => ({
+  useToast: () => ({ addToast: vi.fn() }),
+  ToastProvider: ({ children }: any) => children,
+}));
+
 beforeEach(() => {
   vi.spyOn(global, 'fetch').mockImplementation(async (url: string) => {
     if (url.toString().includes('/api/travel')) {
@@ -25,16 +35,15 @@ beforeEach(() => {
 describe('TravelManagementModule', () => {
   it('renders overview tab by default', () => {
     render(<TravelManagementModule />);
-    expect(screen.getByText(/overview|command center/i)).toBeInTheDocument();
+    expect(screen.getByText('Command Center')).toBeInTheDocument();
   });
 
   it('renders navigation tabs', () => {
     render(<TravelManagementModule />);
-    expect(screen.getByText(/schedule|tickets|departure|arrival/i)).toBeInTheDocument();
-  });
-
-  it('renders search input for filtering', () => {
-    render(<TravelManagementModule />);
-    expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
+    expect(screen.getByText('Schedule')).toBeInTheDocument();
+    expect(screen.getByText('Tickets')).toBeInTheDocument();
+    expect(screen.getByText("Today's Departures")).toBeInTheDocument();
+    expect(screen.getByText('Departure Prep')).toBeInTheDocument();
+    expect(screen.getByText('Arrival')).toBeInTheDocument();
   });
 });

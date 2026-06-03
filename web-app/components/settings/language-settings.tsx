@@ -1,8 +1,8 @@
 ﻿'use client';
 
 import { useEffect, useState } from 'react';
-import { Globe, CheckCircle2, Languages, ArrowRight } from 'lucide-react';
-import { LanguageSwitcher } from '@/components/settings/language-switcher';
+import { Globe, CheckCircle2, Languages } from 'lucide-react';
+import { LanguagePicker } from '@/components/ui/language-picker';
 import { supportedLanguages, type SupportedLanguageCode } from '@/config/languages';
 
 export function LanguageSettings() {
@@ -16,7 +16,7 @@ export function LanguageSettings() {
         if (data.success && data.code) setCurrent(data.code);
         else if (data.code) setCurrent(data.code);
       })
-      .catch(() => {})
+      .catch((err) => console.error('Failed to fetch current language:', err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -59,7 +59,7 @@ export function LanguageSettings() {
       {/* Language Selection */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
         <h2 className="font-bold text-ink dark:text-ink-dark text-lg mb-4">Select Language</h2>
-        <LanguageSwitcher current={current} />
+        <LanguagePicker variant="cards" currentLanguage={current} />
       </div>
 
       {/* Translation Coverage */}

@@ -13,7 +13,7 @@ const systemSettingsSchema = z.object({
   }).optional(),
   notifications: z.object({
     emailAlerts: z.boolean(),
-    telegramNotifications: z.boolean(),
+    smsAlerts: z.boolean(),
     dailyDigest: z.boolean(),
     criticalAlerts: z.boolean()
   }).optional(),
@@ -22,11 +22,6 @@ const systemSettingsSchema = z.object({
     maxFileSize: z.string(),
     retentionDays: z.string()
   }).optional(),
-  telegram: z.object({
-    botToken: z.string().optional(),
-    chatId: z.string().optional(),
-    uploadEnabled: z.boolean()
-  }).optional()
 });
 
 export async function GET() {
@@ -43,18 +38,15 @@ export async function GET() {
       },
       notifications: {
         emailAlerts: process.env.EMAIL_ALERTS === 'true',
-        telegramNotifications: process.env.TELEGRAM_NOTIFICATIONS === 'true',
+        smsAlerts: process.env.SMS_ALERTS === 'true',
         dailyDigest: process.env.DAILY_DIGEST === 'true',
         criticalAlerts: process.env.CRITICAL_ALERTS !== 'false'
       },
       storage: {
-        provider: process.env.STORAGE_PROVIDER || 'teledrive',
+        provider: 'r2',
         maxFileSize: process.env.MAX_FILE_SIZE || '100',
         retentionDays: process.env.RETENTION_DAYS || '90'
       },
-      telegram: {
-        uploadEnabled: process.env.TELEGRAM_UPLOAD_ENABLED !== 'false'
-      }
     };
 
     return ok(settings);
@@ -87,7 +79,7 @@ export async function POST(req: Request) {
     
     if (settings.notifications) {
       process.env.EMAIL_ALERTS = String(settings.notifications.emailAlerts);
-      process.env.TELEGRAM_NOTIFICATIONS = String(settings.notifications.telegramNotifications);
+      process.env.SMS_ALERTS = String(settings.notifications.smsAlerts);
       process.env.DAILY_DIGEST = String(settings.notifications.dailyDigest);
       process.env.CRITICAL_ALERTS = String(settings.notifications.criticalAlerts);
     }
@@ -96,12 +88,6 @@ export async function POST(req: Request) {
       process.env.STORAGE_PROVIDER = settings.storage.provider;
       process.env.MAX_FILE_SIZE = settings.storage.maxFileSize;
       process.env.RETENTION_DAYS = settings.storage.retentionDays;
-    }
-    
-    if (settings.telegram) {
-      if (settings.telegram.botToken) process.env.TELEGRAM_BOT_TOKEN = settings.telegram.botToken;
-      if (settings.telegram.chatId) process.env.TG_CHANNEL_ID = settings.telegram.chatId;
-      process.env.TELEGRAM_UPLOAD_ENABLED = String(settings.telegram.uploadEnabled);
     }
 
     return ok({ success: true, message: 'Settings updated successfully' });

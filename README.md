@@ -1,7 +1,7 @@
 # 🌍 Ethio Agency Hub
 
 > **Modernizing Ethiopian foreign employment agencies through technology.**
-> A full-stack SaaS platform built for Ethiopian labor recruitment agencies to manage employees, documents, travel, pilgrimages, and institutional partnerships — with a hybrid Telegram + Teledrive media storage strategy.
+> A full-stack SaaS platform built for Ethiopian labor recruitment agencies to manage employees, documents, travel, pilgrimages, and institutional partnerships — powered by Supabase Auth, Cloudflare R2, and Vercel.
 
 ---
 
@@ -13,8 +13,6 @@
 - [Project Structure](#-project-structure)
 - [Site Map](#-structural-site-map)
 - [Key Features](#-key-features-by-module)
-- [Hybrid Storage System](#-hybrid-storage-system)
-- [Development Roadmap](#-development-roadmap)
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
 - [Database Schema Overview](#-database-schema-overview)
@@ -36,8 +34,8 @@
 |---|---|
 | Paper-based employee records | Digital registration with structured CV generation |
 | Untracked document processing | MOLS integration + cross-match verification |
-| Expensive video storage for international partners | Free global streaming via Telegram private channels |
-| High document storage costs | Unlimited archiving via Teledrive (300 ETB/month) |
+| Expensive video/document storage | Cloudflare R2 (S3-compatible, pay-as-you-go) |
+| Complex auth & session management | Supabase Auth SSR with RBAC |
 | No centralized agency operations view | Real-time KPI dashboard for 50+ agencies |
 | Manual travel coordination | Automated departure preparation & ticket management |
 
@@ -48,260 +46,99 @@
 | Layer | Technology | Purpose |
 |---|---|---|
 | **Framework** | Next.js 14 (App Router) | SSR, routing, API routes |
-| *Bundler** |  | 
 | **Language** | TypeScript (strict) | Type safety |
 | **Database** | MySQL + Prisma ORM | Employee/agency relational data |
-| **Auth** | JWT + bcrypt | Secure session management |
+| **Auth** | Supabase Auth SSR | Session management, row-level security |
+| **File Storage** | Cloudflare R2 | S3-compatible document & media storage |
+| **Rate Limiting** | Upstash Redis | API rate limiting (sliding window) |
+| **Email** | Resend | Transactional emails |
 | **Validation** | Zod | Schema validation |
-| **Telegram** | `node-telegram-bot-api` | Interview video uploads & streaming |
-| **Teledrive** | Local FS watch + Ethio Telecom Teledrive | Photo/document sync |
 | **Styling** | Tailwind CSS | Utility-first styling |
-| **Testing** | Vitest + Playwright | Unit + E2E tests |
-| **Deployment** | Docker + CI/CD | Containerized deployment |
+| **Testing** | Vitest | Unit + integration tests |
+| **Hosting** | Vercel (Cloudflare domain) | Edge-rendered deployment |
+| **CI/CD** | GitHub Actions | Lint, test, deploy pipeline |
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         CLIENT LAYER                                │
-│              Next.js App Router (SSR + Client Components)           │
-└──────────────────────────────┬──────────────────────────────────────┘
-                               │
-┌──────────────────────────────▼──────────────────────────────────────┐
-│                          API LAYER                                  │
-│                  Next.js API Routes (/app/api/*)                    │
-│           Zod Validation │ JWT Middleware │ Role Guards             │
-└──────┬───────────────────────┬──────────────────┬───────────────────┘
-       │                       │                  │
-┌──────▼──────┐    ┌───────────▼──────┐  ┌────────▼────────┐
-│   MySQL DB  │    │  Teledrive Sync  │  │  Telegram Bot   │
-│  (Prisma)   │    │  (Local FS Watch)│  │  Private Channel│
-│             │    │  Photos/Passports│  │  Interview Videos│
-│ Employees   │    │  300 ETB/month   │  │  Free streaming  │
-│ Agencies    │    │  Unlimited       │  │  @EthioAgency   │
-│ Documents   │    └──────────────────┘  │  Hub_Bot        │
-│ Travel      │                          └─────────────────┘
-│ Pilgrimages │
-└─────────────┘
-```
-
-### Hybrid Storage Flow
-
-```
-Employee Registration
-        │
-        ├── Photos / Passports ──→ Local Folder ──→ Teledrive Desktop Sync ──→ Ethio Telecom Cloud
-        │
-        └── Interview Videos ──→ Telegram Bot ──→ Private Channel ──→ tg_video_id saved in MySQL
-                                                                              │
-                                                              International Partner views via
-                                                              authorized Telegram stream
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Browser     │────▶│  Vercel      │────▶│  Supabase    │
+│  (Next.js)   │     │  Edge/Middle │     │  Auth SSR    │
+└─────────────┘     └──────┬───────┘     └──────────────┘
+                           │
+                    ┌──────▼───────┐     ┌──────────────┐
+                    │  Next.js API │────▶│  MySQL       │
+                    │  Routes      │     │  (Prisma)    │
+                    └──────┬───────┘     └──────────────┘
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+       ┌──────────┐ ┌──────────┐ ┌──────────┐
+       │ R2       │ │ Upstash  │ │ Resend   │
+       │ Storage  │ │ Redis    │ │ Email    │
+       └──────────┘ └──────────┘ └──────────┘
 ```
 
 ---
 
-## 📁 Project Structure
+📁 Project Structure
 
 ```
 ethio-agency-hub/
 │
-├── app/                              # Next.js App Router root
-│   ├── (auth)/                       # Auth route group (no layout)
-│   │   ├── login/
-│   │   │   └── page.tsx
-│   │   ├── logout/
-│   │   │   └── route.ts
-│   │   └── register/
-│   │       └── page.tsx
-│   │
-│   ├── (dashboard)/                  # Protected route group (shared layout)
-│   │   ├── layout.tsx                # Dashboard shell: sidebar, topbar
-│   │   │
-│   │   ├── dashboard/
-│   │   │   ├── page.tsx              # Main KPI dashboard
-│   │   │   ├── trends/page.tsx
-│   │   │   ├── tasks/page.tsx
-│   │   │   └── activities/page.tsx
-│   │   │
-│   │   ├── employee-management/
-│   │   │   ├── page.tsx              # Employee overview
-│   │   │   ├── registration/
-│   │   │   │   ├── layout.tsx        # Wizard step layout
-│   │   │   │   ├── personal/page.tsx
-│   │   │   │   ├── skills/page.tsx
-│   │   │   │   ├── documents/page.tsx
-│   │   │   │   └── review/page.tsx
-│   │   │   ├── cv-generator/
-│   │   │   │   ├── templates/page.tsx
-│   │   │   │   ├── preview/page.tsx
-│   │   │   │   └── download-share/page.tsx
-│   │   │   ├── cv-database/
-│   │   │   │   ├── employee-profiles/page.tsx
-│   │   │   │   ├── skill-matching/page.tsx
-│   │   │   │   └── search/page.tsx
-│   │   │   └── [id]/page.tsx         # Dynamic employee profile
-│   │   │
-│   │   ├── documents/
-│   │   │   ├── page.tsx
-│   │   │   ├── upload/page.tsx
-│   │   │   ├── visa/page.tsx
-│   │   │   ├── mols/page.tsx
-│   │   │   ├── missing-report/page.tsx
-│   │   │   ├── cross-match/page.tsx
-│   │   │   └── [id]/page.tsx
-│   │   │
-│   │   ├── travel/
-│   │   │   ├── page.tsx
-│   │   │   ├── schedule/page.tsx
-│   │   │   ├── ticket/page.tsx
-│   │   │   ├── today/page.tsx
-│   │   │   ├── departure/page.tsx
-│   │   │   └── [id]/page.tsx
-│   │   │
-│   │   ├── hajj-umrah/
-│   │   │   ├── page.tsx
-│   │   │   ├── pilgrim-detail/page.tsx
-│   │   │   ├── requirements/page.tsx
-│   │   │   ├── documentation/page.tsx
-│   │   │   └── [id]/page.tsx
-│   │   │
-│   │   ├── institutions/
-│   │   │   ├── page.tsx
-│   │   │   ├── institution-detail/page.tsx
-│   │   │   ├── partners/page.tsx
-│   │   │   ├── collaboration/page.tsx
-│   │   │   └── [id]/page.tsx
-│   │   │
-│   │   ├── agents/
-│   │   │   ├── page.tsx
-│   │   │   ├── agent-detail/page.tsx
-│   │   │   ├── performance/page.tsx
-│   │   │   ├── onboarding/page.tsx
-│   │   │   ├── training/page.tsx
-│   │   │   ├── support/page.tsx
-│   │   │   └── [id]/page.tsx
-│   │   │
-│   │   ├── administration/
-│   │   │   ├── page.tsx
-│   │   │   ├── users/page.tsx
-│   │   │   ├── roles-permissions/page.tsx
-│   │   │   ├── settings/page.tsx
-│   │   │   ├── logs/page.tsx
-│   │   │   └── audit/page.tsx
-│   │   │
-│   │   ├── reporting-analytics/
-│   │   │   ├── page.tsx
-│   │   │   ├── overview/page.tsx
-│   │   │   ├── employee-reports/page.tsx
-│   │   │   ├── document-reports/page.tsx
-│   │   │   ├── financial-reports/page.tsx
-│   │   │   └── export/page.tsx
-│   │   │
-│   │   └── user-settings/
-│   │       ├── page.tsx
-│   │       ├── profile/page.tsx
-│   │       ├── security/page.tsx
-│   │       └── notifications/page.tsx
-│   │
-│   └── api/                          # Next.js API Routes
-│       ├── auth/
-│       │   ├── login/route.ts
-│       │   ├── logout/route.ts
-│       │   └── register/route.ts
-│       ├── employees/
-│       │   ├── route.ts              # GET list, POST create
-│       │   ├── [id]/route.ts         # GET, PUT, DELETE by ID
-│       │   └── register/route.ts     # Multi-step registration handler
-│       ├── documents/
-│       │   ├── route.ts
-│       │   ├── [id]/route.ts
-│       │   └── cross-match/route.ts
-│       ├── travel/
-│       │   └── [...slug]/route.ts
-│       ├── hajj-umrah/
-│       │   └── [...slug]/route.ts
-│       ├── institutions/
-│       │   └── [...slug]/route.ts
-│       ├── agents/
-│       │   └── [...slug]/route.ts
-│       ├── telegram/
-│       │   ├── webhook/route.ts      # Telegram bot webhook
-│       │   └── stream/[fileId]/route.ts  # Proxy video stream
-│       └── upload/
-│           └── route.ts             # Teledrive sync upload handler
+├── .github/workflows/          # CI/CD pipelines
 │
-├── components/                       # Shared UI components
-│   ├── ui/                           # Base design system (Button, Input, Modal…)
-│   ├── layout/                       # Sidebar, Topbar, PageHeader
-│   ├── dashboard/                    # KPI cards, charts, activity feed
-│   ├── employee/                     # Employee cards, wizard steps
-│   ├── documents/                    # Document viewer, upload zone
-│   ├── travel/                       # Travel timeline, departure cards
-│   ├── hajj-umrah/                   # Pilgrim registration components
-│   ├── telegram/                     # Video player proxy, interview trigger
-│   └── forms/                        # Reusable form primitives
+├── app/                        # Next.js App Router
+│   ├── (auth)/                 # Login, register, logout
+│   ├── (dashboard)/            # Protected pages (50+ routes)
+│   └── api/                    # REST API routes
+│       ├── auth/               # Supabase Auth wrappers
+│       ├── employees/          # Employee CRUD, registration, bulk import
+│       ├── documents/          # Documents, visa, MOLS, cross-match
+│       ├── travel/             # Travel management (catch-all [...slug])
+│       ├── hajj-umrah/         # Pilgrim management (catch-all [...slug])
+│       ├── institutions/       # Institution management (catch-all [...slug])
+│       ├── agents/             # Agent management (catch-all [...slug])
+│       ├── jobs/[jobId]        # Import progress polling
+│       ├── r2/presign          # Presigned upload/download URL generation
+│       └── inngest/            # Background job webhook endpoint
 │
-├── lib/                              # Pure logic — no React
-│   ├── auth/
-│   │   ├── jwt.ts                    # Sign/verify JWT
-│   │   ├── password.ts               # bcrypt helpers
-│   │   └── middleware.ts             # Route protection
-│   ├── db/
-│   │   ├── prisma.ts                 # Prisma client singleton
-│   │   └── queries/                  # Reusable DB query functions
-│   ├── telegram/
-│   │   ├── bot.ts                    # Bot instance + helpers
-│   │   └── channel.ts               # Channel media management
-│   ├── teledrive/
-│   │   └── watcher.ts               # FS watcher for sync folder
-│   ├── validations/                  # Zod schemas
-│   │   ├── employee.schema.ts
-│   │   ├── document.schema.ts
-│   │   └── auth.schema.ts
-│   └── utils/                        # General utilities
-│       ├── format.ts
-│       └── errors.ts
+├── components/                 # Shared UI components
+│   ├── ui/                     # Base design system (shadcn/ui)
+│   ├── layout/                 # Sidebar, topbar, theme provider
+│   ├── dashboard/              # KPI cards, charts, activity feed
+│   ├── employees/              # Registration wizard, CV generator, profiles
+│   ├── documents/              # Document viewer, upload, cross-match
+│   ├── travel/                 # Travel timeline, departure cards
+│   ├── hajj-umrah/             # Pilgrim registration components
+│   └── agents/                 # Agent management components
 │
-├── prisma/
-│   ├── schema.prisma                 # DB models
-│   └── migrations/                   # Migration history
+├── lib/                        # Pure logic — no React
+│   ├── supabase/               # client.ts, server.ts, admin.ts, middleware.ts
+│   ├── db/                     # prisma.ts, queries/
+│   ├── r2/                     # client.ts, presign.ts (S3 presigned URLs)
+│   ├── redis/                  # client.ts, rate-limit.ts (Upstash)
+│   ├── jobs/                   # client.ts, dispatch.ts (Supabase jobs table)
+│   ├── email/                  # resend.ts (Resend client)
+│   ├── auth/                   # Route protection + role guards
+│   ├── validations/            # Zod schemas (employee, document, auth)
+│   └── utils/                  # format.ts, errors.ts (AppError hierarchy)
 │
-├── public/                           # Static assets
-│   └── icons/
-│
-├── styles/
-│   └── globals.css                   # Tailwind base + CSS vars
-│
-├── types/                            # Global TypeScript types
-│   ├── api.ts
-│   ├── employee.ts
-│   └── telegram.ts
-│
-├── config/
-│   ├── site.ts                       # App metadata
-│   └── permissions.ts                # Role/permission maps
-│
-├── tests/
-│   ├── unit/                         # Vitest unit tests
-│   ├── integration/                  # API integration tests
-│   └── e2e/                          # Playwright end-to-end tests
-│
-├── docker/
-│   ├── Dockerfile
-│   └── docker-compose.yml
+├── prisma/                     # schema.prisma + migrations
+├── supabase/migrations/        # RLS policies, SQL extensions
+├── tests/                      # unit/, integration/
+├── inngest/                    # Background job functions
+├── config/                     # site.ts, permissions.ts
+├── types/                      # api.ts, employee.ts, media.ts
 │
 ├── .env.example
-├── .env.local                        # ← never commit
-├── next.config.ts
+├── next.config.mjs
 ├── tailwind.config.ts
 ├── tsconfig.json
-├── vitest.config.ts
-└── README.md
+└── vitest.config.ts
 ```
-
----
 
 ## 🗂️ Structural Site Map
 
@@ -313,7 +150,7 @@ Ethio Agency Hub
 │   └── /register                    (admin only)
 │
 ├── 📊 Dashboard
-│   ├── /dashboard                   (KPIs, today's departures, quick actions)
+│   ├── /dashboard
 │   ├── /dashboard/trends
 │   ├── /dashboard/tasks
 │   └── /dashboard/activities
@@ -321,81 +158,44 @@ Ethio Agency Hub
 ├── 👥 Employee Management
 │   ├── /employee-management
 │   ├── /employee-management/registration
-│   │   ├── /personal
-│   │   ├── /skills
-│   │   ├── /documents               (Teledrive sync + Telegram interview trigger)
-│   │   └── /review
+│   │   ├── /personal ├── /skills ├── /documents └── /review
 │   ├── /employee-management/cv-generator
-│   │   ├── /templates
-│   │   ├── /preview
-│   │   └── /download-share
+│   │   ├── /templates ├── /preview └── /download-share
 │   ├── /employee-management/cv-database
-│   │   ├── /employee-profiles
-│   │   ├── /skill-matching
-│   │   └── /search
+│   │   ├── /employee-profiles ├── /skill-matching └── /search
 │   └── /employee-management/[id]
 │
 ├── 📄 Document Management
-│   ├── /documents
-│   ├── /documents/upload
-│   ├── /documents/visa
-│   ├── /documents/mols
-│   ├── /documents/missing-report
-│   ├── /documents/cross-match
-│   └── /documents/[id]
+│   ├── /documents ├── /upload ├── /visa ├── /mols
+│   ├── /missing-report ├── /cross-match └── /[id]
 │
 ├── ✈️ Travel Management
-│   ├── /travel
-│   ├── /travel/schedule
-│   ├── /travel/ticket
-│   ├── /travel/today
-│   ├── /travel/departure
-│   └── /travel/[id]
+│   ├── /travel ├── /schedule ├── /ticket
+│   ├── /today ├── /departure └── /[id]
 │
-├── 🕋 Hajj & Umrah Management
-│   ├── /hajj-umrah
-│   ├── /hajj-umrah/pilgrim-detail
-│   ├── /hajj-umrah/requirements
-│   ├── /hajj-umrah/documentation
-│   └── /hajj-umrah/[id]
+├── 🕋 Hajj & Umrah
+│   ├── /hajj-umrah ├── /pilgrim-detail ├── /requirements
+│   ├── /documentation └── /[id]
 │
-├── 🏢 Institution Management
-│   ├── /institutions
-│   ├── /institutions/institution-detail
-│   ├── /institutions/partners
-│   ├── /institutions/collaboration
-│   └── /institutions/[id]
+├── 🏢 Institutions
+│   ├── /institutions ├── /institution-detail ├── /partners
+│   ├── /collaboration └── /[id]
 │
-├── 👤 Agent Management
-│   ├── /agents
-│   ├── /agents/agent-detail
-│   ├── /agents/performance
-│   ├── /agents/onboarding
-│   ├── /agents/training
-│   ├── /agents/support
-│   └── /agents/[id]
+├── 👤 Agents
+│   ├── /agents ├── /agent-detail ├── /performance
+│   ├── /onboarding ├── /training ├── /support └── /[id]
 │
 ├── ⚙️ Administration
-│   ├── /administration
-│   ├── /administration/users
-│   ├── /administration/roles-permissions
-│   ├── /administration/settings
-│   ├── /administration/logs
-│   └── /administration/audit
+│   ├── /administration ├── /users ├── /roles-permissions
+│   ├── /settings ├── /logs └── /audit
 │
 ├── 📈 Reporting & Analytics
-│   ├── /reporting-analytics
-│   ├── /reporting-analytics/overview
-│   ├── /reporting-analytics/employee-reports
-│   ├── /reporting-analytics/document-reports
-│   ├── /reporting-analytics/financial-reports
-│   └── /reporting-analytics/export
+│   ├── /reporting-analytics ├── /overview
+│   ├── /employee-reports ├── /document-reports
+│   ├── /financial-reports └── /export
 │
 └── 👤 User Settings
-    ├── /user-settings
-    ├── /user-settings/profile
-    ├── /user-settings/security
-    └── /user-settings/notifications
+    ├── /user-settings ├── /profile ├── /security └── /notifications
 ```
 
 ---
@@ -410,13 +210,12 @@ Ethio Agency Hub
 
 ### 👥 Employee Management
 - Multi-step registration wizard (personal → skills → documents → review)
-- **Hybrid upload**: photos/passports → Teledrive; interview videos → Telegram bot
 - Professional CV generator with exportable templates
 - Skill-matching engine for deployment opportunities
 - Full employee lifecycle status tracking
 
 ### 📄 Document Management
-- Secure file upload routed to Teledrive sync folder
+- Secure file upload to Cloudflare R2 with presigned URLs
 - Visa application tracking
 - MOLS (Ministry of Labor & Social Affairs) system integration
 - Employee missing-person reports to MOLS
@@ -458,118 +257,38 @@ Ethio Agency Hub
 
 ---
 
-## 🔗 Hybrid Storage System
-
-This is the core architectural innovation that keeps operating costs low while enabling free global video streaming for international partners.
-
-### Storage Routing Logic
-
-| File Type | Destination | Cost | Why |
-|---|---|---|---|
-| Photos, Passports, PDFs | Local FS → Teledrive Desktop Sync | ~300 ETB/month (unlimited) | Fast local access, cheap cloud backup |
-| Interview Videos | Telegram Bot → Private Channel | Free | Global CDN, no storage cost, streamable anywhere |
-
-### Implementation
-
-```javascript
-// /app/api/employees/register/route.ts
-import { bot } from '@/lib/telegram/bot';
-import { db } from '@/lib/db/prisma';
-import { uploadSchema } from '@/lib/validations/employee.schema';
-
-export async function POST(req: Request) {
-  const formData = await req.formData();
-  const photo = formData.get('photo') as File;
-  const video = formData.get('video') as File;
-  const { name, agency_id } = uploadSchema.parse(Object.fromEntries(formData));
-
-  // Photo goes to Teledrive-monitored folder
-  const photoPath = await saveToTeledriveFolder(photo);
-
-  // Video goes to Telegram for free global CDN streaming
-  const tgRes = await bot.sendVideo(process.env.TG_CHANNEL_ID!, videoBuffer);
-  const tg_video_id = tgRes.video.file_id;
-
-  // Save both references to MySQL
-  const employee = await db.employee.create({
-    data: { name, agency_id, doc_path: photoPath, tg_video_id }
-  });
-
-  return Response.json({ success: true, employee });
-}
-```
-
-### Telegram Resources
-- **Channel**: [EthioAgencyHub](https://t.me/+nSnc_vQGfuQ3Y2Jk)
-- **Bot**: `@EthioAgencyHub_Bot`
-
----
-
-## 🚀 Development Roadmap
-
-### Phase 1: Foundation — 🔄 Refactoring to Next.js
-- [ ] Migrate to **Next.js 14 App Router** from previous framework
-- [ ] Initialize **Vite** as the primary bundler for local development
-- [ ] Configure **MySQL** connection pool (Prisma) for employee and agency data
-- [ ] Set up `.env` for **Telegram Bot Token**, **TG Channel ID**, and **Teledrive Sync Path**
-- [ ] Scaffold folder structure per this README
-
-### Phase 2: Hybrid Storage Integration
-- [x] **Telegram Integration**: Connect `@EthioAgencyHub_Bot` to handle employee short interview uploads
-- [ ] **Teledrive Bridge**: Implement local file-system watcher to sync `UPLOAD_PATH` with Ethio Telecom Teledrive Desktop
-- [ ] **Video Streaming**: Implement Telegram proxy endpoint (`/api/telegram/stream/[fileId]`) for authenticated international partner viewing
-
-### Phase 3: Core Modules — 🔄 In Progress
-- [ ] **Employee Registration**: Update document upload step to save photos to the Teledrive sync folder
-- [ ] **Interview Module**: Create UI to trigger `@EthioAgencyHub_Bot` to record employee video introductions
-- [ ] **Dashboard**: Real-time KPI dashboard supporting 50+ agencies (multi-tenant)
-- [ ] **Document Management**: Full MOLS integration + cross-match verification
-- [ ] **CV Generator**: PDF export with agency-branded templates
-
-### Phase 4: Integration & Deployment — Planned
-- [ ] **Teledrive Sync Optimization**: Ensure 300 ETB/month unlimited plan is fully utilized
-- [ ] **Private Channel Security**: Lock Telegram media to authorized agency IDs only (JWT-gated proxy)
-- [ ] **MOLS / Embassy Integration**: Live API connections to government systems
-- [ ] **Hajj & Umrah Module**: Full pilgrim season management
-- [ ] **Reporting & Analytics**: Full dashboard with export
-
-### Phase 5: Future Enhancements
-- [ ] AI-powered employee-to-opportunity matching
-- [ ] Predictive analytics (deployment trends, document processing time)
-- [ ] React Native mobile app with offline sync
-- [ ] GraphQL API layer
-- [ ] Blockchain document verification
-
----
-
 ## ⚡ Getting Started
 
 ### Prerequisites
 
 - Node.js 20+
-- MySQL 8+
-- Ethio Telecom Teledrive Desktop (installed and signed in)
-- A Telegram bot token from [@BotFather](https://t.me/BotFather)
+- MySQL 8+ (or remote instance)
+- Supabase project (free tier)
+- Cloudflare R2 bucket (free tier)
+- Upstash Redis (free tier)
+- Resend account (free tier)
 
 ### Installation
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/ethioagencyhub/ethio-agency-hub.git
-cd ethio-agency-hub
+git clone https://github.com/ethioagencyhub-art/EthioAgencyHub.git
+cd EthioAgencyHub
 
 # 2. Install dependencies
 npm install
 
-# 3. Configure environment
+# 3. Generate Prisma client
+npx prisma generate
+
+# 4. Copy environment template
 cp .env.example .env.local
 # → Edit .env.local with your values (see below)
 
-# 4. Set up the database
-npx prisma migrate dev --name init
-npx prisma generate
+# 5. Run database migrations
+npx prisma migrate dev
 
-# 5. Start development server
+# 6. Start development server
 npm run dev
 ```
 
@@ -580,25 +299,31 @@ The app will be available at `http://localhost:3000`.
 ## 🔑 Environment Variables
 
 ```env
-# .env.local
-
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NODE_ENV=development
 
-# Auth
-JWT_SECRET=your-super-secret-jwt-key-min-32-chars
-
-# Database
+# Database (MySQL)
 DATABASE_URL=mysql://user:password@localhost:3306/ethio_agency_hub
 
-# Telegram
-TELEGRAM_BOT_TOKEN=your_bot_token_from_botfather
-TG_CHANNEL_ID=-100xxxxxxxxxx        # Private channel numeric ID
+# Supabase Auth
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Teledrive / File Storage
-UPLOAD_PATH=/path/to/teledrive/sync/folder   # Monitored by Teledrive Desktop
-MAX_FILE_SIZE_MB=50
+# Cloudflare R2 (S3-compatible)
+R2_ENDPOINT=https://your-account.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=your-access-key
+R2_SECRET_ACCESS_KEY=your-secret-key
+R2_BUCKET_NAME=ethio-agency-hub
+R2_PUBLIC_URL=https://pub-xxxxx.r2.dev
+
+# Upstash Redis
+REDIS_URL=https://your-region.upstash.io
+REDIS_TOKEN=your-redis-token
+
+# Resend (Email)
+RESEND_API_KEY=re_xxxxx
 ```
 
 ---
@@ -606,58 +331,46 @@ MAX_FILE_SIZE_MB=50
 ## 🗄️ Database Schema Overview
 
 ```prisma
-// prisma/schema.prisma (abbreviated)
-
 model Agency {
-  id         String     @id @default(cuid())
-  name       String
-  employees  Employee[]
-  agents     Agent[]
-  users      User[]
-  createdAt  DateTime   @default(now())
+  id        String     @id @default(cuid())
+  name      String
+  users     User[]
+  employees Employee[]
+  agents    Agent[]
+  createdAt DateTime   @default(now())
 }
 
 model Employee {
-  id          String   @id @default(cuid())
-  agency      Agency   @relation(fields: [agency_id], references: [id])
-  agency_id   String
-  name        String
-  doc_path    String?  // Teledrive sync path
-  tg_video_id String?  // Telegram file_id for interview video
-  status      EmployeeStatus
-  skills      Skill[]
-  documents   Document[]
-  travels     Travel[]
-  createdAt   DateTime @default(now())
-}
-
-model Document {
-  id          String   @id @default(cuid())
-  employee    Employee @relation(fields: [employee_id], references: [id])
-  employee_id String
-  type        DocumentType  // PASSPORT | VISA | MOLS | MEDICAL | ...
-  file_path   String
-  status      DocumentStatus
-  expiresAt   DateTime?
-}
-
-model Travel {
-  id          String   @id @default(cuid())
-  employee    Employee @relation(fields: [employee_id], references: [id])
-  employee_id String
-  destination String
-  departureAt DateTime
-  status      TravelStatus
-  ticket      String?
+  id              String   @id @default(cuid())
+  agency          Agency   @relation(fields: [agencyId], references: [id])
+  agencyId        String
+  firstName       String?
+  lastName        String?
+  email           String?
+  passportNumber  String?
+  contactPhone    String?
+  photoUrl        String?  // R2 presigned URL reference
+  status          EmployeeStatus
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model User {
-  id        String   @id @default(cuid())
-  agency    Agency   @relation(fields: [agency_id], references: [id])
-  agency_id String
-  email     String   @unique
-  password  String   // bcrypt hashed
-  role      Role     // SUPER_ADMIN | AGENCY_ADMIN | AGENT | VIEWER
+  id           String   @id @default(cuid())
+  agency       Agency   @relation(fields: [agencyId], references: [id])
+  agencyId     String
+  email        String   @unique
+  role         Role
+  createdAt    DateTime @default(now())
+}
+
+model Agent {
+  id         String  @id @default(cuid())
+  agency     Agency  @relation(fields: [agencyId], references: [id])
+  agencyId   String
+  name       String
+  country    String
+  status     String  @default("active")
 }
 ```
 
@@ -668,24 +381,23 @@ model User {
 All API routes live under `/app/api/`. They follow RESTful conventions and return JSON.
 
 ```
-GET    /api/employees              → list employees (with pagination, filters)
-POST   /api/employees/register     → multi-step registration
-GET    /api/employees/[id]         → single employee
-PUT    /api/employees/[id]         → update employee
-DELETE /api/employees/[id]         → soft delete
+GET    /api/employees                  → list employees (paginated, filtered)
+POST   /api/employees                  → create employee
+GET    /api/employees/[id]             → single employee
+PUT    /api/employees/[id]             → update employee
+DELETE /api/employees/[id]             → soft delete
 
-POST   /api/upload                 → save file to Teledrive sync folder
-POST   /api/telegram/webhook       → Telegram bot webhook receiver
-GET    /api/telegram/stream/[id]   → JWT-gated Telegram video proxy
+POST   /api/r2/presign                 → generate presigned upload URL (Bearer auth)
+GET    /api/r2/presign?key=...         → generate presigned download URL
 
-GET    /api/documents              → list documents
-POST   /api/documents/cross-match  → trigger document verification
+POST   /api/auth/login                 → Supabase Auth login
+POST   /api/auth/logout                → Supabase Auth logout
+POST   /api/auth/register              → admin-driven registration
 
-GET    /api/travel                 → travel records
-GET    /api/travel/today           → today's departures
-
-POST   /api/auth/login             → issue JWT
-POST   /api/auth/logout            → invalidate session
+GET    /api/travel/[...slug]           → travel CRUD (catch-all)
+GET    /api/hajj-umrah/[...slug]       → pilgrim CRUD (catch-all)
+GET    /api/institutions/[...slug]     → institution CRUD (catch-all)
+GET    /api/agents/[...slug]           → agent CRUD (catch-all)
 ```
 
 ### Response Format
@@ -694,7 +406,7 @@ POST   /api/auth/logout            → invalidate session
 {
   "success": true,
   "data": { ... },
-  "meta": { "page": 1, "total": 120 }
+  "meta": { "page": 1, "total": 120, "source": "database" }
 }
 ```
 
@@ -714,78 +426,74 @@ POST   /api/auth/logout            → invalidate session
 ## 🔐 Security & Privacy
 
 ### Authentication & Authorization
-- **JWT-based auth** with short-lived access tokens + refresh token rotation
+- **Supabase Auth SSR** with `@supabase/ssr` middleware (cookie-based session)
 - **RBAC**: `SUPER_ADMIN` → `AGENCY_ADMIN` → `AGENT` → `VIEWER`
-- **bcrypt** password hashing (cost factor 12)
-- Planned: MFA via TOTP
+- **Row-Level Security** via Supabase policies (planned)
+- MFA via TOTP (available)
 
 ### Data Protection
 - **Agency data isolation**: each agency only sees its own data (Prisma-level tenant filtering)
 - **Zod validation** on all API inputs
-- **CSRF protection** via SameSite cookies
+- **CSRF protection** via Supabase SSR cookie pattern
 - **Prisma ORM** prevents SQL injection
 - **Secure headers** via Next.js middleware
-
-### Telegram Channel Security
-- All media in a private Telegram channel
-- Backend proxy at `/api/telegram/stream/[fileId]` validates JWT before forwarding stream
-- Agency ID checked before returning any media
 
 ---
 
 ## 🧪 Testing Strategy
 
 ```bash
-# Unit tests (Vitest)
+# All tests (Vitest)
 npm run test
 
-# Integration tests
+# Integration tests only
 npm run test:integration
 
-# End-to-end tests (Playwright)
-npm run test:e2e
+# Single test file
+npx vitest run tests/components/sidebar.test.tsx
 
-# Coverage report
-npm run test:coverage
+# Coverage
+npx vitest run --coverage
 ```
 
-### Coverage Targets
+### Current Status
 
-| Layer | Target |
-|---|---|
-| Lib / utilities | 90%+ |
-| API routes | 80%+ |
-| UI components | 70%+ |
-| E2E critical flows | 100% of happy paths |
+| Suite | Tests | Status |
+|---|---|---|
+| Unit tests (15 files) | 96 | ✅ All passing |
+| Integration tests (4 files) | 84 | ✅ 45 passing, 39 skipped* |
+| Component tests (17 files) | 72 | ✅ All passing |
+
+*\*Skipped integration tests require a MySQL `DATABASE_URL`. Run with `DATABASE_URL=mysql://...` to enable.*
 
 ---
 
 ## 🚢 Deployment & DevOps
 
+### Vercel (Recommended)
+
 ```bash
-# Build
-npm run build
+# Install Vercel CLI
+npm i -g vercel
 
-# Docker
-docker-compose up --build
-
-# Production
-docker-compose up -d
+# Deploy
+vercel --prod
 ```
+
+Set all environment variables (from `.env.example`) in the Vercel dashboard under **Settings → Environment Variables**.
 
 ### CI/CD Pipeline (GitHub Actions)
 
 ```
-Push → Lint + Type Check → Unit Tests → Build → E2E Tests → Deploy
+Push → Lint + Type Check → Unit Tests → Build → Deploy to Vercel
 ```
 
 ### Environment Targets
 
-| Environment | Branch | Purpose |
+| Environment | Branch | Host |
 |---|---|---|
-| Development | `feature/*` | Local dev |
-| Staging | `develop` | QA testing |
-| Production | `main` | Live system |
+| Preview | `feature/*` | `*.vercel.app` (auto) |
+| Production | `main` | Custom domain (Cloudflare) |
 
 ---
 
@@ -793,25 +501,13 @@ Push → Lint + Type Check → Unit Tests → Build → E2E Tests → Deploy
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Follow the existing folder structure and naming conventions
+3. Follow existing folder structure and naming conventions
 4. Write tests for new API routes and utility functions
-5. Ensure `npm run lint && npm run type-check` passes
-6. Submit a pull request against `develop`
-
----
-
-## 📞 Support & Contact
-
-| Channel | Link |
-|---|---|
-| Email | support@ethioagencyhub.com |
-| Documentation | https://docs.ethioagencyhub.com |
-| Issue Tracker | https://github.com/ethioagencyhub/issues |
-| Community | https://community.ethioagencyhub.com |
-| Telegram | [@EthioAgencyHub](https://t.me/+nSnc_vQGfuQ3Y2Jk) |
+5. Ensure `npm run build` passes (compilation + type-check)
+6. Submit a pull request against `main`
 
 ---
 
 **Ethio Agency Hub** — Modernizing Ethiopian foreign employment agencies through technology.
 
-*Version: 2.0.0 | Last Updated: May 2025*
+*Version: 3.0.0 | Last Updated: June 2026*

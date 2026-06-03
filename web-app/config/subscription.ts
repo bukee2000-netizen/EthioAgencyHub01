@@ -13,7 +13,7 @@ export const PLANS = {
   BASIC: {
     monthlyPrice: 2500,
     yearlyPrice: 25500,
-    features: ['Employee registration', 'Document tracking', 'Telegram upload', 'Basic reports']
+    features: ['Employee registration', 'Document tracking', 'R2 file upload', 'Basic reports']
   },
   PREMIUM: {
     monthlyPrice: 6500,
@@ -40,7 +40,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     description: 'For small agencies digitizing their employee registration workflow.',
     pricesEtb: { monthly: 2500, quarterly: 7125, yearly: 25500 },
     employeeLimit: 250,
-    features: ['Employee registration', 'Document tracking', 'Telegram short video upload', 'Basic reports']
+    features: ['Employee registration', 'Document tracking', 'R2 short video upload', 'Basic reports']
   },
   {
     id: 'professional',

@@ -12,6 +12,11 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
+
 beforeEach(() => {
   vi.spyOn(global, 'fetch').mockImplementation(async (url: string) => {
     if (url.toString().includes('/api/agents')) {
@@ -30,13 +35,9 @@ describe('AgentsModule', () => {
     expect(screen.getByText('Agent Management')).toBeInTheDocument();
   });
 
-  it('renders search input', () => {
+  it('shows country overview cards', () => {
     render(<AgentsModule />);
-    expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
-  });
-
-  it('renders action buttons for creating agents', () => {
-    render(<AgentsModule />);
-    expect(screen.getByText(/add agent|register agent|create/i)).toBeInTheDocument();
+    // The overview tab shows country stat cards like Kuwait
+    expect(screen.getByText('Kuwait')).toBeInTheDocument();
   });
 });

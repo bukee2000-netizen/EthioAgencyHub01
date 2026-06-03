@@ -9,6 +9,7 @@ import {
   ChevronDown, ChevronUp, Shield, Activity, Briefcase, Eye, IdCard
 } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
+import { getStatusColor } from '@/lib/utils/status';
 
 interface PilgrimDocument {
   id: string;
@@ -95,7 +96,6 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
   const { addToast } = useToast();
   const [pilgrims, setPilgrims] = useState<Pilgrim[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [telegramConfigured, setTelegramConfigured] = useState(true);
   const [whatsappConfigured, setWhatsappConfigured] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(openNewRegistration);
 
@@ -106,25 +106,15 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
   }, [openNewRegistration]);
 
   useEffect(() => {
-    checkTelegramConfig();
+    (async () => {
+      try {
+        const res = await fetch('/api/whatsapp/send', { method: 'GET' });
+        setWhatsappConfigured(res.status !== 503);
+      } catch {
+        setWhatsappConfigured(false);
+      }
+    })();
   }, []);
-
-  const checkTelegramConfig = async () => {
-    try {
-      const res = await fetch('/api/telegram/upload', { method: 'GET' });
-      const data = await res.json();
-      setTelegramConfigured(data.success !== false);
-    } catch {
-      setTelegramConfigured(false);
-    }
-
-    try {
-      const res = await fetch('/api/whatsapp/send', { method: 'GET' });
-      setWhatsappConfigured(res.status !== 503);
-    } catch {
-      setWhatsappConfigured(false);
-    }
-  };
 
   const sendWhatsAppNotification = async (type: string, phone: string, name: string, data?: Record<string, string>) => {
     try {
@@ -230,18 +220,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
     p.groupName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      registered: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
-      documents_pending: 'bg-yellow-100 text-yellow-800',
-      requirements_met: 'bg-blue-100 text-blue-800',
-      medical_cleared: 'bg-indigo-100 text-indigo-800',
-      visa_approved: 'bg-purple-100 text-purple-800',
-      ready: 'bg-green-100 text-green-800',
-      deployed: 'bg-teal-100 text-teal-800',
-    };
-    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
-  };
+
 
   const handleOpenModal = (pilgrim?: Pilgrim) => {
     if (pilgrim) {
@@ -345,20 +324,26 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
     setSelectedPilgrim(null);
   };
 
-  const uploadToTelegram = async (pilgrimId: string, docType: string, file: File): Promise<{ success: boolean; fileId?: string; error?: string }> => {
+  const uploadToR2 = async (pilgrimId: string, docType: string, file: File): Promise<{ success: boolean; fileKey?: string; error?: string }> => {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('pilgrimId', pilgrimId);
-      formData.append('docType', docType);
-
-      const response = await fetch('/api/telegram/upload', {
+      const key = `hajj-umrah/${pilgrimId}/${docType}-${Date.now()}-${file.name}`;
+      const presignRes = await fetch('/api/r2/presign', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, action: 'upload', contentType: file.type }),
       });
 
-      const data = await response.json();
-      return data;
+      if (!presignRes.ok) {
+        const err = await presignRes.json();
+        return { success: false, error: err.error?.message || 'Failed to get upload URL' };
+      }
+
+      const { url } = await presignRes.json();
+
+      const uploadRes = await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+      if (!uploadRes.ok) return { success: false, error: 'Upload to storage failed' };
+
+      return { success: true, fileKey: key };
     } catch (error) {
       console.error('Upload error:', error);
       addToast({ title: 'Error', description: 'Failed to upload file. Please try again.', type: 'error' });
@@ -372,7 +357,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
     setUploadError(prev => ({ ...prev, [docType]: '' }));
 
     try {
-      const result = await uploadToTelegram(pilgrimId, docType, file);
+      const result = await uploadToR2(pilgrimId, docType, file);
 
       if (result.success) {
         setDocumentUploadProgress(prev => ({ ...prev, [docType]: 100 }));
@@ -398,7 +383,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                   id: `D${Date.now()}`,
                   type: docType as PilgrimDocument['type'],
                   fileName: file.name,
-                  fileUrl: result.fileId,
+                  fileUrl: result.fileKey,
                   status: 'uploaded',
                   uploadDate: new Date().toISOString().split('T')[0],
                 }],
@@ -456,19 +441,19 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
             <h2 className="text-2xl font-bold text-ink dark:text-ink-dark flex items-center gap-3">
               <Users className="h-7 w-7 text-purple-600" />
               Pilgrim Registration & Management
-              {telegramConfigured && whatsappConfigured ? (
+              {whatsappConfigured ? (
                 <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                  <CheckCircle2 className="h-3 w-3" /> All Connected
+                  <CheckCircle2 className="h-3 w-3" /> WhatsApp Connected
                 </span>
               ) : (
                 <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-medium">
-                  <AlertCircle className="h-3 w-3" /> Setup Pending
+                  <AlertCircle className="h-3 w-3" /> WhatsApp Pending
                 </span>
               )}
             </h2>
             <p className="mt-1 text-slate-600 dark:text-slate-300">
               Register, edit, delete pilgrims and manage their documents. 
-              Documents are securely stored in a private Telegram channel.
+              Documents are securely stored in Cloudflare R2.
             </p>
           </div>
           <button 
@@ -1012,10 +997,10 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                               </span>
                               {pilgrimDoc.status === 'uploaded' && (
                                 <span className="text-xs text-green-600 flex items-center gap-1">
-                                  <CheckCircle2 className="h-3 w-3" /> Telegram
+                                  <CheckCircle2 className="h-3 w-3" /> R2
                                 </span>
                               )}
-                              <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="Download from Telegram">
+                              <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700" title="Download from R2">
                                 <Download className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                               </button>
                             </>
@@ -1026,7 +1011,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                                   <div className="h-full bg-purple-500 transition-all" style={{ width: `${progress}%` }} />
                                 </div>
                               </div>
-                              <span className="text-xs text-purple-600">Uploading to Telegram...</span>
+                              <span className="text-xs text-purple-600">Uploading to R2...</span>
                             </div>
                           ) : uploadError[doc.type] ? (
                             <div className="flex items-center gap-2">
@@ -1052,7 +1037,7 @@ export function HajjUmrahPilgrimRegister({ openNewRegistration = false }: HajjUm
                                 className="flex items-center gap-2 rounded-lg bg-purple-50 px-3 py-1.5 text-sm font-medium text-purple-700 hover:bg-purple-100"
                               >
                                 <Upload className="h-4 w-4" />
-                                Upload to Telegram
+                                Upload to R2
                               </button>
                             </>
                           )}

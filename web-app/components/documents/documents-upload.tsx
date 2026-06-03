@@ -1,8 +1,9 @@
 ﻿'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Upload, CheckCircle2, FileText, AlertCircle, Search, User, FileType, Loader2, Cloud, X } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 interface UploadedFile {
   id: string;
@@ -11,7 +12,6 @@ interface UploadedFile {
   size: string;
   status: 'Verified' | 'In Review' | 'Processing';
   type: string;
-  route: 'teledrive' | 'telegram';
 }
 
 interface Employee {
@@ -27,34 +27,16 @@ export function DocumentsUpload() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loadingEmployees, setLoadingEmployees] = useState(true);
+  const { employees: fetchedEmployees, loading: loadingEmployees } = useEmployees({ limit: 1000 });
+  const employees = fetchedEmployees.map(e => ({ id: e.id, name: e.name || `${(e as any).firstName || ''} ${(e as any).lastName || ''}`.trim() || 'Unknown' }));
   const [uploads, setUploads] = useState<UploadedFile[]>([
-    { id: '1', name: 'mekdes_tesfaye_passport.pdf', employee: 'Mekdes Tesfaye', size: '2.4 MB', status: 'Verified', type: 'Passport', route: 'teledrive' },
-    { id: '2', name: 'hana_bekele_medical.jpg', employee: 'Hana Bekele', size: '1.8 MB', status: 'In Review', type: 'Medical Certificate', route: 'teledrive' },
-    { id: '3', name: 'selamawit_visa_form.pdf', employee: 'Selamawit Alemu', size: '890 KB', status: 'Processing', type: 'Visa Form', route: 'teledrive' },
+    { id: '1', name: 'mekdes_tesfaye_passport.pdf', employee: 'Mekdes Tesfaye', size: '2.4 MB', status: 'Verified', type: 'Passport' },
+    { id: '2', name: 'hana_bekele_medical.jpg', employee: 'Hana Bekele', size: '1.8 MB', status: 'In Review', type: 'Medical Certificate' },
+    { id: '3', name: 'selamawit_visa_form.pdf', employee: 'Selamawit Alemu', size: '890 KB', status: 'Processing', type: 'Visa Form' },
   ]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const docTypes = ['Passport', 'Medical Certificate', 'Visa Form', 'Contract', 'ID Card', 'Profile Photo'];
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await fetch('/api/employees?limit=1000');
-        const data = await res.json();
-        if (data.success && data.data) {
-          setEmployees(data.data.map((emp: any) => ({ id: emp.id, name: emp.name })));
-        }
-      } catch (error) {
-        console.error('Failed to fetch employees:', error);
-        addToast({ title: 'Error', description: 'Failed to load employees list.', type: 'error' });
-      } finally {
-        setLoadingEmployees(false);
-      }
-    };
-    fetchEmployees();
-  }, [addToast]);
 
   const filteredUploads = uploads.filter(u =>
     u.employee.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -99,7 +81,6 @@ export function DocumentsUpload() {
           size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
           status: 'In Review',
           type: selectedDocType,
-          route: data.data?.route || 'teledrive'
         };
 
         setUploads([newUpload, ...uploads]);
@@ -183,7 +164,7 @@ export function DocumentsUpload() {
             {uploading ? (
               <div className="flex flex-col items-center">
                 <Loader2 className="h-10 w-10 text-brand-600 animate-spin mb-4" />
-                <p className="text-lg font-bold text-ink dark:text-ink-dark">Uploading to Teledrive...</p>
+                <p className="text-lg font-bold text-ink dark:text-ink-dark">Uploading to R2...</p>
                 <div className="mt-4 w-64 h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-brand-500 transition-all duration-300" 
@@ -203,7 +184,7 @@ export function DocumentsUpload() {
                   {canUpload ? 'Click or drag file to upload' : 'Select an employee & document type first'}
                 </h4>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">
-                  Supports PDF, JPG, PNG up to 50MB â€¢ Files sync to Teledrive cloud
+                  Supports PDF, JPG, PNG up to 50MB • Stored securely in Cloudflare R2
                 </p>
               </>
             )}
@@ -240,29 +221,18 @@ export function DocumentsUpload() {
           </div>
 
           <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
-            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Storage Status</p>
-            <div className="flex items-center gap-2 mb-2">
-              <Cloud className="h-5 w-5 text-brand-600" />
-              <p className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">Teledrive</p>
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">Storage Architecture</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-purple-100 dark:bg-purple-900/30">
+                  <Cloud className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="font-bold text-slate-800 dark:text-slate-100">Cloudflare R2</p>
+                  <p className="text-xs text-slate-500">All documents, photos & videos</p>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">300 ETB/month â€¢ Unlimited storage</p>
-            <div className="h-2.5 w-full rounded-full bg-slate-100 dark:bg-slate-700/50 overflow-hidden">
-              <div className="h-full rounded-full bg-brand-500" style={{ width: '12.4%' }}></div>
-            </div>
-            <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400 flex justify-between">
-              <span>12.4% Used</span>
-              <span>1 TB Limit</span>
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <div className="flex items-center gap-2 text-amber-800">
-              <Cloud className="h-5 w-5" />
-              <p className="text-sm font-semibold">Auto-sync enabled</p>
-            </div>
-            <p className="text-xs text-amber-700 mt-1">
-              Files upload to local folder and auto-sync to Ethio Telecom cloud via Teledrive Desktop.
-            </p>
           </div>
         </div>
       </div>
@@ -291,7 +261,7 @@ export function DocumentsUpload() {
               <th className="px-6 py-4">Type</th>
               <th className="px-6 py-4">Size</th>
               <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Storage</th>
+                <th className="px-6 py-4">Channel</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -316,11 +286,9 @@ export function DocumentsUpload() {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1 text-xs font-medium ${
-                    upload.route === 'teledrive' ? 'text-brand-600' : 'text-purple-600'
-                  }`}>
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-purple-600">
                     <Cloud className="h-3 w-3" />
-                    {upload.route === 'teledrive' ? 'Teledrive' : 'Telegram'}
+                    R2
                   </span>
                 </td>
               </tr>

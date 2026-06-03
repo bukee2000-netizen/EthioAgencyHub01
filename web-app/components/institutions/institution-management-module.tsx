@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { 
   Building2, Mail, Phone, MapPin, Users, FileText, Plus, Search, 
   Edit, Trash2, X, Save, CheckCircle2, AlertCircle, Clock, ChevronRight,
@@ -9,6 +9,8 @@ import {
   Landmark, Award, UserCheck, Smartphone, MessageSquare, BarChart3,
   LayoutDashboard, Send
 } from 'lucide-react';
+import { getStatusColor } from '@/lib/utils/status';
+import { Card } from '@/components/ui/card';
 
 interface Institution {
   id: string; name: string; type: string; category: string; country: string; city: string;
@@ -20,9 +22,36 @@ interface Institution {
   digitalSignature?: string; createdAt: string; updatedAt: string;
 }
 
+interface Partner {
+  id: string; name: string; institution: string; role: string; email: string; phone: string; status: string;
+  createdAt: string; notes?: string;
+}
+
+interface Collaboration {
+  id: string; institutionId: string; institution: string; type: string; startDate: string; endDate?: string;
+  status: string; mou: string; description?: string; createdAt: string;
+}
+
+function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700">
+          <h2 className="text-lg font-bold text-ink dark:text-ink-dark">{title}</h2>
+          <button onClick={onClose} className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700"><X className="h-5 w-5 text-slate-500" /></button>
+        </div>
+        <div className="px-6 py-5">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 export function InstitutionManagementModule() {
   const [activeTab, setActiveTab] = useState('overview');
   const [institutions, setInstitutions] = useState<Institution[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [collaborations, setCollaborations] = useState<Collaboration[]>([]);
   const [filtered, setFiltered] = useState<Institution[]>([]);
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -30,21 +59,117 @@ export function InstitutionManagementModule() {
   const [loading, setLoading] = useState(true);
   const [selectedInst, setSelectedInst] = useState<Institution | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showInstForm, setShowInstForm] = useState(false);
+  const [showPartnerForm, setShowPartnerForm] = useState(false);
+  const [showCollabForm, setShowCollabForm] = useState(false);
+  const [formMessage, setFormMessage] = useState<string | null>(null);
 
   useEffect(() => { fetchInstitutions(); }, []);
 
   const fetchInstitutions = async () => {
+    setLoading(true);
     try {
       const mock: Institution[] = [
-        { id: 'INS-001', name: 'Saudi Ministry of Labor', type: 'government', category: 'Governmental', country: 'Saudi Arabia', city: 'Riyadh', contactPerson: 'Dr. Ahmed bin Ali', email: 'mols@mol.gov.sa', phone: '+966-11-2345678', address: 'Riyadh, Saudi Arabia', gpsLocation: '24.7136Â° N, 46.6753Â° E', collaborationStatus: 'active', collaborationStartDate: '2023-06-15', licenseExpiry: '2025-06-15', documents: 12, totalEmployees: 500, employeesAtInstitution: 120, pendingPayments: 0, performanceRating: 4.8, quotaTotal: 1000, quotaUsed: 480, notes: 'Primary labor authority for Saudi deployments', createdAt: '2023-06-15', updatedAt: '2024-01-10' },
+        { id: 'INS-001', name: 'Saudi Ministry of Labor', type: 'government', category: 'Governmental', country: 'Saudi Arabia', city: 'Riyadh', contactPerson: 'Dr. Ahmed bin Ali', email: 'mols@mol.gov.sa', phone: '+966-11-2345678', address: 'Riyadh, Saudi Arabia', gpsLocation: '24.7136° N, 46.6753° E', collaborationStatus: 'active', collaborationStartDate: '2023-06-15', licenseExpiry: '2025-06-15', documents: 12, totalEmployees: 500, employeesAtInstitution: 120, pendingPayments: 0, performanceRating: 4.8, quotaTotal: 1000, quotaUsed: 480, notes: 'Primary labor authority for Saudi deployments', createdAt: '2023-06-15', updatedAt: '2024-01-10' },
         { id: 'INS-002', name: 'UAE Embassy, Addis', type: 'embassy', category: 'Governmental', country: 'UAE', city: 'Addis Ababa', contactPerson: 'Mr. Hassan Mohamed', email: 'visa@uae-embassy.et', phone: '+251-11-5558889', address: 'Embassy Road, Addis Ababa', collaborationStatus: 'active', collaborationStartDate: '2023-07-20', documents: 8, totalEmployees: 25, performanceRating: 4.5, createdAt: '2023-07-20', updatedAt: '2024-02-15' },
-        { id: 'INS-003', name: 'Addis General Hospital', type: 'medical', category: 'Health', country: 'Ethiopia', city: 'Addis Ababa', contactPerson: 'Dr. Getachew Worku', email: 'info@addisgh.com', phone: '+251-11-5530300', address: 'Bole, Addis Ababa', gpsLocation: '9.0222Â° N, 38.7468Â° E', collaborationStatus: 'active', collaborationStartDate: '2023-08-01', documents: 6, totalEmployees: 200, employeesAtInstitution: 45, performanceRating: 4.2, notes: 'GAMCA approved medical center', createdAt: '2023-08-01', updatedAt: '2024-03-01' },
+        { id: 'INS-003', name: 'Addis General Hospital', type: 'medical', category: 'Health', country: 'Ethiopia', city: 'Addis Ababa', contactPerson: 'Dr. Getachew Worku', email: 'info@addisgh.com', phone: '+251-11-5530300', address: 'Bole, Addis Ababa', gpsLocation: '9.0222° N, 38.7468° E', collaborationStatus: 'active', collaborationStartDate: '2023-08-01', documents: 6, totalEmployees: 200, employeesAtInstitution: 45, performanceRating: 4.2, notes: 'GAMCA approved medical center', createdAt: '2023-08-01', updatedAt: '2024-03-01' },
         { id: 'INS-004', name: 'Commercial Bank of Ethiopia', type: 'bank', category: 'Financial', country: 'Ethiopia', city: 'Addis Ababa', contactPerson: 'Mr. Tadesse Ayalew', email: 'corporate@cbe.com.et', phone: '+251-11-5513100', address: 'Churchill Avenue, Addis Ababa', collaborationStatus: 'active', collaborationStartDate: '2023-09-01', documents: 10, totalEmployees: 50, pendingPayments: 250000, insurancePremiums: 12000, performanceRating: 4.0, createdAt: '2023-09-01', updatedAt: '2024-03-01' },
         { id: 'INS-005', name: 'EthioLife Insurance', type: 'other', category: 'Financial', country: 'Ethiopia', city: 'Addis Ababa', contactPerson: 'Ms. Sara Tekle', email: 'claims@ethiolife.com', phone: '+251-11-5540400', address: 'Kazanchis, Addis Ababa', collaborationStatus: 'active', collaborationStartDate: '2023-10-01', documents: 5, totalEmployees: 30, pendingPayments: 85000, insurancePremiums: 85000, createdAt: '2023-10-01', updatedAt: '2024-02-01' },
         { id: 'INS-006', name: 'Al-Futtaim Manpower', type: 'partner', category: 'Private', country: 'UAE', city: 'Dubai', contactPerson: 'Mr. Khalid Al-Futtaim', email: 'recruit@alfuttaim.ae', phone: '+971-4-1234567', address: 'Dubai, UAE', collaborationStatus: 'pending', collaborationStartDate: '2024-01-15', documents: 3, totalEmployees: 15, performanceRating: 3.8, quotaTotal: 200, quotaUsed: 45, createdAt: '2024-01-15', updatedAt: '2024-03-15' },
       ];
       setInstitutions(mock);
+
+      setPartners([
+        { id: 'PTN-001', name: 'Ahmed Al-Mansouri', institution: 'Saudi Medical Group', role: 'Director', email: 'ahmed@saudi.com', phone: '+966-12-3456789', status: 'active', createdAt: '2024-01-15' },
+        { id: 'PTN-002', name: 'Fatima Al-Mazrouei', institution: 'Gulf Staffing Solutions', role: 'Manager', email: 'fatima@gulf.com', phone: '+971-50-1234567', status: 'active', createdAt: '2024-03-20' },
+        { id: 'PTN-003', name: 'Mohammed Al-Qahtani', institution: 'Qatar Development', role: 'Coordinator', email: 'mohammed@qatar.com', phone: '+974-30-123456', status: 'inactive', createdAt: '2024-06-01' },
+      ]);
+
+      setCollaborations([
+        { id: 'COLL-001', institutionId: 'INS-001', institution: 'Saudi Ministry of Labor', type: 'Employment', startDate: '2024-01-15', status: 'active', mou: 'Signed', createdAt: '2024-01-15' },
+        { id: 'COLL-002', institutionId: 'INS-003', institution: 'Addis General Hospital', type: 'Medical', startDate: '2024-03-20', status: 'active', mou: 'Signed', createdAt: '2024-03-20' },
+        { id: 'COLL-003', institutionId: 'INS-006', institution: 'Al-Futtaim Manpower', type: 'Joint Venture', startDate: '2024-06-01', status: 'negotiation', mou: 'Pending', createdAt: '2024-06-01' },
+      ]);
     } finally { setLoading(false); }
+  };
+
+  const handleRegisterInstitution = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = fd.get('name') as string;
+    const type = fd.get('type') as string;
+    const category = fd.get('category') as string;
+    const country = fd.get('country') as string;
+    const city = fd.get('city') as string;
+    const contactPerson = fd.get('contactPerson') as string;
+    const email = fd.get('email') as string;
+    const phone = fd.get('phone') as string;
+    const address = fd.get('address') as string;
+    const collaborationStatus = fd.get('collaborationStatus') as string || 'active';
+    const now = new Date().toISOString().split('T')[0];
+    const newInst: Institution = {
+      id: `INS-${Date.now().toString(36).toUpperCase()}`,
+      name, type, category: category || type, country, city, contactPerson, email, phone, address,
+      collaborationStatus, collaborationStartDate: now, documents: 0, totalEmployees: 0,
+      createdAt: now, updatedAt: now,
+    };
+    try {
+      const res = await fetch('/api/institutions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, type, contact: email, country, active: true }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.data?.id) newInst.id = data.data.id;
+      }
+    } catch { /* fallback to local */ }
+    setInstitutions(prev => [...prev, newInst]);
+    setShowInstForm(false);
+    setFormMessage(`"${name}" registered successfully.`);
+    setTimeout(() => setFormMessage(null), 3000);
+  };
+
+  const handleRegisterPartner = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = fd.get('name') as string;
+    const institution = fd.get('institution') as string;
+    const role = fd.get('role') as string;
+    const email = fd.get('email') as string;
+    const phone = fd.get('phone') as string;
+    const status = fd.get('status') as string || 'active';
+    const now = new Date().toISOString().split('T')[0];
+    const newPartner: Partner = {
+      id: `PTN-${Date.now().toString(36).toUpperCase()}`, name, institution, role, email, phone, status,
+      createdAt: now,
+    };
+    setPartners(prev => [...prev, newPartner]);
+    setShowPartnerForm(false);
+    setFormMessage(`Partner "${name}" registered successfully.`);
+    setTimeout(() => setFormMessage(null), 3000);
+  };
+
+  const handleRegisterCollaboration = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const institutionId = fd.get('institutionId') as string;
+    const type = fd.get('type') as string;
+    const description = fd.get('description') as string;
+    const startDate = fd.get('startDate') as string;
+    const status = fd.get('status') as string || 'active';
+    const mou = fd.get('mou') as string || 'Pending';
+    const inst = institutions.find(i => i.id === institutionId);
+    const now = new Date().toISOString().split('T')[0];
+    const newCollab: Collaboration = {
+      id: `COLL-${Date.now().toString(36).toUpperCase()}`,
+      institutionId, institution: inst?.name || institutionId,
+      type, startDate: startDate || now, status, mou, description, createdAt: now,
+    };
+    setCollaborations(prev => [...prev, newCollab]);
+    setShowCollabForm(false);
+    setFormMessage(`${type} collaboration registered with "${inst?.name || institutionId}".`);
+    setTimeout(() => setFormMessage(null), 3000);
   };
 
   useEffect(() => {
@@ -55,7 +180,7 @@ export function InstitutionManagementModule() {
     setFiltered(f);
   }, [institutions, typeFilter, statusFilter, searchQuery]);
 
-  const getStatusColor = (s: string) => ({ active: 'bg-green-100 text-green-700', pending: 'bg-yellow-100 text-yellow-700', suspended: 'bg-red-100 text-red-700', inactive: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200' }[s] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200');
+
 
   const tabs = [
     { id: 'overview', label: 'Network Dashboard', icon: LayoutDashboard },
@@ -64,19 +189,25 @@ export function InstitutionManagementModule() {
     { id: 'collaboration', label: 'Collaboration', icon: Link2 },
   ];
 
-  const stats = {
-    total: institutions.length,
-    active: institutions.filter(i => i.collaborationStatus === 'active').length,
-    medical: institutions.filter(i => i.type === 'medical').length,
-    financial: institutions.filter(i => i.type === 'bank' || i.category === 'Financial').length,
-    employeesInCare: institutions.reduce((s, i) => s + (i.employeesAtInstitution || 0), 0),
-    pendingPayments: institutions.reduce((s, i) => s + (i.pendingPayments || 0), 0),
-    expiringSoon: institutions.filter(i => i.licenseExpiry && Math.abs(new Date(i.licenseExpiry).getTime() - Date.now()) < 90 * 86400000).length,
-  };
+   const stats = {
+     total: institutions.length,
+     active: institutions.filter(i => i.collaborationStatus === 'active').length,
+     medical: institutions.filter(i => i.type === 'medical').length,
+     financial: institutions.filter(i => i.type === 'bank' || i.category === 'Financial').length,
+     employeesInCare: institutions.reduce((s, i) => s + (i.employeesAtInstitution || 0), 0),
+     pendingPayments: institutions.reduce((s, i) => s + (i.pendingPayments || 0), 0),
+     expiringSoon: institutions.filter(i => i.licenseExpiry && Math.abs(new Date(i.licenseExpiry).getTime() - Date.now()) < 90 * 86400000).length
+   };
 
-  if (loading) return <div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600" /></div>;
+   if (loading) {
+     return (
+       <div className="flex items-center justify-center py-20">
+         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-600" />
+       </div>
+     );
+   }
 
-  return (
+   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-white via-brand-50/30 to-white p-8 shadow-sm dark:shadow-soft-dark">
@@ -93,23 +224,23 @@ export function InstitutionManagementModule() {
         ))}
       </div>
 
-      {/* ===== TAB 1: NETWORK DASHBOARD ===== */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {[
-              { label: 'Total Partners', value: stats.total, icon: Building2, color: 'text-brand-600', bg: 'bg-brand-50' },
-              { label: 'Active Agreements', value: stats.active, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
-              { label: 'Employees in Care', value: stats.employeesInCare, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: 'Pending Payments', value: stats.pendingPayments.toLocaleString() + ' ETB', icon: Banknote, color: 'text-amber-600', bg: 'bg-amber-50' },
-            ].map(s => (
-              <div key={s.label} className={`rounded-2xl border border-slate-200 dark:border-slate-700 ${s.bg} p-5 shadow-sm dark:shadow-soft-dark`}>
-                <s.icon className={`h-6 w-6 ${s.color} mb-3`} />
-                <p className="text-3xl font-bold text-ink dark:text-ink-dark">{s.value}</p>
-                <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{s.label}</p>
-              </div>
-            ))}
-          </div>
+       {/* ===== TAB 1: NETWORK DASHBOARD ===== */}
+       {activeTab === 'overview' && (
+         <div className="space-y-6">
+           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+             {[
+               { label: 'Total Partners', value: stats.total, icon: Building2, color: 'text-brand-600', bg: 'bg-brand-50' },
+               { label: 'Active Agreements', value: stats.active, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
+               { label: 'Employees in Care', value: stats.employeesInCare, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+               { label: 'Pending Payments', value: stats.pendingPayments.toLocaleString() + ' ETB', icon: Banknote, color: 'text-amber-600', bg: 'bg-amber-50' },
+             ].map(s => (
+               <Card key={s.label} variant="outlined" className="p-5">
+                 <s.icon className={`h-6 w-6 ${s.color} mb-3`} />
+                 <p className="text-3xl font-bold text-ink dark:text-ink-dark">{s.value}</p>
+                 <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{s.label}</p>
+               </Card>
+             ))}
+           </div>
 
           {/* Expiry Alerts */}
           {stats.expiringSoon > 0 && (
@@ -121,45 +252,45 @@ export function InstitutionManagementModule() {
             </div>
           )}
 
-          {/* Live Institution Grid */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
-            <h3 className="font-bold text-ink dark:text-ink-dark mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-brand-600" /> Live Institution Network</h3>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {institutions.map(inst => (
-                <div key={inst.id} className={`rounded-xl border p-4 transition-shadow hover:shadow-md ${inst.collaborationStatus === 'active' ? 'border-green-200 bg-green-50/30' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}`}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold text-white ${inst.type === 'government' ? 'bg-blue-600' : inst.type === 'embassy' ? 'bg-purple-600' : inst.type === 'medical' ? 'bg-green-600' : inst.type === 'bank' ? 'bg-amber-600' : 'bg-slate-600'}`}>
-                      {inst.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-ink dark:text-ink-dark text-sm truncate">{inst.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{inst.category || inst.type} â€¢ {inst.country}</p>
-                    </div>
-                    <span className={`w-2.5 h-2.5 rounded-full ${inst.collaborationStatus === 'active' ? 'bg-green-500' : inst.collaborationStatus === 'pending' ? 'bg-yellow-500' : 'bg-red-500'}`} title={inst.collaborationStatus} />
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
-                    {inst.employeesAtInstitution && <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{inst.employeesAtInstitution}</span>}
-                    {inst.performanceRating && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500" />{inst.performanceRating}</span>}
-                    {inst.pendingPayments ? <span className="flex items-center gap-1 text-amber-600"><Banknote className="h-3.5 w-3.5" />{inst.pendingPayments.toLocaleString()}</span> : <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5" />Active</span>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+           {/* Live Institution Grid */}
+           <Card className="p-6">
+             <h3 className="font-bold text-ink dark:text-ink-dark mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-brand-600" /> Live Institution Network</h3>
+             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+               {institutions.map(inst => (
+                 <Card key={inst.id} variant={inst.collaborationStatus === 'active' ? 'outlined' : undefined} className={`transition-shadow hover:shadow-md ${inst.collaborationStatus === 'active' ? 'border-green-200 bg-green-50/30' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}`}>
+                   <div className="flex items-center gap-3 mb-3">
+                     <div className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold text-white ${inst.type === 'government' ? 'bg-blue-600' : inst.type === 'embassy' ? 'bg-purple-600' : inst.type === 'medical' ? 'bg-green-600' : inst.type === 'bank' ? 'bg-amber-600' : 'bg-slate-600'}`}>
+                       {inst.name.charAt(0)}
+                     </div>
+                     <div className="flex-1 min-w-0">
+                       <p className="font-bold text-ink dark:text-ink-dark text-sm truncate">{inst.name}</p>
+                       <p className="text-xs text-slate-500 dark:text-slate-400">{inst.category || inst.type} â€¢ {inst.country}</p>
+                     </div>
+                     <span className={`w-2.5 h-2.5 rounded-full ${inst.collaborationStatus === 'active' ? 'bg-green-500' : inst.collaborationStatus === 'pending' ? 'bg-yellow-500' : 'bg-red-500'}`} title={inst.collaborationStatus} />
+                   </div>
+                   <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                     {inst.employeesAtInstitution && <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{inst.employeesAtInstitution}</span>}
+                     {inst.performanceRating && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500" />{inst.performanceRating}</span>}
+                     {inst.pendingPayments ? <span className="flex items-center gap-1 text-amber-600"><Banknote className="h-3.5 w-3.5" />{inst.pendingPayments.toLocaleString()}</span> : <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5" />Active</span>}
+                   </div>
+                 </Card>
+               ))}
+             </div>
+            </Card>
 
-          {/* Financial Snapshot */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
-            <h3 className="font-bold text-ink dark:text-ink-dark mb-4 flex items-center gap-2"><Banknote className="h-5 w-5 text-brand-600" /> Financial Snapshot</h3>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {institutions.filter(i => i.pendingPayments).slice(0, 6).map(inst => (
-                <div key={inst.id} className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-                  <p className="font-semibold text-sm text-amber-800">{inst.name}</p>
-                  <p className="text-lg font-bold text-amber-900 mt-1">{inst.pendingPayments?.toLocaleString()} ETB</p>
-                  <p className="text-xs text-amber-700">{inst.type === 'bank' ? 'Bank Guarantee' : 'Insurance Premium'}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+            {/* Financial Snapshot */}
+           <Card className="p-6">
+             <h3 className="font-bold text-ink dark:text-ink-dark mb-4 flex items-center gap-2"><Banknote className="h-5 w-5 text-brand-600" /> Financial Snapshot</h3>
+             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+               {institutions.filter(i => i.pendingPayments).slice(0, 6).map(inst => (
+                 <Card key={inst.id} variant="outlined" className="p-4">
+                   <p className="font-semibold text-sm text-amber-800">{inst.name}</p>
+                   <p className="text-lg font-bold text-amber-900 mt-1">{inst.pendingPayments?.toLocaleString()} ETB</p>
+                   <p className="text-xs text-amber-700">{inst.type === 'bank' ? 'Bank Guarantee' : 'Insurance Premium'}</p>
+                 </Card>
+               ))}
+             </div>
+           </Card>
         </div>
       )}
 
@@ -186,6 +317,7 @@ export function InstitutionManagementModule() {
               <option value="pending">Pending</option>
               <option value="suspended">Suspended</option>
             </select>
+            <button onClick={() => setShowInstForm(true)} className="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-700 flex items-center gap-2"><Plus className="h-4 w-4" />Register Institution</button>
           </div>
 
           {/* Institution Cards */}
@@ -263,67 +395,66 @@ export function InstitutionManagementModule() {
       {/* ===== TAB 3: PARTNERS ===== */}
       {activeTab === 'partners' && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-amber-50 to-orange-50 p-6 shadow-sm dark:shadow-soft-dark">
-            <h3 className="font-bold text-ink dark:text-ink-dark flex items-center gap-2 mb-4"><Award className="h-5 w-5 text-amber-600" /> Direct Partner Management</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Manage abroad agents and high-priority partners. Track quotas, performance ratings, and receive contract documents directly.</p>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
-                <p className="text-2xl font-bold text-ink dark:text-ink-dark">{institutions.filter(i => i.type === 'partner' || i.type === 'embassy').length}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Active Partners</p>
-              </div>
-              <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
-                <p className="text-2xl font-bold text-ink dark:text-ink-dark">{institutions.reduce((s, i) => s + (i.quotaUsed || 0), 0)}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Quota Used</p>
-              </div>
-              <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
-                <p className="text-2xl font-bold text-ink dark:text-ink-dark">{institutions.reduce((s, i) => s + ((i.quotaTotal || 0) - (i.quotaUsed || 0)), 0)}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Remaining Quota</p>
-              </div>
-              <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
-                <p className="text-2xl font-bold text-ink dark:text-ink-dark">{institutions.filter(i => i.performanceRating && i.performanceRating >= 4).length}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Top Rated (4+)</p>
-              </div>
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-ink dark:text-ink-dark flex items-center gap-2"><Award className="h-5 w-5 text-amber-600" /> Partner Contacts ({partners.length})</h3>
+            <button onClick={() => setShowPartnerForm(true)} className="rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-amber-700 flex items-center gap-2"><Plus className="h-4 w-4" />Register Partner</button>
+          </div>
+
+          {/* Stats */}
+          <div className="grid gap-3 sm:grid-cols-4">
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
+              <p className="text-2xl font-bold text-ink dark:text-ink-dark">{partners.length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Total Contacts</p>
+            </div>
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
+              <p className="text-2xl font-bold text-green-600">{partners.filter(p => p.status === 'active').length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Active</p>
+            </div>
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
+              <p className="text-2xl font-bold text-blue-600">{partners.filter(p => p.role === 'Director' || p.role === 'Manager').length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Key Contacts</p>
+            </div>
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4">
+              <p className="text-2xl font-bold text-yellow-600">{partners.filter(p => p.status === 'inactive').length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Inactive</p>
             </div>
           </div>
 
-          {/* Partner Cards */}
-          <div className="space-y-4">
-            {institutions.filter(i => i.type === 'partner' || i.type === 'embassy' || i.type === 'agency').map(partner => (
-              <div key={partner.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xl">{partner.name.charAt(0)}</div>
-                    <div>
-                      <h4 className="font-bold text-ink dark:text-ink-dark text-lg">{partner.name}</h4>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">{partner.country} â€¢ {partner.city}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        {partner.performanceRating && <span className="flex items-center gap-1 text-xs font-bold">{Array.from({ length: 5 }).map((_, i) => <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(partner.performanceRating || 0) ? 'text-yellow-500 fill-yellow-500' : 'text-slate-200'}`} />)}<span className="ml-1">{partner.performanceRating}</span></span>}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    {partner.quotaTotal && (
-                      <div className="text-right">
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Quota: {partner.quotaUsed || 0}/{partner.quotaTotal}</p>
-                          <div className="w-32 h-1.5 rounded-full bg-slate-100 dark:bg-slate-700/50 mt-1">
-                            <div className="h-1.5 rounded-full bg-amber-500" style={{ width: `${((partner.quotaUsed || 0) / (partner.quotaTotal || 1)) * 100}%` }} />
-                        </div>
-                      </div>
-                    )}
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${getStatusColor(partner.collaborationStatus)}`}>{partner.collaborationStatus}</span>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-4 text-sm">
-                  <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300"><Mail className="h-4 w-4" />{partner.email}</span>
-                  <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300"><Phone className="h-4 w-4" />{partner.phone}</span>
-                </div>
-                <div className="mt-4 flex gap-3">
-                  <button className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white hover:bg-amber-700"><FileText className="h-3.5 w-3.5 inline-block mr-1" />View Contracts</button>
-                  <button className="rounded-xl bg-green-600 px-4 py-2 text-xs font-bold text-white hover:bg-green-700"><Upload className="h-3.5 w-3.5 inline-block mr-1" />Upload Agreement</button>
-                  <button className="rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"><MessageSquare className="h-3.5 w-3.5 inline-block mr-1" />Send Notification</button>
-                </div>
-              </div>
-            ))}
+          {/* Partners Table */}
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Name</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Institution</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Role</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Email</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {partners.map(partner => (
+                    <tr key={partner.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                      <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-200">{partner.name}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{partner.institution}</td>
+                      <td className="px-6 py-4">{partner.role}</td>
+                      <td className="px-6 py-4 text-blue-600">{partner.email}</td>
+                      <td className="px-6 py-4">
+                        {partner.status === 'active' ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <span className="text-xs text-slate-500 dark:text-slate-400">Inactive</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {partners.length === 0 && (
+                    <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-400">No partners registered yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -331,96 +462,234 @@ export function InstitutionManagementModule() {
       {/* ===== TAB 4: COLLABORATION ===== */}
       {activeTab === 'collaboration' && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-cyan-50 p-6 shadow-sm dark:shadow-soft-dark">
-            <h3 className="font-bold text-ink dark:text-ink-dark flex items-center gap-2 mb-4"><Link2 className="h-5 w-5 text-blue-600" /> Collaboration Board</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">Automated data sharing with Banks, Hospitals, and Insurance providers. Request services and track real-time status.</p>
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-ink dark:text-ink-dark flex items-center gap-2"><Link2 className="h-5 w-5 text-blue-600" /> Collaboration Agreements ({collaborations.length})</h3>
+            <button onClick={() => setShowCollabForm(true)} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 flex items-center gap-2"><Plus className="h-4 w-4" />Register Collaboration</button>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            {/* Medical Integration */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-green-100"><Hospital className="h-6 w-6 text-green-600" /></div>
-                <h4 className="font-bold text-ink dark:text-ink-dark">Medical Integration</h4>
-              </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Hospitals can log in to mark employees as "Fit" or "Unfit". Results instantly update the Visa department dashboard.</p>
-              <div className="space-y-3">
-                {institutions.filter(i => i.type === 'medical').map(h => (
-                  <div key={h.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                    <div>
-                      <p className="font-medium text-sm">{h.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{h.employeesAtInstitution} employees checked</p>
-                    </div>
-                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold">Active</span>
-                  </div>
-                ))}
-              </div>
-              <button className="mt-4 w-full rounded-xl bg-green-600 py-2.5 text-sm font-bold text-white hover:bg-green-700">
-                <Link2 className="h-4 w-4 inline-block mr-1.5" />Sync Medical Results
-              </button>
+          {/* Stats */}
+          <div className="grid gap-3 sm:grid-cols-4">
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 bg-gradient-to-br from-cyan-50 to-cyan-100/50">
+              <p className="text-2xl font-bold text-cyan-600">{collaborations.length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Total Agreements</p>
             </div>
-
-            {/* Bank/Insurance Sync */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-amber-100"><Banknote className="h-6 w-6 text-amber-600" /></div>
-                <h4 className="font-bold text-ink dark:text-ink-dark">Bank & Insurance Sync</h4>
-              </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Auto-send employee National ID and Passport data to Banks for account opening or to Insurance for policy issuance.</p>
-              <div className="space-y-3">
-                {institutions.filter(i => i.type === 'bank' || i.category === 'Financial').slice(0, 3).map(f => (
-                  <div key={f.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                    <div>
-                      <p className="font-medium text-sm">{f.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{f.pendingPayments?.toLocaleString()} ETB pending</p>
-                    </div>
-                    <button className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700">Send Data</button>
-                  </div>
-                ))}
-              </div>
-              <button className="mt-4 w-full rounded-xl bg-amber-600 py-2.5 text-sm font-bold text-white hover:bg-amber-700">
-                <Send className="h-4 w-4 inline-block mr-1.5" />Request Insurance Policy
-              </button>
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 bg-gradient-to-br from-green-50 to-green-100/50">
+              <p className="text-2xl font-bold text-green-600">{collaborations.filter(c => c.status === 'active').length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Active</p>
             </div>
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 bg-gradient-to-br from-yellow-50 to-yellow-100/50">
+              <p className="text-2xl font-bold text-yellow-600">{collaborations.filter(c => c.status === 'negotiation').length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">In Negotiation</p>
+            </div>
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 bg-gradient-to-br from-red-50 to-red-100/50">
+              <p className="text-2xl font-bold text-red-600">{collaborations.filter(c => c.mou === 'Pending').length}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">MOU Pending</p>
+            </div>
+          </div>
 
-            {/* Service Logs */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm dark:shadow-soft-dark md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-purple-100"><Activity className="h-6 w-6 text-purple-600" /></div>
-                <h4 className="font-bold text-ink dark:text-ink-dark">Service Logs & Audit Trail</h4>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                    <tr>
-                      <th className="px-4 py-3 text-left">Date</th>
-                      <th className="px-4 py-3 text-left">Institution</th>
-                      <th className="px-4 py-3 text-left">Service</th>
-                      <th className="px-4 py-3 text-left">Status</th>
+          {/* Collaborations Table */}
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Institution</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Type</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Start Date</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">Status</th>
+                    <th className="px-6 py-3 text-left font-semibold text-slate-600 dark:text-slate-300">MOU</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {collaborations.map(coll => (
+                    <tr key={coll.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                      <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-200">{coll.institution}</td>
+                      <td className="px-6 py-4">{coll.type}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{coll.startDate}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                          coll.status === 'active' ? 'bg-green-100 text-green-700' :
+                          coll.status === 'negotiation' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-slate-100 text-slate-600'
+                        }`}>
+                          {coll.status.charAt(0).toUpperCase() + coll.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                          coll.mou === 'Signed' ? 'bg-green-100 text-green-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {coll.mou}
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {[
-                      { date: '2026-05-10', inst: 'Addis General Hospital', service: 'Medical Check Request', status: 'Completed' },
-                      { date: '2026-05-09', inst: 'CBE', service: 'Account Opening', status: 'In Progress' },
-                      { date: '2026-05-08', inst: 'EthioLife Insurance', service: 'Policy Issuance', status: 'Pending' },
-                    ].map((log, i) => (
-                      <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                        <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{log.date}</td>
-                        <td className="px-4 py-3 font-medium">{log.inst}</td>
-                        <td className="px-4 py-3">{log.service}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${log.status === 'Completed' ? 'bg-green-100 text-green-700' : log.status === 'In Progress' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>{log.status}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                  {collaborations.length === 0 && (
+                    <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-400">No collaborations registered yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       )}
+
+      {/* Registration Form Messages */}
+      {formMessage && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-green-600 text-white px-6 py-4 shadow-2xl text-sm font-bold flex items-center gap-2">
+          <CheckCircle2 className="h-5 w-5" />{formMessage}
+        </div>
+      )}
+
+      {/* Register Institution Modal */}
+      <Modal open={showInstForm} onClose={() => setShowInstForm(false)} title="Register Institution">
+        <form onSubmit={handleRegisterInstitution} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Institution Name *</label>
+              <input name="name" required className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., Saudi Ministry of Labor" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Type</label>
+              <select name="type" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
+                <option value="government">Government</option>
+                <option value="embassy">Embassy</option>
+                <option value="medical">Medical</option>
+                <option value="bank">Bank</option>
+                <option value="partner">Private</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Category</label>
+              <input name="category" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., Governmental" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Country</label>
+              <input name="country" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., Saudi Arabia" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">City</label>
+              <input name="city" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., Riyadh" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Contact Person</label>
+              <input name="contactPerson" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="Full name" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Email</label>
+              <input name="email" type="email" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="email@domain.com" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Phone</label>
+              <input name="phone" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="+251-XX-XXXXXXX" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Address</label>
+              <input name="address" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="Street, city, country" />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={() => setShowInstForm(false)} className="rounded-xl border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50">Cancel</button>
+            <button type="submit" className="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-700 flex items-center gap-2"><Save className="h-4 w-4" />Register</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Register Partner Modal */}
+      <Modal open={showPartnerForm} onClose={() => setShowPartnerForm(false)} title="Register Partner">
+        <form onSubmit={handleRegisterPartner} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Partner Name *</label>
+              <input name="name" required className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="Full name" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Institution</label>
+              <input name="institution" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., Saudi Medical Group" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Role</label>
+              <input name="role" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="e.g., Director" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Status</label>
+              <select name="status" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Email</label>
+              <input name="email" type="email" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="email@domain.com" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Phone</label>
+              <input name="phone" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="+971-XX-XXXXXXX" />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={() => setShowPartnerForm(false)} className="rounded-xl border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50">Cancel</button>
+            <button type="submit" className="rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-amber-700 flex items-center gap-2"><Save className="h-4 w-4" />Register</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Register Collaboration Modal */}
+      <Modal open={showCollabForm} onClose={() => setShowCollabForm(false)} title="Register Collaboration">
+        <form onSubmit={handleRegisterCollaboration} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Institution *</label>
+            <select name="institutionId" required className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
+              <option value="">Select institution...</option>
+              {institutions.map(inst => (
+                <option key={inst.id} value={inst.id}>{inst.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Type</label>
+              <select name="type" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
+                <option value="Employment">Employment</option>
+                <option value="Medical">Medical</option>
+                <option value="Training">Training</option>
+                <option value="Joint Venture">Joint Venture</option>
+                <option value="Financial">Financial</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Status</label>
+              <select name="status" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
+                <option value="active">Active</option>
+                <option value="negotiation">Negotiation</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Start Date</label>
+              <input name="startDate" type="date" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">MOU</label>
+              <select name="mou" className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm">
+                <option value="Signed">Signed</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-ink dark:text-ink-dark mb-1">Description</label>
+              <textarea name="description" rows={3} className="w-full rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm" placeholder="Collaboration details..." />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={() => setShowCollabForm(false)} className="rounded-xl border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50">Cancel</button>
+            <button type="submit" className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 flex items-center gap-2"><Save className="h-4 w-4" />Register</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

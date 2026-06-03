@@ -33,7 +33,7 @@ export function SubscriptionPlans() {
           // No current plan in response, keeping state as null
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error(err));
   }, []);
 
   const handleSelect = (planId: string) => {

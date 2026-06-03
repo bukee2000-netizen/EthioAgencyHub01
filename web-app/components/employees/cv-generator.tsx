@@ -265,7 +265,7 @@ export function CVGeneratorModule() {
   const getPhotoUrl = (path?: string | null): string | null => {
     if (!path) return null;
     if (path.startsWith('http') || path.startsWith('/')) return path;
-    return `/api/telegram/photo/${path}`;
+    return `/api/r2/presign?key=${encodeURIComponent(path)}`;
   };
 
   const getPsychInterview = (emp: CVEmployee): {
@@ -677,9 +677,188 @@ export function CVGeneratorModule() {
     </div>
   );
 
+  const renderBilingualSideBySide = (e: CVEmployee) => {
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontFamily: 'Arial, sans-serif', color: '#1e293b' }}>
+        {/* Left Column - English */}
+        <div style={{ direction: 'ltr', textAlign: 'left', borderRight: '1px solid #e2e8f0', paddingRight: '16px' }}>
+          
+          {/* Personal Info */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.primaryColor, borderBottom: `1px solid ${config.primaryColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>PERSONAL INFORMATION</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Name: </span>{`${getSafe(e, 'firstName')} ${getSafe(e, 'lastName')}`.replace(' -', '')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Father: </span>{getSafe(e, 'fatherName')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Mother: </span>{getSafe(e, 'motherName')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>DOB: </span>{getSafe(e, 'dateOfBirth').slice(0, 10)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Gender: </span>{getSafe(e, 'gender')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Marital Status: </span>{getSafe(e, 'maritalStatus')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Nationality: </span>{getSafe(e, 'nationality')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Religion: </span>{getSafe(e, 'religion')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Region: </span>{getSafe(e, 'region')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Zone: </span>{getSafe(e, 'zone')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Woreda: </span>{getSafe(e, 'woreda')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Kebele: </span>{getSafe(e, 'kebele')}</div>
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.primaryColor, borderBottom: `1px solid ${config.primaryColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>CONTACT</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Phone: </span>{getSafe(e, 'contactPhone')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Alt Phone: </span>{getSafe(e, 'alternatePhone')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Email: </span>{getSafe(e, 'email')}</div>
+            </div>
+          </div>
+
+          {/* Identification */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.primaryColor, borderBottom: `1px solid ${config.primaryColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>IDENTIFICATION</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Passport No: </span>{getSafe(e, 'passportNumber')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Passport Exp: </span>{getSafe(e, 'passportExpiryDate').slice(0, 10)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Issue Date: </span>{getSafe(e, 'passportIssuingDate').slice(0, 10)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Place of Issue: </span>{getSafe(e, 'passportPlaceOfIssue')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>National ID: </span>{getSafe(e, 'nationalId')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Labor ID: </span>{getSafe(e, 'laborId')}</div>
+            </div>
+          </div>
+
+          {/* Education & Experience */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.primaryColor, borderBottom: `1px solid ${config.primaryColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>EDUCATION & EXPERIENCE</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Education: </span>{getSafe(e, 'education')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Job Role: </span>{getSafe(e, 'role')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Experience: </span>{getSafe(e, 'experience')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Destination: </span>{getSafe(e, 'destination')}</div>
+            </div>
+          </div>
+
+          {/* Languages & Skills */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.primaryColor, borderBottom: `1px solid ${config.primaryColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>LANGUAGES & SKILLS</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Languages: </span>{getLanguages(e)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>Skills: </span>{getSafe(e, 'additionalSkills')}</div>
+            </div>
+          </div>
+          
+          {/* Psychological */}
+          {((e.psychologyScore !== null && e.psychologyScore !== undefined) || getPsychInterview(e)) && (
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.primaryColor, borderBottom: `1px solid ${config.primaryColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>PSYCHOLOGICAL ASSESSMENT</div>
+              <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+                {e.psychologyScore !== null && e.psychologyScore !== undefined && <div><span style={{ color: '#64748b', fontWeight: 500 }}>Score: </span>{e.psychologyScore}/100</div>}
+                {getPsychInterview(e)?.overallAssessment && <div><span style={{ color: '#64748b', fontWeight: 500 }}>Assessment: </span>{getPsychInterview(e)?.overallAssessment}</div>}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column - Arabic */}
+        <div style={{ direction: 'rtl', textAlign: 'right', paddingLeft: '16px' }}>
+          
+          {/* البيانات الشخصية */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.accentColor, borderBottom: `1px solid ${config.accentColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>البيانات الشخصية</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الاسم: </span>{`${getSafe(e, 'firstName')} ${getSafe(e, 'lastName')}`.replace(' -', '')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>اسم الأب: </span>{getSafe(e, 'fatherName')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>اسم الأم: </span>{getSafe(e, 'motherName')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>تاريخ الميلاد: </span>{getSafe(e, 'dateOfBirth').slice(0, 10)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الجنس: </span>{getSafe(e, 'gender')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الحالة الاجتماعية: </span>{getSafe(e, 'maritalStatus')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الجنسية: </span>{getSafe(e, 'nationality')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الديانة: </span>{getSafe(e, 'religion')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>المنطقة: </span>{getSafe(e, 'region')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>المقاطعة: </span>{getSafe(e, 'zone')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الناحية: </span>{getSafe(e, 'woreda')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>القبيلة: </span>{getSafe(e, 'kebele')}</div>
+            </div>
+          </div>
+
+          {/* الاتصال */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.accentColor, borderBottom: `1px solid ${config.accentColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>الاتصال</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الهاتف: </span>{getSafe(e, 'contactPhone')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>هاتف آخر: </span>{getSafe(e, 'alternatePhone')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>البريد الإلكتروني: </span>{getSafe(e, 'email')}</div>
+            </div>
+          </div>
+
+          {/* وثائق الهوية */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.accentColor, borderBottom: `1px solid ${config.accentColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>وثائق الهوية</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>جواز السفر: </span>{getSafe(e, 'passportNumber')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>انتهاء الجواز: </span>{getSafe(e, 'passportExpiryDate').slice(0, 10)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>تاريخ الإصدار: </span>{getSafe(e, 'passportIssuingDate').slice(0, 10)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>مكان الإصدار: </span>{getSafe(e, 'passportPlaceOfIssue')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الهوية الوطنية: </span>{getSafe(e, 'nationalId')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>رقم العمل: </span>{getSafe(e, 'laborId')}</div>
+            </div>
+          </div>
+
+          {/* التعليم والخبرة */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.accentColor, borderBottom: `1px solid ${config.accentColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>التعليم والخبرة</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>التعليم: </span>{getSafe(e, 'education')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الوظيفة: </span>{getSafe(e, 'role')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الخبرة: </span>{getSafe(e, 'experience')}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>الدولة: </span>{getSafe(e, 'destination')}</div>
+            </div>
+          </div>
+
+          {/* اللغات والمهارات */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.accentColor, borderBottom: `1px solid ${config.accentColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>اللغات والمهارات</div>
+            <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>اللغات: </span>{getLanguages(e)}</div>
+              <div><span style={{ color: '#64748b', fontWeight: 500 }}>المهارات: </span>{getSafe(e, 'additionalSkills')}</div>
+            </div>
+          </div>
+
+          {/* التقييم النفسي */}
+          {((e.psychologyScore !== null && e.psychologyScore !== undefined) || getPsychInterview(e)) && (
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ fontSize: fs('md'), fontWeight: 'bold', color: config.accentColor, borderBottom: `1px solid ${config.accentColor}30`, paddingBottom: '2px', marginBottom: '4px' }}>التقييم النفسي</div>
+              <div style={{ fontSize: fs('sm'), display: 'grid', gap: '2px' }}>
+                {e.psychologyScore !== null && e.psychologyScore !== undefined && <div><span style={{ color: '#64748b', fontWeight: 500 }}>النتيجة: </span>{e.psychologyScore}/100</div>}
+                {getPsychInterview(e)?.overallAssessment && <div><span style={{ color: '#64748b', fontWeight: 500 }}>التقييم: </span>{getPsychInterview(e)?.overallAssessment}</div>}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const renderPreview = () => {
     if (!selectedEmployee) return null;
     const e = selectedEmployee;
+    if (layout === 'bilingual') {
+      return (
+        <div style={{ fontFamily: 'Arial, sans-serif', color: '#1e293b', padding: '0 4px', fontSize: fs('md') }}>
+          {renderAgencyHeader()}
+          {renderBilingualSideBySide(e)}
+          {config.showFullBodyPhoto && getPhotoUrl(e.fullBodyPhotoPath || e.fullPhotoUrl) && (
+            <div style={{ textAlign: 'center', marginTop: 16, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: fs('sm'), fontWeight: 'bold', color: config.primaryColor, marginBottom: 8 }}>Full Body Photo / صورة كاملة</div>
+              <img src={getPhotoUrl(e.fullBodyPhotoPath || e.fullPhotoUrl)!} alt="Full body"
+                style={{ height: 260, objectFit: 'contain', borderRadius: 8, border: '1px solid #e2e8f0', margin: '0 auto' }} />
+            </div>
+          )}
+          <div style={{ marginTop: 12, paddingTop: 6, borderTop: '1px solid #e2e8f0', fontSize: fs('xs'), color: '#94a3b8', display: 'flex', justifyContent: 'space-between' }}>
+            <span>Generated by {config.companyName || 'Ethio Agency Hub'}</span>
+            <span>{new Date().toLocaleDateString()}</span>
+          </div>
+        </div>
+      );
+    }
     const previews: Record<string, (e: CVEmployee) => React.ReactNode> = {
       standard: renderStandard, professional: renderProfessional,
       modern: renderModern, elegant: renderElegant, compact: renderCompact,

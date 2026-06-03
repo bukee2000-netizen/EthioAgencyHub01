@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CheckCircle2, AlertCircle, Clock, Search, X, ChevronDown, ChevronUp, Shield, FileText, Plane, RefreshCw, Globe, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 interface CheckResult {
   employeeId: string;
@@ -26,24 +27,11 @@ interface CheckResult {
 
 export function DocumentsCrossMatch() {
   const { addToast } = useToast();
-  const [employees, setEmployees] = useState<any[]>([]);
+  const { employees, loading } = useEmployees({ limit: 100 });
   const [results, setResults] = useState<CheckResult[]>([]);
-  const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pass' | 'fail'>('all');
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/employees?limit=100');
-        const data = await res.json();
-        if (data.success && data.data) setEmployees(data.data);
-      } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, [addToast]);
 
   const runCrossMatch = useCallback(() => {
     setRunning(true);

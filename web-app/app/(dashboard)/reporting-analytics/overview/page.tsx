@@ -10,8 +10,8 @@ export default function AnalyticsOverviewPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/employees/stats').then(r => r.json()).catch(() => ({})),
-      fetch('/api/documents').then(r => r.json()).catch(() => ({}))
+      fetch('/api/employees/stats').then(r => r.json()).catch(e => { console.error('Failed to fetch employee stats:', e); return {}; }),
+      fetch('/api/documents').then(r => r.json()).catch(e => { console.error('Failed to fetch documents:', e); return {}; })
     ]).then(([e, d]) => {
       const es = e.success ? (e.data || e.stats || {}) : {};
       const ds = d.success && Array.isArray(d.data) ? d.data : [];

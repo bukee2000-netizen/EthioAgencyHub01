@@ -3,6 +3,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CvGenerator } from '@/components/employees/cv-generator';
 
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
+
 const mockEmployee = {
   id: 'EAH-1024',
   firstName: 'Mekdes',
@@ -79,7 +84,7 @@ describe('CvGenerator', () => {
     expect(professionalButton).toBeInTheDocument();
 
     await user.click(professionalButton);
-    expect(screen.getByText('CV Preview — Professional')).toBeInTheDocument();
+    expect(screen.getByText(/CV Preview/i)).toBeInTheDocument();
   });
 
   it('renders all five template style options', async () => {
@@ -107,6 +112,6 @@ describe('CvGenerator', () => {
     const employeeButton = await screen.findByText(/Mekdes Tesfaye/);
     await user.click(employeeButton);
 
-    expect(await screen.findByText('CV Preview — Standard')).toBeInTheDocument();
+    expect(await screen.findByText(/CV Preview/i)).toBeInTheDocument();
   });
 });

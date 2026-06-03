@@ -175,14 +175,13 @@ export const modules = [
   ];
 
 export const activities = [
-  'Telegram interview video saved for Hana Bekele',
-  'Passport PDF routed to Teledrive sync folder',
+  'Interview video uploaded for Hana Bekele',
+  'Passport PDF uploaded to R2 storage',
   'MOLS cross-match completed for 23 employees',
   'Flight manifest prepared for Addis Ababa departures',
   'Payment received for Professional plan subscription'
 ];
 
 export const storageRoutes = [
-  { type: 'Photos, Passports, PDFs', destination: 'Local FS → Teledrive Desktop Sync', cost: '~300 ETB/month', purpose: 'Low-cost unlimited document archive' },
-  { type: 'Interview Videos', destination: 'Telegram Bot → Private Channel', cost: 'Free', purpose: 'Global CDN streaming for partners' }
+  { type: 'Photos, Passports, PDFs, Videos', destination: 'Cloudflare R2', cost: 'Pay-as-you-go (S3-compatible)', purpose: 'Scalable global document & media storage' },
 ];

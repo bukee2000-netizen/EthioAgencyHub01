@@ -43,6 +43,46 @@
 
 ---
 
+## Next Work Plan
+
+### Immediate tasks
+- [ ] Fix the Prisma schema bug: remove duplicate `CrossMatchResult.createdAt` and run `npx prisma generate`
+- [ ] Convert `Employee.selectedByAgent` to a Prisma relation and add missing foreign-key relations for `agencyId`
+- [ ] Review and commit current local changes in `web-app/app/(auth)/login/login-form.tsx`
+- [ ] Clean or remove `web-app/prisma/dev.db` from source control if it is not meant to be committed
+- [ ] Push the current branch to `origin` after commit verification
+
+### High-priority backend tasks
+- [ ] Add missing endpoints: delete visa apps, agent performance metrics, MOLS document status update, user update/delete/password reset
+- [ ] Implement DB-backed system settings instead of only `process.env`
+- [ ] Add billing models and endpoints: Invoice, InvoiceLineItem, Payment, Refund
+- [ ] Convert `travel.currency` and `travel.paymentStatus` to enums for validation and consistency
+
+### Frontend completion tasks
+- [ ] Build missing pages: `/agents/[id]`, `/hajj-umrah/groups`, `/hajj-umrah/groups/[id]`, `/travel/arrival`, `/notifications`, `/support`, `/onboarding`, `/documents/[id]`
+- [ ] Replace stub redirects with actual route content for `/dashboard/activities`, `/dashboard/tasks`, `/dashboard/trends`
+- [ ] Wire toast/notification states across forms and error flows
+
+### Integration and feature tasks
+- [ ] Wire WhatsApp notifications into document, travel, and payment workflows
+- [ ] Integrate Passport OCR with Tesseract.js or another OCR provider
+- [ ] Add OCR confidence scoring and validation feedback
+- [ ] Harden Teledrive sync with retry persistence and error recovery
+
+### Testing and quality tasks
+- [ ] Add backend tests for auth session/cookies, Prisma client, MOLS sync, WhatsApp, Teledrive, audit, passport OCR, and registration helpers
+- [ ] Add API route tests for `app/api/*` handlers
+- [ ] Add component tests for registration wizard, travel management, agents, and documents modules
+- [ ] Add E2E tests for login, registration, document upload, travel booking, and payment flows
+
+### DevOps & deployment tasks
+- [ ] Build a staging deployment plan and runbook
+- [ ] Add CI auto-deploy on merge and Prisma migration automation
+- [ ] Add SSL/TLS configuration and monitoring
+- [ ] Validate Docker and docker-compose in a production-like environment
+
+---
+
 ## 1. FOUNDATION & ARCHITECTURE — 100%
 
 ### Framework & Build

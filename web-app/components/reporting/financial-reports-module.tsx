@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Download, DollarSign, TrendingUp, BarChart3 } from 'lucide-react';
@@ -23,7 +23,7 @@ export function FinancialReportsModule() {
           setData({ totalRevenue, paidTotal, pendingTotal, recordCount: records.length, destinations: destinations.length, paidCount: paid.length, pendingCount: pending.length });
         }
       })
-      .catch(() => {})
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 

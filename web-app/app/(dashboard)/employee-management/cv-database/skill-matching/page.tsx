@@ -1,46 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { CVDatabaseModule } from '@/components/employees/cv-search';
-import { Sparkles, CheckCircle2, Users, Briefcase, Globe, Award } from 'lucide-react';
-
-interface Employee {
-  id: string;
-  name: string;
-  role?: string;
-  destination?: string;
-  status: string;
-  education?: string;
-  experience?: string;
-  languages?: string[];
-  createdAt: string;
-}
+import { Users, Briefcase, Globe } from 'lucide-react';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 export default function SkillMatchingPage() {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/employees?limit=200')
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && data.data) {
-          setEmployees(data.data.map((e: any) => ({
-            id: e.id,
-            name: e.name || `${e.firstName || ''} ${e.lastName || ''}`.trim() || 'Unknown',
-            role: e.role || e.jobRole || '-',
-            destination: e.destination || e.country || 'Open',
-            status: e.status || 'REGISTERED',
-            education: e.education || '-',
-            experience: e.experience || '-',
-            languages: e.languages || [],
-            createdAt: e.createdAt,
-          })));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const { employees: empData, loading } = useEmployees({ limit: 200 });
+  const employees = empData.map(e => ({
+    id: e.id,
+    name: e.name || `${(e as any).firstName || ''} ${(e as any).lastName || ''}`.trim() || 'Unknown',
+    role: e.role || (e as any).jobRole || '-',
+    destination: e.destination || (e as any).country || 'Open',
+    status: e.status || 'REGISTERED',
+    education: (e as any).education || '-',
+    experience: (e as any).experience || '-',
+    languages: e.languages || [],
+    createdAt: e.createdAt,
+  }));
 
   const roleCounts: Record<string, number> = {};
   const destCounts: Record<string, number> = {};

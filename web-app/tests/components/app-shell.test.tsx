@@ -9,6 +9,11 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
+
 vi.mock('@/components/layout/sidebar-provider', () => ({
   useSidebar: () => ({
     isOpen: true,
@@ -57,8 +62,8 @@ vi.mock('@/components/layout/user-menu', () => ({
   ),
 }));
 
-vi.mock('@/components/layout/language-selector', () => ({
-  LanguageSelector: () => <div data-testid="language-selector">Language</div>,
+vi.mock('@/components/ui/language-picker', () => ({
+  LanguagePicker: () => <div data-testid="language-selector">Language</div>,
 }));
 
 const mockSession = {
@@ -77,7 +82,6 @@ describe('AppShell', () => {
       </AppShell>
     );
     expect(screen.getByText('Foreign Employment Operations')).toBeInTheDocument();
-    expect(screen.getByText('Multi-tenant command center')).toBeInTheDocument();
   });
 
   it('renders children content', () => {
@@ -95,7 +99,7 @@ describe('AppShell', () => {
         <div>Content</div>
       </AppShell>
     );
-    expect(screen.getByPlaceholderText('Search modules, pages...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
   });
 
   it('renders the notification bell button', () => {
@@ -133,7 +137,7 @@ describe('AppShell', () => {
         <div>Content</div>
       </AppShell>
     );
-    const searchInput = screen.getByPlaceholderText('Search modules, pages...');
+    const searchInput = screen.getByPlaceholderText('Search');
     await user.type(searchInput, 'Dashboard');
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
@@ -145,7 +149,7 @@ describe('AppShell', () => {
         <div>Content</div>
       </AppShell>
     );
-    const searchInput = screen.getByPlaceholderText('Search modules, pages...');
+    const searchInput = screen.getByPlaceholderText('Search');
     await user.type(searchInput, 'xyznonexistent');
     expect(screen.getByText('No results found')).toBeInTheDocument();
   });

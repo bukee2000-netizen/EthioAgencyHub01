@@ -10,6 +10,16 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
+
+vi.mock('@/components/ui/toast-provider', () => ({
+  useToast: () => ({ addToast: vi.fn() }),
+  ToastProvider: ({ children }: any) => children,
+}));
+
 beforeEach(() => {
   vi.spyOn(global, 'fetch').mockImplementation(async (url: string) => {
     return {
@@ -22,11 +32,12 @@ beforeEach(() => {
 describe('DocumentManagementModule', () => {
   it('renders document management header', () => {
     render(<DocumentManagementModule />);
-    expect(screen.getByText(/document|management/i)).toBeInTheDocument();
+    expect(screen.getByText('Document Management')).toBeInTheDocument();
   });
 
   it('renders filter controls', () => {
     render(<DocumentManagementModule />);
-    expect(screen.getByText(/all|status|type/i)).toBeInTheDocument();
+    expect(screen.getByText('All Types')).toBeInTheDocument();
+    expect(screen.getByText('All Status')).toBeInTheDocument();
   });
 });

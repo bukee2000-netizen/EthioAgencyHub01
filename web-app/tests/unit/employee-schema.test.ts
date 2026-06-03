@@ -10,7 +10,8 @@ describe('employeeCreateSchema', () => {
         lastName: 'Tesfaye',
         email: 'mekdes@example.com',
         contactPhone: '+251912345678',
-        emergencyContact: 'John Doe'
+        emergencyContact: 'John Doe',
+        emergencyPhone: '+251911111111'
       }
     });
 

@@ -1,21 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, User, Briefcase, FileText, StickyNote, Plane, Phone, Mail, MapPin, Calendar, Award, Languages, CheckCircle2, Globe, Download, ChevronRight } from 'lucide-react';
+import { ArrowLeft, User, Briefcase, FileText, StickyNote, Plane, Phone, MapPin, Calendar, Award, Languages, CheckCircle2, Globe, Download, ChevronRight } from 'lucide-react';
+import { getStatusColor } from '@/lib/utils/status';
+import { useEmployeeById } from '@/lib/hooks/use-employees';
+import type { EmployeeBasic } from '@/lib/types/employee';
 
-interface EmployeeFull {
-  id: string;
+type EmployeeFull = EmployeeBasic & {
   firstName?: string;
   lastName?: string;
-  name?: string;
   email?: string;
   contactPhone?: string;
-  role?: string;
   jobRole?: string;
-  destination?: string;
   country?: string;
-  status: string;
   dateOfBirth?: string;
   gender?: string;
   maritalStatus?: string;
@@ -33,52 +31,25 @@ interface EmployeeFull {
   motherName?: string;
   education?: string;
   experience?: string;
-  languages?: string[];
   additionalSkills?: string;
   bankName?: string;
   bankAccountNumber?: string;
   bankBranch?: string;
-  createdAt: string;
   updatedAt?: string;
   psychologyScore?: number;
   _count?: { documents: number; travels: number };
-}
+};
 
 export default function EmployeeDetailPage({ params }: { params: { id: string } }) {
-  const [employee, setEmployee] = useState<EmployeeFull | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { employee: emp, loading, error: fetchError } = useEmployeeById(params.id);
   const [activeTab, setActiveTab] = useState<'overview' | 'personal' | 'documents' | 'travel' | 'notes'>('overview');
 
-  useEffect(() => {
-    const loadEmployee = async () => {
-      try {
-        const res = await fetch(`/api/employees/${params.id}`);
-        const payload = await res.json();
-        if (!res.ok || !payload?.success || !payload.data) {
-          throw new Error(payload?.error?.message ?? 'Failed to load employee profile');
-        }
-        setEmployee(payload.data as EmployeeFull);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load employee profile');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadEmployee();
-  }, [params.id]);
+  const employee = emp as EmployeeFull | null;
+  const error = fetchError;
 
   const getName = () => employee?.name || `${employee?.firstName || ''} ${employee?.lastName || ''}`.trim() || 'Unknown';
   const getInitials = () => getName().split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  const getStatusColor = (s?: string) => {
-    switch (s) {
-      case 'DEPLOYED': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'TRAVEL_READY': return 'bg-green-50 text-green-700 border-green-200';
-      case 'INTERVIEW_UPLOADED': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'DOCUMENT_REVIEW': return 'bg-amber-50 text-amber-700 border-amber-200';
-      default: return 'bg-blue-50 text-blue-700 border-blue-200';
-    }
-  };
+
 
   if (loading) {
     return (

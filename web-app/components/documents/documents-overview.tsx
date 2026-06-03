@@ -1,30 +1,11 @@
-﻿'use client';
+'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FileCheck2, Upload, FileText, Landmark, AlertCircle, CheckCircle2, ArrowRight, Search, Users, Globe, Clock } from 'lucide-react';
+import { FileCheck2, Upload, FileText, Landmark, AlertCircle, CheckCircle2, ArrowRight, Users, Clock } from 'lucide-react';
+import { useDocumentStats } from '@/lib/hooks/use-documents';
 
 export function DocumentsOverview() {
-  const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, processing: 0 });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/documents')
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && Array.isArray(data.data)) {
-          const docs = data.data;
-          setStats({
-            total: docs.length,
-            pending: docs.filter((d: any) => d.status === 'PENDING').length,
-            approved: docs.filter((d: any) => d.status === 'VERIFIED' || d.status === 'APPROVED').length,
-            processing: docs.filter((d: any) => d.status === 'PROCESSING' || d.status === 'REVIEW').length,
-          });
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const { stats, loading } = useDocumentStats();
 
   const documentCategories = [
     { title: 'Upload Documents', href: '/documents/upload', icon: Upload, desc: 'Add new documents to the system', color: 'bg-blue-500' },
@@ -38,7 +19,7 @@ export function DocumentsOverview() {
   const quickLinks = [
     { label: 'View All Documents', href: '/documents/upload', count: loading ? '-' : stats.total },
     { label: 'Pending Reviews', href: '/documents/upload?status=pending', count: loading ? '-' : stats.pending },
-    { label: 'Approved Documents', href: '/documents/upload?status=approved', count: loading ? '-' : stats.approved },
+    { label: 'Approved Documents', href: '/documents/upload?status=approved', count: loading ? '-' : stats.verified },
     { label: 'In Processing', href: '/documents/mols', count: loading ? '-' : stats.processing },
   ];
 
@@ -52,7 +33,7 @@ export function DocumentsOverview() {
         {[
           { label: 'Total Documents', value: stats.total, icon: FileCheck2, color: 'bg-blue-500', text: 'text-blue-700' },
           { label: 'Pending Review', value: stats.pending, icon: AlertCircle, color: 'bg-orange-500', text: 'text-orange-700' },
-          { label: 'Approved', value: stats.approved, icon: CheckCircle2, color: 'bg-green-500', text: 'text-green-700' },
+          { label: 'Approved', value: stats.verified, icon: CheckCircle2, color: 'bg-green-500', text: 'text-green-700' },
           { label: 'In Processing', value: stats.processing, icon: Clock, color: 'bg-purple-500', text: 'text-purple-700' },
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:shadow-md transition-shadow">

@@ -11,8 +11,8 @@ export function EmployeeReportsModule() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/reporting/overview').then(r => r.json()).catch(() => ({})),
-      fetch('/api/employees/stats').then(r => r.json()).catch(() => ({}))
+      fetch('/api/reporting/overview').then(r => r.json()).catch(e => { console.error('Failed to fetch overview:', e); return {}; }),
+      fetch('/api/employees/stats').then(r => r.json()).catch(e => { console.error('Failed to fetch employee stats:', e); return {}; })
     ]).then(([overview, stats]) => {
       const o = overview.success ? (overview.data || overview) : {};
       const s = stats.success ? (stats.data || stats.stats || stats) : {};

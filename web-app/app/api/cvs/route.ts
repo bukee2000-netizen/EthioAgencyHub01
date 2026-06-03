@@ -42,7 +42,7 @@ export async function GET(req: Request) {
       take: 50,
       include: {
         employee: {
-          select: { id: true, firstName: true, lastName: true, name: true, role: true, destination: true }
+          select: { id: true, firstName: true, lastName: true, name: true, role: true, destination: true, passportSizePhotoPath: true }
         }
       }
     });
@@ -58,6 +58,8 @@ export async function GET(req: Request) {
       layout: cv.layout,
       style: cv.style,
       status: cv.status,
+      passportSizePhotoPath: cv.employee?.passportSizePhotoPath || null,
+      photoUrl: cv.employee?.passportSizePhotoPath || null,
       createdAt: cv.createdAt.toISOString(),
     }));
 

@@ -1,7 +1,5 @@
-﻿'use client';
+﻿import { redirect } from 'next/navigation';
 
-import { UserSettingsModule } from '@/components/settings/user-settings-module';
-
-export default function Page() {
-  return <UserSettingsModule />;
+export default function UserSettingsPage() {
+  redirect('/user-settings/profile');
 }

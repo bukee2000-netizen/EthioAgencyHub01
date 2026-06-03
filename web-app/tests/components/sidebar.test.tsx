@@ -10,22 +10,35 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
+vi.mock('@/components/layout/theme-provider', () => ({
+  useTheme: () => ({ theme: 'light', resolvedTheme: 'light', setTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => children,
+}));
+
+vi.mock('@/components/ui/language-picker', () => ({
+  LanguagePicker: () => null,
+}));
+
 vi.mock('@/components/layout/sidebar-provider', () => ({
   useSidebar: () => ({ isOpen: true, toggle: vi.fn(), isHovering: false, setIsHovering: vi.fn() }),
 }));
 
-vi.mock('lucide-react', () => ({
-  ChevronLeft: () => <span>ChevronLeft</span>,
-  ChevronRight: () => <span>ChevronRight</span>,
-  ChevronDown: () => <span>ChevronDown</span>,
-  Globe2: () => <span>Globe2</span>,
-  LayoutDashboard: () => <span>LayoutDashboard</span>,
-  X: () => <span>X</span>,
-  PlusCircle: () => <span>PlusCircle</span>,
-  FileText: () => <span>FileText</span>,
-  Plane: () => <span>Plane</span>,
-  Ticket: () => <span>Ticket</span>,
-}));
+vi.mock('lucide-react', async () => {
+  const actual = await vi.importActual('lucide-react') as any;
+  return {
+    ...actual,
+    ChevronLeft: () => <span>ChevronLeft</span>,
+    ChevronRight: () => <span>ChevronRight</span>,
+    ChevronDown: () => <span>ChevronDown</span>,
+    Globe2: () => <span>Globe2</span>,
+    LayoutDashboard: () => <span>LayoutDashboard</span>,
+    X: () => <span>X</span>,
+    PlusCircle: () => <span>PlusCircle</span>,
+    FileText: () => <span>FileText</span>,
+    Plane: () => <span>Plane</span>,
+    Ticket: () => <span>Ticket</span>,
+  };
+});
 
 const mockDict: any = {
   common: { dashboard: 'Dashboard', register: 'Register', registerNewEmployee: 'Register New Employee', travel: 'Travel', documents: 'Documents' },

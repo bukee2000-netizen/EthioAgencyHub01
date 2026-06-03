@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { HajjUmrahPilgrimRegister } from './hajj-umrah-pilgrim-register';
 import { useToast } from '@/components/ui/toast-provider';
+import { getStatusColor, getStatusLabel } from '@/lib/utils/status';
 
 interface Pilgrim {
   id: string;
@@ -79,31 +80,7 @@ export function HajjUmrahManagementModule() {
     setFilteredPilgrims(filtered);
   }, [pilgrims, destinationFilter, statusFilter, searchQuery]);
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      registered: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
-      documents_pending: 'bg-yellow-100 text-yellow-800',
-      requirements_met: 'bg-blue-100 text-blue-800',
-      medical_clearance: 'bg-indigo-100 text-indigo-800',
-      visa_approved: 'bg-purple-100 text-purple-800',
-      ready_for_travel: 'bg-emerald-100 text-emerald-800',
-      deployed: 'bg-teal-100 text-teal-800',
-    };
-    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
-  };
 
-  const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      registered: 'Registered',
-      documents_pending: 'Documents Pending',
-      requirements_met: 'Requirements Met',
-      medical_clearance: 'Medical Clearance',
-      visa_approved: 'Visa Approved',
-      ready_for_travel: 'Ready for Travel',
-      deployed: 'Deployed',
-    };
-    return labels[status] || status;
-  };
 
   const hajjCount = pilgrims.filter((p) => p.destination === 'Hajj').length;
   const umrahCount = pilgrims.filter((p) => p.destination === 'Umrah').length;

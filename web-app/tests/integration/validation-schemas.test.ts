@@ -72,7 +72,8 @@ describe('Employee Validation Schemas', () => {
       lastName: 'Tesfaye',
       email: 'mekdes@test.com',
       contactPhone: '+251912345678',
-      emergencyContact: 'Hana Bekele'
+      emergencyContact: 'Hana Bekele',
+      emergencyPhone: '+251911111111'
     },
     skills: {
       role: 'Nurse',

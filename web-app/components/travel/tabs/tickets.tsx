@@ -8,6 +8,7 @@ import {
   X, Save, Ticket
 } from 'lucide-react';
 import { TravelEmployee, TicketBooking, BookingFormData } from './types';
+import { getStatusColor } from '@/lib/utils/status';
 
 export function TicketsTab({ employees }: { employees: TravelEmployee[] }) {
   const [countryFilter, setCountryFilter] = useState('all');
@@ -397,15 +398,7 @@ export function BookingTab({ bookings, setBookings, isBookingModalOpen, setIsBoo
   const pendingCount = bookings.filter(b => b.paymentStatus === 'pending').length;
   const issuedCount = bookings.filter(b => b.status === 'issued').length;
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      booked: 'bg-blue-100 text-blue-700',
-      issued: 'bg-green-100 text-green-700',
-      cancelled: 'bg-red-100 text-red-700',
-      used: 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200',
-    };
-    return colors[status] || 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200';
-  };
+
 
   const getPaymentColor = (status: string) => {
     const colors: Record<string, string> = {

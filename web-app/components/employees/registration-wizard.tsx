@@ -22,6 +22,7 @@ import { BankStep } from './registration/bank-step';
 import { AssessmentStep } from './registration/assessment-step';
 import { DocumentsStep } from './registration/documents-step';
 import { ReviewStep } from './registration/review-step';
+import { uploadFile } from '@/lib/r2/upload';
 
 type RegistrationWizardProps = {
   initialStep?: number;
@@ -482,26 +483,12 @@ const handlePassportAutoFill = (data: any) => {
     setUploadError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'pdf-document');
-      formData.append('employeeName', `${personal.firstName} ${personal.lastName}`.trim() || 'Unknown');
-
-      const response = await fetch('/api/telegram/document', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setDocs(prev => ({
-          ...prev,
-          pdfDocuments: [...prev.pdfDocuments, data.data.fileId]
-        }));
-      } else {
-        throw new Error(data.error?.message || 'PDF upload failed');
-      }
+      const key = `documents/${(personal.firstName + '-' + personal.lastName).replace(/\s+/g, '-')}-${Date.now()}-${file.name}`;
+      const result = await uploadFile(file, key);
+      setDocs(prev => ({
+        ...prev,
+        pdfDocuments: [...prev.pdfDocuments, result.key]
+      }));
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : 'PDF upload failed');
     } finally {
@@ -853,9 +840,9 @@ const handlePassportAutoFill = (data: any) => {
             <div className="mb-4 rounded-2xl bg-purple-50 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <MessageCircle className="h-5 w-5 text-purple-600" />
-                <span className="font-semibold text-purple-800">Via Telegram</span>
+                <span className="font-semibold text-purple-800">Video Interview</span>
               </div>
-              <p className="text-sm text-purple-700">Videos are sent to your private Telegram channel for secure storage and streaming to international partners.</p>
+              <p className="text-sm text-purple-700">Videos are stored securely in Cloudflare R2 for streaming to international partners.</p>
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Employee Name</label>
@@ -867,12 +854,9 @@ const handlePassportAutoFill = (data: any) => {
                 const file = e.target.files?.[0]; if (!file) return;
                 setInterviewUploading(true);
                 try {
-                  const fd = new FormData();
-                  fd.append('video', file);
-                  fd.append('employeeName', `${personal.firstName} ${personal.lastName}`);
-                  const res = await fetch('/api/telegram/interview', { method: 'POST', body: fd });
-                  const data = await res.json();
-                  if (data.success && data.data?.fileId) { setDocs(d => ({ ...d, tgVideoId: data.data.fileId })); setShowInterviewModal(false); }
+                  const key = `interviews/${(personal.firstName + '-' + personal.lastName).replace(/\s+/g, '-')}-${Date.now()}-${file.name}`;
+                  const result = await uploadFile(file, key);
+                  setDocs(d => ({ ...d, tgVideoId: result.key })); setShowInterviewModal(false);
                 } catch { setUploadError('Failed to upload interview video'); } finally { setInterviewUploading(false); }
               }} />
             </div>

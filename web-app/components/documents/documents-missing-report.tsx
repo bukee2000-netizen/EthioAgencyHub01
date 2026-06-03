@@ -1,8 +1,9 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AlertCircle, CheckCircle2, Clock, Download, FileText, Printer, Send, Search, X, Plus, Upload, ChevronDown, ChevronUp, Shield, Globe, User, Calendar, Flag, ExternalLink } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
+import { useEmployees } from '@/lib/hooks/use-employees';
 
 interface MissingCase {
   id: string;
@@ -25,30 +26,17 @@ interface MissingCase {
 
 export function DocumentsMissingReport() {
   const { addToast } = useToast();
+  const { employees, loading } = useEmployees({ limit: 100 });
   const [cases, setCases] = useState<MissingCase[]>([]);
-  const [employees, setEmployees] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [statusMsg, setStatusMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const [form, setForm] = useState({
     employeeSearch: '', employeeId: '', employeeName: '', passportNo: '', visaNumber: '', destinationCountry: '', employerName: '',
     missingSince: '', lastContactDate: '', notes: ''
   });
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/employees?limit=100');
-        const data = await res.json();
-        if (data.success && data.data) setEmployees(data.data);
-      } catch (err) { console.error(err); addToast({ title: 'Error', description: 'Failed to fetch employee data.', type: 'error' }); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, [addToast]);
 
   const filteredEmployees = employees.filter((e: any) =>
     !form.employeeId && (!form.employeeSearch || (e.name || '').toLowerCase().includes(form.employeeSearch.toLowerCase()))

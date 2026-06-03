@@ -92,14 +92,6 @@ export const EMPLOYEE_STATUS_LABELS: Record<string, string> = {
   ARCHIVED: 'Archived',
 };
 
-export function getStatusColor(status: string): string {
-  return EMPLOYEE_STATUS_COLORS[status] || 'bg-slate-50 text-slate-700 border-slate-200';
-}
-
-export function getStatusLabel(status: string): string {
-  return EMPLOYEE_STATUS_LABELS[status] || status.replace(/_/g, ' ');
-}
-
 // Language parsing utility
 export function parseLanguages(languages: string | string[] | null | undefined): string[] {
   if (!languages) return [];
@@ -113,10 +105,10 @@ export function parseLanguages(languages: string | string[] | null | undefined):
 }
 
 // Photo URL utility
-export function getPhotoUrl(fileId: string | null | undefined): string | null {
-  if (!fileId) return null;
-  if (fileId.startsWith('http') || fileId.startsWith('/')) return fileId;
-  return `/api/telegram/photo/${fileId}`;
+export function getPhotoUrl(fileKey: string | null | undefined): string | null {
+  if (!fileKey) return null;
+  if (fileKey.startsWith('http') || fileKey.startsWith('/')) return fileKey;
+  return `/api/r2/presign?key=${encodeURIComponent(fileKey)}`;
 }
 
 // Name formatting

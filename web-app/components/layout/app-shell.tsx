@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react';
 import { Bell, Search, X, Sun, Moon } from 'lucide-react';
 import { UserMenu } from '@/components/layout/user-menu';
 import { Sidebar } from '@/components/layout/sidebar';
-import { LanguageSelector } from '@/components/layout/language-selector';
+import { LanguagePicker } from '@/components/ui/language-picker';
 import { useSidebar } from '@/components/layout/sidebar-provider';
 import { useLanguage } from '@/components/layout/language-provider';
 import { useTheme } from '@/components/layout/theme-provider';
@@ -73,7 +73,7 @@ export function AppShell({ children, session }: { children: ReactNode; session: 
               <button className="rounded-lg border border-slate-200 dark:border-slate-600 p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors" type="button" aria-label="Notifications">
                 <Bell className="h-4 w-4" />
               </button>
-              <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
+              <LanguagePicker variant="dropdown" currentLanguage={language} onLanguageChange={setLanguage} />
               <UserMenu role={session?.role ?? 'Guest'} email={session?.email} />
             </div>
           </div>

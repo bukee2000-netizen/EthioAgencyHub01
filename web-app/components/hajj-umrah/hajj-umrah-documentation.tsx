@@ -6,7 +6,6 @@ import {
   FileText, CheckCircle2, AlertCircle, Clock, Upload, Search,
   Filter, ChevronRight, Download, Eye, X, Plus
 } from 'lucide-react';
-
 interface Document {
   id: string;
   pilgrimId: string;

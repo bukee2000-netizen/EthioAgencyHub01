@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE_NAME } from '@/lib/auth/cookies';
+import { type NextRequest } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
 const protectedRoutes = [
   '/dashboard',
@@ -11,28 +11,24 @@ const protectedRoutes = [
   '/agents',
   '/administration',
   '/reporting-analytics',
-  '/user-settings'
+  '/user-settings',
 ];
 
-export function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
-  const isProtected = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+export async function middleware(request: NextRequest) {
+  const { response, user } = await updateSession(request);
+  const { pathname } = request.nextUrl;
 
-  if (!isProtected) {
-    return NextResponse.next();
+  if (protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))) {
+    if (!user) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('next', pathname);
+      return Response.redirect(loginUrl);
+    }
   }
 
-  const hasSession = Boolean(req.cookies.get(SESSION_COOKIE_NAME)?.value);
-
-  if (!hasSession) {
-    const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('next', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

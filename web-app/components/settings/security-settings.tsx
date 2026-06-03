@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Save, Key, Lock, Shield, Eye, EyeOff, Copy, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -27,7 +27,7 @@ export function SecuritySettings() {
           setMfaEnabled(data.data?.twoFactorEnabled || false);
         }
       })
-      .catch(() => {})
+      .catch((err) => console.error(err))
       .finally(() => setMfaLoading(false));
   }, []);
 

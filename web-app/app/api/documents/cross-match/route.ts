@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       return ok({ checked: 23, matched: 21, flagged: 2, source: 'mock' });
     }
 
-    const { employeeId, autoUpdateStatus } = await req.json().catch(() => ({}));
+    const { employeeId, autoUpdateStatus } = await req.json().catch(e => { console.error('Failed to parse cross-match body:', e); return {}; });
     let employees;
 
     if (employeeId) {
